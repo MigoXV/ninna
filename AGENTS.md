@@ -10,4 +10,5 @@
 - 维护 `agent/guide.md`、Skill、工具描述和资产说明，让 Agent 能找到前提、输入、执行副作用和结果证据。
 - README 使用中文。新版本分批提交并打 annotated tag；不移动已有 tag。
 - UI 遵循 MANAS，画布 `#FFFEFB`。Figma 一界面一 Page，规范、组件分开，Page 内仅一个原点主画板。
+- UI 修改应及时同步 Figma 的界面和组件；发布 tag 前更新页面索引、PNG 与打印稿。
 - 真 Docker 测试需显式 `NINNA_INTEGRATION=1`；禁止用 mock 训练证明端到端通过。

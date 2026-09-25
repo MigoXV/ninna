@@ -98,7 +98,7 @@ export function PageHeader({
   return (
     <header className="page-header">
       <div>
-        <p className="eyebrow">{eyebrow}</p>
+        {eyebrow.startsWith("run-") && <p className="eyebrow">{eyebrow}</p>}
         <h1>{title}</h1>
         {description && <p className="page-description">{description}</p>}
       </div>
@@ -240,7 +240,7 @@ export function LossChart({
           <ResponsiveContainer width="100%" height={250}>
             <LineChart
               data={rows}
-              margin={{ top: 15, right: 15, bottom: 5, left: -24 }}
+              margin={{ top: 15, right: 15, bottom: 5, left: 0 }}
             >
               <CartesianGrid
                 stroke="var(--line)"
@@ -260,6 +260,7 @@ export function LossChart({
                 }}
               />
               <YAxis
+                width={48}
                 tickLine={false}
                 axisLine={false}
                 tick={{ fontSize: 12, fill: "var(--muted)" }}

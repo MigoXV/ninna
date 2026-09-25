@@ -1,183 +1,208 @@
 {
   "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
-  "version": "ui-v0.2.1",
+  "version": "ui-v0.4.0",
   "paper": "A3 landscape",
   "screens": [
     {
       "name": "01 · 训练运行",
       "page": "44:2572",
-      "frame": "55:364",
+      "frame": "77:318",
       "width": 1440,
-      "height": 1628,
-      "source": "runs"
+      "height": 900,
+      "source": "runs",
+      "path": "/runs"
     },
     {
       "name": "02 · 创建训练",
       "page": "44:2573",
-      "frame": "55:1501",
+      "frame": "102:318",
       "width": 1440,
-      "height": 1372,
-      "source": "create"
+      "height": 900,
+      "source": "create",
+      "path": "/runs/new"
     },
     {
       "name": "03 · Run · 训练详情",
       "page": "44:2574",
-      "frame": "55:2028",
+      "frame": "100:318",
       "width": 1440,
-      "height": 1356,
-      "source": "run-success"
+      "height": 900,
+      "source": "run-success",
+      "path": "/runs/run-b196f3593b05"
     },
     {
       "name": "04 · Run · 产物",
       "page": "44:2575",
-      "frame": "55:2648",
+      "frame": "96:318",
       "width": 1440,
-      "height": 1585,
-      "source": "run-artifacts"
+      "height": 1316,
+      "source": "run-artifacts",
+      "path": "/runs/run-b196f3593b05",
+      "tab": "artifacts"
     },
     {
       "name": "05 · Run · 执行与诊断",
       "page": "44:2576",
-      "frame": "55:3339",
+      "frame": "97:318",
       "width": 1440,
-      "height": 1981,
-      "source": "run-diagnostics"
+      "height": 900,
+      "source": "run-diagnostics",
+      "path": "/runs/run-b196f3593b05",
+      "tab": "diagnostics"
     },
     {
       "name": "06 · Run · 失败",
       "page": "44:2577",
-      "frame": "55:3816",
+      "frame": "98:318",
       "width": 1440,
-      "height": 1456,
-      "source": "run-failure"
+      "height": 900,
+      "source": "run-failure",
+      "path": "/runs/run-df17145d34ef"
     },
     {
       "name": "07 · Run · 比较",
       "page": "44:2578",
-      "frame": "55:4344",
+      "frame": "101:318",
       "width": 1440,
-      "height": 1341,
-      "source": "compare"
+      "height": 900,
+      "source": "compare",
+      "path": "/runs/compare?ids=run-b196f3593b05,run-4b1e02fe8b09"
     },
     {
       "name": "08 · Dataset · 列表",
       "page": "44:2579",
-      "frame": "55:4889",
+      "frame": "78:318",
       "width": 1440,
-      "height": 1000,
-      "source": "dataset-list"
+      "height": 900,
+      "source": "dataset-list",
+      "path": "/assets/dataset"
     },
     {
       "name": "09 · Dataset · 详情",
       "page": "44:2580",
-      "frame": "55:5309",
+      "frame": "106:318",
       "width": 1440,
-      "height": 1194,
-      "source": "dataset"
+      "height": 900,
+      "source": "dataset",
+      "path": "/assets/dataset?name=mnist&version=v2"
     },
     {
       "name": "10 · Model · 列表",
       "page": "44:2581",
-      "frame": "55:5675",
+      "frame": "82:318",
       "width": 1440,
-      "height": 2546,
-      "source": "model-list"
+      "height": 900,
+      "source": "model-list",
+      "path": "/assets/model"
     },
     {
       "name": "11 · Model · 详情",
       "page": "44:2582",
-      "frame": "55:6780",
+      "frame": "105:318",
       "width": 1440,
-      "height": 1337,
-      "source": "model"
+      "height": 900,
+      "source": "model",
+      "path": "/assets/model?name=mnist-cnn&version=v2"
     },
     {
       "name": "12 · Recipe · 列表",
       "page": "44:2583",
-      "frame": "55:7197",
+      "frame": "83:318",
       "width": 1440,
-      "height": 1286,
-      "source": "recipe-list"
+      "height": 900,
+      "source": "recipe-list",
+      "path": "/assets/recipe"
     },
     {
       "name": "13 · Recipe · 详情",
       "page": "44:2584",
-      "frame": "56:322",
+      "frame": "104:318",
       "width": 1440,
-      "height": 1331,
-      "source": "recipe"
+      "height": 900,
+      "source": "recipe",
+      "path": "/assets/recipe?name=mnist-adam&version=v1"
     },
     {
       "name": "14 · Runtime · 列表",
       "page": "44:2585",
-      "frame": "56:685",
+      "frame": "85:318",
       "width": 1440,
-      "height": 1000,
-      "source": "runtime-list"
+      "height": 900,
+      "source": "runtime-list",
+      "path": "/assets/runtime"
     },
     {
       "name": "15 · Runtime · 详情",
       "page": "44:2586",
-      "frame": "56:1043",
+      "frame": "107:318",
       "width": 1440,
-      "height": 1000,
-      "source": "runtime"
+      "height": 900,
+      "source": "runtime",
+      "path": "/assets/runtime?name=mnist-pytorch-runtime&version=v3"
     },
     {
       "name": "16 · Workspace · 列表",
       "page": "44:2587",
-      "frame": "56:1392",
+      "frame": "89:318",
       "width": 1440,
-      "height": 2255,
-      "source": "workspace-list"
+      "height": 900,
+      "source": "workspace-list",
+      "path": "/assets/workspace"
     },
     {
       "name": "17 · Workspace · 详情",
       "page": "44:2588",
-      "frame": "57:322",
+      "frame": "112:318",
       "width": 1440,
-      "height": 1264,
-      "source": "workspace"
+      "height": 900,
+      "source": "workspace",
+      "path": "/assets/workspace?name=mnist-hf&version=v1"
     },
     {
       "name": "18 · 中心存储",
       "page": "44:2589",
-      "frame": "57:734",
+      "frame": "88:318",
       "width": 1440,
-      "height": 4621,
-      "source": "hub"
+      "height": 900,
+      "source": "hub",
+      "path": "/hub"
     },
     {
       "name": "19 · 实验观察",
       "page": "44:2590",
-      "frame": "57:4438",
+      "frame": "93:318",
       "width": 1440,
-      "height": 1214,
-      "source": "experiments"
+      "height": 900,
+      "source": "experiments",
+      "path": "/experiments"
     },
     {
       "name": "20 · 系统验收",
       "page": "44:2591",
-      "frame": "57:6275",
+      "frame": "108:318",
       "width": 1440,
-      "height": 2564,
-      "source": "certification"
+      "height": 900,
+      "source": "certification",
+      "path": "/certification"
     },
     {
       "name": "21 · 移动端 · 训练运行",
       "page": "44:2592",
-      "frame": "57:7746",
+      "frame": "91:318",
       "width": 375,
-      "height": 1637,
-      "source": "mobile-runs"
+      "height": 1095,
+      "source": "mobile-runs",
+      "path": "/runs"
     },
     {
       "name": "22 · 桌面 · 收起导航",
       "page": "44:2593",
-      "frame": "57:8363",
+      "frame": "95:318",
       "width": 1440,
-      "height": 1628,
-      "source": "collapsed-runs"
+      "height": 900,
+      "source": "collapsed-runs",
+      "path": "/runs",
+      "collapsed": true
     }
   ]
 }

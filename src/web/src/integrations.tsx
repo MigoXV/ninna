@@ -64,6 +64,7 @@ export function HubPage() {
   const [assets, setAssets] = useState<Asset[]>([]),
     [search, setSearch] = useState("");
   const [configOpen, setConfigOpen] = useState(false),
+    [configError, setConfigError] = useState(""),
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
   const [enabled, setEnabled] = useState(false),
@@ -73,6 +74,7 @@ export function HubPage() {
     [token, setToken] = useState("");
   const [busy, setBusy] = useState(""),
     [reposLoading, setReposLoading] = useState(false),
+    [reposError, setReposError] = useState(""),
     [reload, setReload] = useState(0);
   const [assetId, setAssetId] = useState(""),
     [publishRepo, setPublishRepo] = useState(""),
@@ -92,7 +94,7 @@ export function HubPage() {
     let current = true;
     setAssetId("");
     setRepositories([]);
-    setError("");
+    setReposError("");
     api<Asset[]>("/assets/" + kind)
       .then((data) => {
         if (current)
@@ -112,7 +114,7 @@ export function HubPage() {
           if (current) setRepositories(data);
         })
         .catch((e) => {
-          if (current) setError(e.message);
+          if (current) setReposError(e.message);
         })
         .finally(() => {
           if (current) setReposLoading(false);
@@ -125,7 +127,7 @@ export function HubPage() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy("settings");
-    setError("");
+    setConfigError("");
     setNotice("");
     try {
       await api("/integrations", {
@@ -138,7 +140,7 @@ export function HubPage() {
       setReload((r) => r + 1);
       setNotice("集成设置已保存。");
     } catch (e) {
-      setError((e as Error).message);
+      setConfigError((e as Error).message);
     } finally {
       setBusy("");
     }
@@ -157,12 +159,19 @@ export function HubPage() {
       setBusy("");
     }
   }
-  const online = status.data?.status === "CONNECTED";
+  const online = status.data?.status === "CONNECTED" && !status.error;
+  const checking = settings.loading || status.loading;
+  const connectionError = checking
+    ? ""
+    : status.error ||
+      (status.data?.status === "UNAVAILABLE"
+        ? status.data.error || "连接失败，请重试。"
+        : "");
   return (
     <>
       <PageHeader
         eyebrow="资产中心 / Central storage"
-        title="让资产拥有共同的归处"
+        title="中心存储"
         description="模型与数据集集中保存；每次训练仍使用一个确定、可验证的版本。"
         actions={
           <button
@@ -175,7 +184,7 @@ export function HubPage() {
           </button>
         }
       />
-      <ErrorNotice error={error || settings.error || status.error} />
+      <ErrorNotice error={settings.error} onRetry={settings.refresh} />
       {notice && (
         <div className="integration-notice" role="status">
           <Check size={16} />
@@ -190,17 +199,25 @@ export function HubPage() {
           <strong>KohakuHub</strong>
           <p>{settings.data?.hub.endpoint || "正在读取连接设置"}</p>
         </div>
-        <span className={"connection-state " + (online ? "connected" : "")}>
-          {online
-            ? "已连接 · " + (status.data?.account || "匿名只读")
-            : status.data?.status === "DISABLED"
-              ? "未启用 · 本地存储"
-              : "暂不可用"}
+        <span
+          role="status"
+          className={"connection-state " + (online ? "connected" : "")}
+        >
+          {checking
+            ? "正在检查连接…"
+            : online
+              ? "已连接 · " + (status.data?.account || "匿名只读")
+              : status.data?.status === "DISABLED"
+                ? "未启用 · 本地存储"
+                : "暂不可用"}
+          {!checking && status.refreshing && " · 检查中"}
         </span>
       </div>
+      <ErrorNotice error={connectionError} onRetry={status.refresh} />
       {configOpen && (
         <form className="integration-settings" onSubmit={save}>
           <SectionHeader title="连接与实验记录" />
+          <ErrorNotice error={configError} />
           <div className="integration-fields">
             <label>
               Hub 地址
@@ -261,7 +278,9 @@ export function HubPage() {
           </p>
         </form>
       )}
-      {!settings.data?.hub.enabled ? (
+      {settings.loading ? (
+        <Loading />
+      ) : settings.error ? null : !settings.data?.hub.enabled ? (
         <Empty
           title="按需连接中心存储"
           description="启用后，可以发布 HF 资产，或将 Hub 中的固定版本导入工作空间。"
@@ -273,14 +292,6 @@ export function HubPage() {
         />
       ) : (
         <>
-          {!online && (
-            <ErrorNotice
-              error={
-                status.data?.error || "正在检查连接；传输前请确认服务可用。"
-              }
-              onRetry={status.refresh}
-            />
-          )}
           <div className="integration-toolbar">
             <div className="segmented" aria-label="资产类型">
               {[
@@ -318,7 +329,12 @@ export function HubPage() {
             </button>
           </div>
           <div className="hub-repositories">
-            {reposLoading ? (
+            {reposError ? (
+              <ErrorNotice
+                error={reposError}
+                onRetry={() => setReload((r) => r + 1)}
+              />
+            ) : reposLoading ? (
               <Loading />
             ) : repositories.filter((r) => r.id.includes(search)).length ? (
               repositories
@@ -356,6 +372,7 @@ export function HubPage() {
               />
             )}
           </div>
+          <ErrorNotice error={error} />
           <div className="hub-operations">
             <form
               onSubmit={(e) => {

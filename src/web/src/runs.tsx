@@ -13,7 +13,6 @@ import {
   ArrowUpRight,
   Check,
   ChevronDown,
-  CircleHelp,
   Copy,
   Download,
   FileCode2,
@@ -29,6 +28,7 @@ import {
 } from "lucide-react";
 import { api, useData } from "./api";
 import type { Asset, Run } from "./types";
+import { useRegionScroll, useViewState } from "./workspace";
 import {
   AssetLink,
   duration,
@@ -48,13 +48,17 @@ import {
 const terminal = ["SUCCESS", "FAILED", "CANCELLED"];
 export function RunsPage() {
   const { data: runs, error, loading, refresh } = useData<Run[]>("/runs", 2500);
-  const [search, setSearch] = useState(""),
-    [filter, setFilter] = useState("ALL"),
-    [page, setPage] = useState(1),
+  const [search, setSearch] = useViewState("runs.search", ""),
+    [filter, setFilter] = useViewState("runs.filter", "ALL"),
+    [page, setPage] = useViewState("runs.page", 1),
     [selected, setSelected] = useState<string[]>([]),
     [busy, setBusy] = useState(false),
     [initError, setInitError] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
+  const scrollRef = useRegionScroll(
+    `runs:${filter}:${search}:${page}`,
+    !loading,
+  );
   useEffect(() => {
     const focusSearch = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -119,247 +123,269 @@ export function RunsPage() {
     }
   }
   return (
-    <>
-      <PageHeader
-        eyebrow="实验 / Experiments"
-        title="训练运行"
-        description="把训练定义变成一次可追溯的实验。"
-        actions={
-          <Link className="button primary" to="/runs/new">
-            <Plus size={17} />
-            创建训练
-          </Link>
-        }
-      />
-      <ErrorNotice error={error} onRetry={refresh} />
-      <ErrorNotice error={initError} />
-      <div className="overview-strip">
-        <Metric
-          label="正在运行"
-          value={
-            <>
-              {active}
-              <span className="metric-unit">runs</span>
-            </>
-          }
-          detail="真实 Docker 容器执行"
-        />
-        <Metric
-          label="已完成训练"
-          value={
-            <>
-              {completed.length}
-              <span className="metric-unit">runs</span>
-            </>
-          }
-          detail="保留权重、指标与完整日志"
-        />
-        <Metric
-          label="最佳测试准确率"
-          value={percent(best)}
-          detail="已完成 Run · MNIST test split"
-        />
-        <Link to="/certification" className="cert-entry">
-          <span className="cert-emblem">
-            <Check size={22} />
-          </span>
-          <div>
-            <strong>验证整条训练链路</strong>
-            <span>
-              MNIST Certification <ArrowUpRight size={13} />
-            </span>
-          </div>
-        </Link>
-      </div>
-      {assets.data?.length === 0 && (
-        <div className="setup-banner">
-          <div>
-            <strong>准备你的第一个实验</strong>
-            <p>注册 MNIST、CNN 模型、两种 Recipe 和代码空间，开始真实训练。</p>
-          </div>
-          <button className="button" disabled={busy} onClick={init}>
-            {busy ? (
-              <LoaderCircle size={15} className="spin" />
-            ) : (
-              <Download size={15} />
-            )}{" "}
-            {busy ? "正在下载并校验数据…" : "初始化训练资产"}
-          </button>
-        </div>
-      )}
-      <div className="table-toolbar">
-        <div className="tabs compact" aria-label="运行筛选">
-          {[
-            ["ALL", "全部运行"],
-            ["ACTIVE", "进行中"],
-            ["SUCCESS", "已完成"],
-            ["FAILED", "失败"],
-            ["CANCELLED", "已取消"],
-          ].map(([value, label]) => (
-            <button
-              key={value}
-              className={filter === value ? "selected" : ""}
-              aria-pressed={filter === value}
-              onClick={() => {
-                setFilter(value);
-                setPage(1);
-              }}
-            >
-              {label}
-              {value === "ALL" && (
-                <span className="count">{runs?.length || 0}</span>
-              )}
-            </button>
-          ))}
-        </div>
-        <div className="toolbar-right">
-          <label className="search-field">
-            <Search size={16} />
-            <input
-              ref={searchInput}
-              aria-label="搜索训练运行"
-              placeholder="搜索运行、模型或 Recipe"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-            />
-            <kbd>/</kbd>
-          </label>
-        </div>
-      </div>
-      {selected.length > 0 && (
-        <div className="selection-bar" aria-label="比较选择">
-          <span role="status">
-            已选择 {selected.length} / 2 个 Run，可跨页选择
-          </span>
-          <button className="text-button" onClick={() => setSelected([])}>
-            清空选择
-          </button>
-          {selected.length === 2 && (
-            <Link
-              className="button small"
-              to={"/runs/compare?ids=" + selected.join(",")}
-            >
-              <GitCompareArrows size={14} />
-              比较 2 个 Run
+    <section className="work-page runs-workspace" aria-label="训练运行工作区">
+      <div className="work-heading">
+        <PageHeader
+          eyebrow="实验 / Experiments"
+          title="训练运行"
+          description="把训练定义变成一次可追溯的实验。"
+          actions={
+            <Link className="button primary" to="/runs/new">
+              <Plus size={17} />
+              创建训练
             </Link>
-          )}
-        </div>
-      )}
-      {loading && !runs ? (
-        <Loading />
-      ) : rows.length ? (
-        <div className="table-scroll">
-          <table className="runs-table">
-            <thead>
-              <tr>
-                <th className="check-col">
-                  <span className="sr-only">选择比较</span>
-                </th>
-                <th>训练运行</th>
-                <th>训练定义</th>
-                <th>状态</th>
-                <th>准确率</th>
-                <th>用时</th>
-                <th>创建时间</th>
-                <th>
-                  <span className="sr-only">查看</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleRows.map((r) => (
-                <tr
-                  key={r.id}
-                  className={
-                    selected.includes(r.id) ? "row-selected" : undefined
-                  }
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      aria-label={"选择 " + r.id + " 进行比较"}
-                      checked={selected.includes(r.id)}
-                      disabled={
-                        selected.length >= 2 && !selected.includes(r.id)
-                      }
-                      onChange={(e) =>
-                        setSelected(
-                          e.target.checked
-                            ? [...selected, r.id]
-                            : selected.filter((id) => id !== r.id),
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <Link className="run-title" to={"/runs/" + r.id}>
-                      {r.training_spec.model.name}
-                      <ArrowUpRight size={13} />
-                    </Link>
-                    <span className="row-subtitle mono">{r.id}</span>
-                  </td>
-                  <td>
-                    <span>
-                      {r.training_spec.recipe.name}
-                      <span className="version">
-                        {r.training_spec.recipe.version}
-                      </span>
-                    </span>
-                    <span className="row-subtitle">
-                      {r.training_spec.dataset.name}{" "}
-                      <span className="dot-separator">·</span> CPU
-                    </span>
-                  </td>
-                  <td>
-                    <Status value={r.status} />
-                  </td>
-                  <td className="numeric">
-                    {percent(r.metrics?.test_accuracy)}
-                  </td>
-                  <td className="numeric muted">
-                    {duration(r.started_at, r.finished_at)}
-                  </td>
-                  <td className="muted nowrap">{time(r.created_at)}</td>
-                  <td>
-                    <Link
-                      className="icon-button"
-                      aria-label={"查看 " + r.id}
-                      to={"/runs/" + r.id}
-                    >
-                      <ArrowRight size={16} />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <Empty
-          title={
-            search || filter !== "ALL" ? "没有匹配的训练" : "从第一轮训练开始"
-          }
-          description={
-            search || filter !== "ALL"
-              ? "调整搜索或状态筛选后重试。"
-              : "选择数据集、模型和 Recipe，让每一个结果都能被验证。"
-          }
-          action={
-            search || filter !== "ALL" ? (
-              <button className="button" onClick={resetFilters}>
-                清空筛选
-              </button>
-            ) : (
-              <Link to="/runs/new" className="text-link">
-                创建训练 <ArrowRight size={15} />
-              </Link>
-            )
           }
         />
-      )}
+        <ErrorNotice error={error} onRetry={refresh} />
+        <ErrorNotice error={initError} />
+        <div className="overview-strip">
+          <Metric
+            label="正在运行"
+            value={
+              <>
+                {active}
+                <span className="metric-unit">runs</span>
+              </>
+            }
+            detail="真实 Docker 容器执行"
+          />
+          <Metric
+            label="已完成训练"
+            value={
+              <>
+                {completed.length}
+                <span className="metric-unit">runs</span>
+              </>
+            }
+            detail="保留权重、指标与完整日志"
+          />
+          <Metric
+            label="最佳测试准确率"
+            value={percent(best)}
+            detail="已完成 Run · MNIST test split"
+          />
+          <Link to="/certification" className="cert-entry">
+            <span className="cert-emblem">
+              <Play size={18} />
+            </span>
+            <div>
+              <strong>验证整条训练链路</strong>
+              <span>
+                MNIST Certification <ArrowUpRight size={13} />
+              </span>
+            </div>
+          </Link>
+        </div>
+        {assets.data?.length === 0 && (
+          <div className="setup-banner">
+            <div>
+              <strong>准备你的第一个实验</strong>
+              <p>
+                注册 MNIST、CNN 模型、两种 Recipe 和代码空间，开始真实训练。
+              </p>
+            </div>
+            <button className="button" disabled={busy} onClick={init}>
+              {busy ? (
+                <LoaderCircle size={15} className="spin" />
+              ) : (
+                <Download size={15} />
+              )}{" "}
+              {busy ? "正在下载并校验数据…" : "初始化训练资产"}
+            </button>
+          </div>
+        )}
+        <div className="table-toolbar">
+          <div className="tabs compact" aria-label="运行筛选">
+            {[
+              ["ALL", "全部运行"],
+              ["ACTIVE", "进行中"],
+              ["SUCCESS", "已完成"],
+              ["FAILED", "失败"],
+              ["CANCELLED", "已取消"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                className={filter === value ? "selected" : ""}
+                aria-pressed={filter === value}
+                onClick={() => {
+                  setFilter(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+                {value === "ALL" && (
+                  <span className="count">{runs?.length || 0}</span>
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="toolbar-right">
+            <label className="search-field">
+              <Search size={16} />
+              <input
+                ref={searchInput}
+                aria-label="搜索训练运行"
+                placeholder="搜索运行、模型或 Recipe"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <kbd>/</kbd>
+            </label>
+          </div>
+        </div>
+        {selected.length > 0 && (
+          <div className="selection-bar" aria-label="比较选择">
+            <span role="status">
+              已选择 {selected.length} / 2 个 Run，可跨页选择
+            </span>
+            <button className="text-button" onClick={() => setSelected([])}>
+              清空选择
+            </button>
+            {selected.length === 2 && (
+              <Link
+                className="button small"
+                to={"/runs/compare?ids=" + selected.join(",")}
+              >
+                <GitCompareArrows size={14} />
+                比较 2 个 Run
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+      <div
+        className="work-scroll"
+        ref={scrollRef}
+        tabIndex={0}
+        role="region"
+        aria-label="训练运行记录"
+      >
+        {loading && !runs ? (
+          <Loading />
+        ) : rows.length ? (
+          <div className="table-scroll">
+            <table className="runs-table">
+              <colgroup>
+                <col className="col-select" />
+                <col className="col-run" />
+                <col className="col-definition" />
+                <col className="col-status" />
+                <col className="col-accuracy" />
+                <col className="col-duration" />
+                <col className="col-time" />
+                <col className="col-action" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th className="check-col">
+                    <span className="sr-only">选择比较</span>
+                  </th>
+                  <th>训练运行</th>
+                  <th>训练定义</th>
+                  <th>状态</th>
+                  <th>准确率</th>
+                  <th>用时</th>
+                  <th>创建时间</th>
+                  <th>
+                    <span className="sr-only">查看</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {visibleRows.map((r) => (
+                  <tr
+                    key={r.id}
+                    className={
+                      selected.includes(r.id) ? "row-selected" : undefined
+                    }
+                  >
+                    <td>
+                      <input
+                        type="checkbox"
+                        aria-label={"选择 " + r.id + " 进行比较"}
+                        checked={selected.includes(r.id)}
+                        disabled={
+                          selected.length >= 2 && !selected.includes(r.id)
+                        }
+                        onChange={(e) =>
+                          setSelected(
+                            e.target.checked
+                              ? [...selected, r.id]
+                              : selected.filter((id) => id !== r.id),
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      <Link className="run-title" to={"/runs/" + r.id}>
+                        {r.training_spec.model.name}
+                        <ArrowUpRight size={13} />
+                      </Link>
+                      <span className="row-subtitle mono">{r.id}</span>
+                    </td>
+                    <td>
+                      <span>
+                        {r.training_spec.recipe.name}
+                        <span className="version">
+                          {r.training_spec.recipe.version}
+                        </span>
+                      </span>
+                      <span className="row-subtitle">
+                        {r.training_spec.dataset.name}{" "}
+                        <span className="dot-separator">·</span> CPU
+                      </span>
+                    </td>
+                    <td>
+                      <Status value={r.status} />
+                    </td>
+                    <td className="numeric">
+                      {percent(r.metrics?.test_accuracy)}
+                    </td>
+                    <td className="numeric muted">
+                      {duration(r.started_at, r.finished_at)}
+                    </td>
+                    <td className="muted nowrap">{time(r.created_at)}</td>
+                    <td>
+                      <Link
+                        className="icon-button"
+                        aria-label={"查看 " + r.id}
+                        to={"/runs/" + r.id}
+                      >
+                        <ArrowRight size={16} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Empty
+            title={
+              search || filter !== "ALL" ? "没有匹配的训练" : "从第一轮训练开始"
+            }
+            description={
+              search || filter !== "ALL"
+                ? "调整搜索或状态筛选后重试。"
+                : "选择数据集、模型和 Recipe，让每一个结果都能被验证。"
+            }
+            action={
+              search || filter !== "ALL" ? (
+                <button className="button" onClick={resetFilters}>
+                  清空筛选
+                </button>
+              ) : (
+                <Link to="/runs/new" className="text-link">
+                  创建训练 <ArrowRight size={15} />
+                </Link>
+              )
+            }
+          />
+        )}
+      </div>
       <div className="list-footnote">
         <span role="status">
           {rows.length} 条运行记录
@@ -388,18 +414,7 @@ export function RunsPage() {
           </button>
         </nav>
       </div>
-      <div className="definition-note">
-        <span className="note-number">01 —</span>
-        <div>
-          <strong>定义训练，独立于执行环境。</strong>
-          <p>
-            Dataset 决定用什么数据，Model 决定训练谁，Recipe
-            决定如何训练。Runtime 与 Workspace 负责让它真实运行。
-          </p>
-        </div>
-        <CircleHelp size={18} />
-      </div>
-    </>
+    </section>
   );
 }
 export function CreatePage() {
@@ -574,6 +589,13 @@ export function CreatePage() {
         title="创建训练"
         description="组合训练资产，交给一个独立的 Docker 容器执行。"
       />
+      <details className="training-help">
+        <summary>训练定义与执行环境</summary>
+        <p>
+          Dataset 决定用什么数据，Model 决定训练谁，Recipe 决定如何训练。Runtime
+          与 Workspace 负责执行；每次训练保留独立的运行记录。
+        </p>
+      </details>
       <ErrorNotice error={error} />
       {loading ? (
         <Loading />
@@ -847,13 +869,14 @@ export function RunPage() {
   const query = useData<Run>("/runs/" + id, 2000);
   const run = query.data;
   const metrics = useData<{ events: any[] }>("/runs/" + id + "/metrics", 2000);
-  const [tab, setTab] = useState("training"),
+  const [tab, setTab] = useViewState("run." + id + ".tab", "training"),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [confirm, setConfirm] = useState(false),
     [version, setVersion] = useState(""),
     [promoted, setPromoted] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
+  const scrollRef = useRegionScroll(`run:${id}:${tab}`, !!run);
   useEffect(() => {
     if (confirm) dialog.current?.showModal();
     else dialog.current?.close();
@@ -896,292 +919,311 @@ export function RunPage() {
     (events.length / run.assets.recipe.epochs) * 100,
   );
   return (
-    <>
-      <Link to="/runs" className="back-link">
-        <ArrowLeft size={14} />
-        训练运行
-      </Link>
-      <PageHeader
-        eyebrow={run.id}
-        title={run.training_spec.model.name}
-        description={`${run.training_spec.recipe.name} · ${time(run.created_at)} 创建`}
-        actions={
-          <>
-            {!terminal.includes(run.status) ? (
-              <button
-                className="button"
-                onClick={() => setConfirm(true)}
-                disabled={run.cancel_requested}
-              >
-                <Square size={14} />
-                {run.cancel_requested ? "正在取消…" : "取消训练"}
-              </button>
-            ) : (
-              <Link className="button" to={"/runs/new?from=" + id}>
-                <Copy size={15} />
-                基于此 Run 新建
-              </Link>
-            )}
-            <Link
-              className="button icon-only"
-              aria-label="比较运行"
-              to={"/runs/compare?ids=" + id}
-            >
-              <GitCompareArrows size={17} />
-            </Link>
-          </>
-        }
-      />
-      <ErrorNotice
-        error={query.error ? "状态更新中断：" + query.error : ""}
-        onRetry={query.refresh}
-      />
-      <ErrorNotice error={error} />
-      <ErrorNotice
-        error={
-          run.monitor_error
-            ? "Docker 监控暂不可用，运行状态待确认：" + run.monitor_error
-            : ""
-        }
-      />
-      {run.failure_reason && (
-        <div className="failure-banner">
-          <Status value={run.status} />
-          <div>
-            <strong>
-              {run.status === "CANCELLED" ? "训练已停止" : "这次训练未完成"}
-            </strong>
-            <p>{run.failure_reason}</p>
-          </div>
-          <button className="text-button" onClick={() => setTab("diagnostics")}>
-            查看诊断 <ArrowRight size={14} />
-          </button>
-        </div>
-      )}
-      <div className="run-context">
-        <Status value={run.status} />
-        <span className="context-divider" />
-        <AssetLink kind="dataset" {...run.training_spec.dataset} />
-        <span className="muted">×</span>
-        <AssetLink kind="recipe" {...run.training_spec.recipe} />
-        <span className="context-divider" />
-        <span className="mono">
-          CPU / {run.execution_spec.resources.cpu_threads} threads
-        </span>
-        <span className="context-duration">
-          {duration(run.started_at, run.finished_at)}
-        </span>
-      </div>
-      <div className="tabs detail-tabs">
-        {[
-          ["training", "训练"],
-          ["artifacts", "产物"],
-          ["diagnostics", "执行与诊断"],
-        ].map(([value, label]) => (
-          <button
-            key={value}
-            onClick={() => setTab(value)}
-            className={tab === value ? "selected" : ""}
-          >
-            {label}
-            {value === "artifacts" && (
-              <span className="count">{run.artifacts.length}</span>
-            )}
-          </button>
-        ))}
-      </div>
-      {tab === "training" && (
-        <>
-          <div className="training-metrics">
-            <Metric
-              label="测试准确率"
-              value={percent(
-                run.metrics?.test_accuracy ?? current?.test_accuracy,
+    <section className="work-page run-workspace" aria-label="运行详情工作区">
+      <div className="work-heading">
+        <Link to="/runs" className="back-link">
+          <ArrowLeft size={14} />
+          训练运行
+        </Link>
+        <PageHeader
+          eyebrow={run.id}
+          title={run.training_spec.model.name}
+          description={`${run.training_spec.recipe.name} · ${time(run.created_at)} 创建`}
+          actions={
+            <>
+              {!terminal.includes(run.status) ? (
+                <button
+                  className="button"
+                  onClick={() => setConfirm(true)}
+                  disabled={run.cancel_requested}
+                >
+                  <Square size={14} />
+                  {run.cancel_requested ? "正在取消…" : "取消训练"}
+                </button>
+              ) : (
+                <Link className="button" to={"/runs/new?from=" + id}>
+                  <Copy size={15} />
+                  基于此 Run 新建
+                </Link>
               )}
-              detail="完整测试集 · 10,000 样本"
-            />
-            <Metric
-              label="训练损失"
-              value={
-                (run.metrics?.final_train_loss ?? current?.train_loss)?.toFixed(
-                  4,
-                ) || "—"
-              }
-              detail="Cross entropy / 每轮平均"
-            />
-            <Metric
-              label="训练进度"
-              value={
-                <>
-                  {events.length}
-                  <span className="metric-denominator">
-                    {" "}
-                    / {run.assets.recipe.epochs}
-                  </span>
-                </>
-              }
-              detail={
-                <span className="mini-progress">
-                  <i style={{ width: progress + "%" }} />
-                </span>
-              }
-            />
-            <Metric
-              label="权重验证"
-              value={run.metadata.trained_model_hash ? "已更新" : "待验证"}
-              detail={
-                run.metadata.trained_model_hash
-                  ? "初始与最终 state_dict hash 不同"
-                  : "训练结束后计算 SHA-256"
-              }
-            />
+              <Link
+                className="button icon-only"
+                aria-label="比较运行"
+                to={"/runs/compare?ids=" + id}
+              >
+                <GitCompareArrows size={17} />
+              </Link>
+            </>
+          }
+        />
+        <ErrorNotice
+          error={query.error ? "状态更新中断：" + query.error : ""}
+          onRetry={query.refresh}
+        />
+        <ErrorNotice error={error} />
+        <ErrorNotice
+          error={
+            run.monitor_error
+              ? "Docker 监控暂不可用，运行状态待确认：" + run.monitor_error
+              : ""
+          }
+        />
+        {run.failure_reason && (
+          <div className="failure-banner">
+            <Status value={run.status} />
+            <div>
+              <strong>
+                {run.status === "CANCELLED" ? "训练已停止" : "这次训练未完成"}
+              </strong>
+              <p>{run.failure_reason}</p>
+            </div>
+            <button
+              className="text-button"
+              onClick={() => setTab("diagnostics")}
+            >
+              查看诊断 <ArrowRight size={14} />
+            </button>
           </div>
-          <div className="curve-heading">
+        )}
+        <div className="run-context">
+          <Status value={run.status} />
+          <span className="context-divider" />
+          <AssetLink kind="dataset" {...run.training_spec.dataset} />
+          <span className="muted">×</span>
+          <AssetLink kind="recipe" {...run.training_spec.recipe} />
+          <span className="context-divider" />
+          <span className="mono">
+            CPU / {run.execution_spec.resources.cpu_threads} threads
+          </span>
+          <span className="context-duration">
+            {duration(run.started_at, run.finished_at)}
+          </span>
+        </div>
+        <div className="tabs detail-tabs">
+          {[
+            ["training", "训练"],
+            ["artifacts", "产物"],
+            ["diagnostics", "执行与诊断"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setTab(value)}
+              className={tab === value ? "selected" : ""}
+            >
+              {label}
+              {value === "artifacts" && (
+                <span className="count">{run.artifacts.length}</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div
+        className="work-scroll"
+        ref={scrollRef}
+        tabIndex={0}
+        role="region"
+        aria-label="运行详情内容"
+      >
+        {tab === "training" && (
+          <>
+            <div className="training-metrics">
+              <Metric
+                label="测试准确率"
+                value={percent(
+                  run.metrics?.test_accuracy ?? current?.test_accuracy,
+                )}
+                detail="完整测试集 · 10,000 样本"
+              />
+              <Metric
+                label="训练损失"
+                value={
+                  (
+                    run.metrics?.final_train_loss ?? current?.train_loss
+                  )?.toFixed(4) || "—"
+                }
+                detail="Cross entropy / 每轮平均"
+              />
+              <Metric
+                label="训练进度"
+                value={
+                  <>
+                    {events.length}
+                    <span className="metric-denominator">
+                      {" "}
+                      / {run.assets.recipe.epochs}
+                    </span>
+                  </>
+                }
+                detail={
+                  <span className="mini-progress">
+                    <i style={{ width: progress + "%" }} />
+                  </span>
+                }
+              />
+              <Metric
+                label="权重验证"
+                value={run.metadata.trained_model_hash ? "已更新" : "待验证"}
+                detail={
+                  run.metadata.trained_model_hash
+                    ? "初始与最终 state_dict hash 不同"
+                    : "训练结束后计算 SHA-256"
+                }
+              />
+            </div>
+            <div className="curve-heading">
+              <SectionHeader
+                title="学习曲线"
+                aside={
+                  <span className="muted text-small">
+                    {run.assets.recipe.optimizer.name} · lr{" "}
+                    {run.assets.recipe.optimizer.params.lr}
+                  </span>
+                }
+              />
+            </div>
+            <ErrorNotice error={metrics.error} />
+            <LossChart events={events} />
+            <LogViewer id={run.id} />
+          </>
+        )}
+        {tab === "artifacts" && (
+          <>
             <SectionHeader
-              title="学习曲线"
+              title="训练输出"
               aside={
                 <span className="muted text-small">
-                  {run.assets.recipe.optimizer.name} · lr{" "}
-                  {run.assets.recipe.optimizer.params.lr}
+                  由容器生成，平台持久保存
                 </span>
               }
             />
-          </div>
-          <ErrorNotice error={metrics.error} />
-          <LossChart events={events} />
-          <LogViewer id={run.id} />
-        </>
-      )}
-      {tab === "artifacts" && (
-        <>
-          <SectionHeader
-            title="训练输出"
-            aside={
-              <span className="muted text-small">由容器生成，平台持久保存</span>
-            }
-          />
-          {run.artifacts.length ? (
-            <div className="artifact-list">
-              {[
-                ...run.artifacts,
-                { name: "run.json", size: 0, sha256: "" },
-              ].map((a) => (
-                <div className="artifact-row" key={a.name}>
-                  <FileCode2 size={19} />
-                  <div>
-                    <strong className="mono">{a.name}</strong>
-                    <span>
-                      {a.sha256 ? <ShortId value={a.sha256} /> : "完整运行记录"}
+            {run.artifacts.length ? (
+              <div className="artifact-list">
+                {[
+                  ...run.artifacts,
+                  { name: "run.json", size: 0, sha256: "" },
+                ].map((a) => (
+                  <div className="artifact-row" key={a.name}>
+                    <FileCode2 size={19} />
+                    <div>
+                      <strong className="mono">{a.name}</strong>
+                      <span>
+                        {a.sha256 ? (
+                          <ShortId value={a.sha256} />
+                        ) : (
+                          "完整运行记录"
+                        )}
+                      </span>
+                    </div>
+                    <span className="muted mono">
+                      {a.size ? (a.size / 1024).toFixed(1) + " KB" : "JSON"}
                     </span>
+                    <a
+                      className="button small"
+                      href={`/api/runs/${id}/artifacts/${a.name}`}
+                    >
+                      <Download size={14} />
+                      下载
+                    </a>
                   </div>
-                  <span className="muted mono">
-                    {a.size ? (a.size / 1024).toFixed(1) + " KB" : "JSON"}
-                  </span>
-                  <a
-                    className="button small"
-                    href={`/api/runs/${id}/artifacts/${a.name}`}
-                  >
-                    <Download size={14} />
-                    下载
-                  </a>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Empty
-              title="等待训练产物"
-              description="训练完成后，checkpoint 与指标会出现在这里。日志在训练过程中持续保存。"
-            />
-          )}
-          {run.status === "SUCCESS" && (
-            <section className="promotion">
-              <div>
-                <h2>让结果成为下一次训练的起点</h2>
-                <p>将 checkpoint 注册为 Model 新版本，保留完整来源。</p>
+                ))}
               </div>
-              {promoted ? (
-                <p role="status">
-                  <Check size={16} />
-                  已注册 {promoted}
-                </p>
-              ) : (
-                <div className="inline-form">
-                  <label htmlFor="model-version" className="sr-only">
-                    新模型版本
-                  </label>
-                  <input
-                    id="model-version"
-                    placeholder="新版本，例如 trained-001"
-                    value={version}
-                    onChange={(e) => setVersion(e.target.value)}
-                  />
-                  <button
-                    className="button"
-                    disabled={!version || busy}
-                    onClick={promote}
-                  >
-                    注册 Model <ArrowUpRight size={15} />
-                  </button>
+            ) : (
+              <Empty
+                title="等待训练产物"
+                description="训练完成后，checkpoint 与指标会出现在这里。日志在训练过程中持续保存。"
+              />
+            )}
+            {run.status === "SUCCESS" && (
+              <section className="promotion">
+                <div>
+                  <h2>让结果成为下一次训练的起点</h2>
+                  <p>将 checkpoint 注册为 Model 新版本，保留完整来源。</p>
                 </div>
-              )}
-            </section>
-          )}
-        </>
-      )}
-      {tab === "diagnostics" && (
-        <div className="diagnostic-layout">
-          <div>
-            <SectionHeader title="训练定义" />
-            <Json value={run.training_spec} />
-            <SectionHeader title="执行环境" />
-            <Json value={run.execution_spec} />
-            <SectionHeader title="训练证据" />
-            <Json value={run.metadata} />
-            <SectionHeader title="Workspace 文件快照" />
-            <Json value={run.assets.workspace.files} />
-          </div>
-          <aside>
-            <SectionHeader title="执行实例" />
-            <dl className="detail-list">
-              <dt>Container ID</dt>
-              <dd className="mono break">{run.container_id || "尚未创建"}</dd>
-              <dt>Runtime image ID</dt>
-              <dd className="mono break">{run.assets.runtime.image_id}</dd>
-              <dt>退出码</dt>
-              <dd>{run.exit_code ?? "—"}</dd>
-              <dt>开始时间</dt>
-              <dd>{time(run.started_at)}</dd>
-              <dt>结束时间</dt>
-              <dd>{time(run.finished_at)}</dd>
-            </dl>
-            <SectionHeader title="状态时间线" />
-            <ol className="timeline">
-              <li>
-                <strong>CREATED</strong>
-                <span>{time(run.created_at)}</span>
-              </li>
-              {run.events.map((e, i) => (
-                <li key={i}>
-                  <strong>{e.to}</strong>
-                  <span>{time(e.at)}</span>
+                {promoted ? (
+                  <p role="status">
+                    <Check size={16} />
+                    已注册 {promoted}
+                  </p>
+                ) : (
+                  <div className="inline-form">
+                    <label htmlFor="model-version" className="sr-only">
+                      新模型版本
+                    </label>
+                    <input
+                      id="model-version"
+                      placeholder="新版本，例如 trained-001"
+                      value={version}
+                      onChange={(e) => setVersion(e.target.value)}
+                    />
+                    <button
+                      className="button"
+                      disabled={!version || busy}
+                      onClick={promote}
+                    >
+                      注册 Model <ArrowUpRight size={15} />
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
+          </>
+        )}
+        {tab === "diagnostics" && (
+          <div className="diagnostic-layout">
+            <div>
+              <SectionHeader title="训练定义" />
+              <Json value={run.training_spec} />
+              <SectionHeader title="执行环境" />
+              <Json value={run.execution_spec} />
+              <SectionHeader title="训练证据" />
+              <Json value={run.metadata} />
+              <SectionHeader title="Workspace 文件快照" />
+              <Json value={run.assets.workspace.files} />
+            </div>
+            <aside>
+              <SectionHeader title="执行实例" />
+              <dl className="detail-list">
+                <dt>Container ID</dt>
+                <dd className="mono break">{run.container_id || "尚未创建"}</dd>
+                <dt>Runtime image ID</dt>
+                <dd className="mono break">{run.assets.runtime.image_id}</dd>
+                <dt>退出码</dt>
+                <dd>{run.exit_code ?? "—"}</dd>
+                <dt>开始时间</dt>
+                <dd>{time(run.started_at)}</dd>
+                <dt>结束时间</dt>
+                <dd>{time(run.finished_at)}</dd>
+              </dl>
+              <SectionHeader title="状态时间线" />
+              <ol className="timeline">
+                <li>
+                  <strong>CREATED</strong>
+                  <span>{time(run.created_at)}</span>
                 </li>
-              ))}
-            </ol>
-            <a
-              className="button wide"
-              href={"/api/runs/" + id + "/diagnostics"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Download size={15} />
-              查看完整诊断 JSON
-            </a>
-            <p className="submit-note">
-              包含日志、容器状态与全部配置，可供 Harness 读取。
-            </p>
-          </aside>
-        </div>
-      )}
+                {run.events.map((e, i) => (
+                  <li key={i}>
+                    <strong>{e.to}</strong>
+                    <span>{time(e.at)}</span>
+                  </li>
+                ))}
+              </ol>
+              <a
+                className="button wide"
+                href={"/api/runs/" + id + "/diagnostics"}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Download size={15} />
+                查看完整诊断 JSON
+              </a>
+              <p className="submit-note">
+                包含日志、容器状态与全部配置，可供 Harness 读取。
+              </p>
+            </aside>
+          </div>
+        )}
+      </div>
       <dialog
         ref={dialog}
         onCancel={() => setConfirm(false)}
@@ -1207,7 +1249,7 @@ export function RunPage() {
           </button>
         </div>
       </dialog>
-    </>
+    </section>
   );
 }
 export function ComparePage() {

@@ -1,0 +1,383 @@
+/* One continuous working surface, with task-owned scrolling on desktop. */
+:root {
+  font-family: "Inter Variable", "Noto Sans SC Variable", sans-serif;
+  --mono: "IBM Plex Mono", "Noto Sans SC Variable", monospace;
+  --page-gutter: 32px;
+}
+h1,
+.page-header h1 {
+  font-size: 24px;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+h2 {
+  letter-spacing: 0;
+}
+.page-header {
+  margin-bottom: 20px;
+  gap: 16px;
+}
+.page-description {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.eyebrow {
+  font-family: var(--mono);
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
+.topbar {
+  height: 48px;
+  flex-shrink: 0;
+  padding: 0 var(--page-gutter);
+}
+main {
+  padding: 20px var(--page-gutter) 24px;
+  max-width: none;
+  margin: 0;
+}
+.overview-strip {
+  grid-template-columns: repeat(3, minmax(140px, 210px)) minmax(220px, 1fr);
+  padding: 12px 0;
+  margin: 0 0 16px;
+}
+.metric {
+  gap: 4px;
+  padding: 0 20px;
+}
+.metric > strong,
+.training-metrics .metric > strong {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.overview-strip .metric > small {
+  display: none;
+}
+.metric-unit {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.cert-entry {
+  justify-self: end;
+  padding-left: 16px;
+  gap: 10px;
+}
+.cert-emblem {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  color: var(--muted);
+}
+.cert-entry strong {
+  margin-bottom: 2px;
+}
+.table-toolbar {
+  margin-bottom: 12px;
+}
+.runs-table {
+  table-layout: fixed;
+}
+.table-scroll {
+  position: relative;
+}
+.runs-table .col-select {
+  width: 36px;
+}
+.runs-table .col-run {
+  width: 24%;
+}
+.runs-table .col-status {
+  width: 98px;
+}
+.runs-table .col-accuracy {
+  width: 90px;
+}
+.runs-table .col-duration {
+  width: 64px;
+}
+.runs-table .col-time {
+  width: 120px;
+}
+.runs-table .col-action {
+  width: 40px;
+}
+.runs-table td {
+  padding: 10px 10px;
+  height: 66px;
+  overflow-wrap: anywhere;
+}
+.runs-table th {
+  padding: 10px;
+}
+.runs-table td:last-child {
+  padding: 4px;
+}
+.runs-table .check-col {
+  padding-right: 0;
+}
+.runs-table td:nth-child(5),
+.runs-table td:nth-child(6) {
+  font-variant-numeric: tabular-nums;
+}
+.list-footnote {
+  padding: 10px 0 0;
+  align-items: center;
+  min-height: 44px;
+}
+.work-heading {
+  flex-shrink: 0;
+}
+.work-heading .back-link {
+  margin-bottom: 8px;
+}
+.work-heading .page-header {
+  margin-bottom: 12px;
+}
+.run-context {
+  padding: 8px 0;
+  gap: 12px;
+}
+.detail-tabs {
+  margin: 8px 0 0;
+}
+.detail-tabs > button {
+  padding-bottom: 10px;
+}
+.training-metrics {
+  margin: 16px 0 24px;
+}
+.training-metrics .metric:first-child {
+  padding-left: 0;
+}
+.integration-connection {
+  padding: 12px 0;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.integration-connection strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.integration-toolbar {
+  margin-bottom: 16px;
+}
+.integration-settings {
+  padding: 16px 0;
+  margin-bottom: 16px;
+}
+.hub-operations {
+  margin-top: 24px;
+}
+.section-heading {
+  margin-bottom: 14px;
+}
+.back-link {
+  margin-bottom: 8px;
+}
+.asset-overview {
+  gap: 14px;
+  padding: 12px 0;
+}
+.asset-large-icon {
+  width: 44px;
+  height: 48px;
+}
+.asset-large-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.asset-overview h2 {
+  font-size: 16px;
+}
+.asset-overview p:last-child {
+  margin-top: 4px;
+}
+.asset-facts {
+  gap: 32px;
+  padding: 16px 0;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.asset-facts > div {
+  gap: 4px;
+}
+.asset-facts strong {
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.architecture-flow {
+  padding: 8px 0;
+}
+.form-section {
+  padding: 16px 0;
+}
+.numbered-heading {
+  margin-bottom: 18px;
+}
+.asset-field {
+  margin-bottom: 20px;
+}
+.cert-intro {
+  padding: 12px 0;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+.cert-intro-mark {
+  width: 40px;
+  height: 44px;
+}
+.cert-intro-mark svg {
+  width: 24px;
+  height: 24px;
+}
+.cert-intro p {
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.connection-state {
+  min-width: 150px;
+  text-align: right;
+}
+.training-help {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+.training-help summary {
+  cursor: pointer;
+  width: fit-content;
+  padding: 6px 0;
+}
+.training-help p {
+  max-width: 70ch;
+  padding: 4px 0;
+}
+.work-scroll {
+  overscroll-behavior: contain;
+}
+.log-output {
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1000px) and (min-height: 650px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+  .main-shell {
+    height: 100dvh;
+    min-height: 0;
+  }
+  main {
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+  main.task-main {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .work-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .work-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+  .work-scroll > .table-scroll {
+    overflow: visible;
+  }
+  .runs-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--canvas);
+  }
+  .document-main > .page-header {
+    position: sticky;
+    top: -20px;
+    padding: 12px 0;
+    z-index: 3;
+    background: var(--canvas);
+  }
+  .run-workspace .work-scroll {
+    padding-top: 4px;
+  }
+  .work-heading .failure-banner {
+    margin: 8px 0;
+    padding: 10px 14px;
+  }
+}
+@media (max-width: 1190px) {
+  .overview-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .runs-table .col-run {
+    width: 23%;
+  }
+  .runs-table .col-time {
+    width: 106px;
+  }
+  .runs-table .col-status {
+    width: 86px;
+  }
+}
+@media (max-width: 999px), (max-height: 649px) {
+  .work-scroll {
+    overflow: visible;
+  }
+  .runs-table {
+    min-width: 850px;
+  }
+  .table-scroll {
+    overflow-x: auto;
+  }
+}
+@media (max-width: 640px) {
+  :root {
+    --page-gutter: 18px;
+  }
+  main {
+    padding-top: 20px;
+  }
+  .overview-strip {
+    grid-template-columns: 1fr 1fr;
+    padding: 8px 0;
+    gap: 8px;
+  }
+  .overview-strip .metric {
+    padding: 0 8px;
+  }
+  .overview-strip .metric > strong {
+    font-size: 22px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+  }
+  .connection-state {
+    min-width: 0;
+  }
+  .integration-connection {
+    flex-wrap: wrap;
+  }
+  .training-metrics {
+    margin: 12px 0 20px;
+  }
+}

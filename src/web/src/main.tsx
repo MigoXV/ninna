@@ -9,13 +9,14 @@ import {
   useLocation,
 } from "react-router-dom";
 import {
-  Activity,
+  ListTodo,
   ArrowUpRight,
-  Award,
+  ListChecks,
   Box,
-  Cloud,
+  HardDrive,
   ChartNoAxesCombined,
-  Boxes,
+  Container,
+  Server,
   ChevronRight,
   Database,
   FolderCode,
@@ -31,16 +32,21 @@ import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
 import { AssetsPage, CertificationPage } from "./pages";
 import { HubPage } from "./integrations";
 import { ExperimentsPage } from "./experiments";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/noto-sans-sc";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "./style.css";
+import "./workspace.css";
 const nav = [
-  { label: "训练运行", path: "/runs", icon: Activity },
+  { label: "训练运行", path: "/runs", icon: ListTodo },
   { label: "实验观察", path: "/experiments", icon: ChartNoAxesCombined },
-  { label: "中心存储", path: "/hub", icon: Cloud },
-  { label: "系统验收", path: "/certification", icon: Award },
+  { label: "中心存储", path: "/hub", icon: HardDrive },
+  { label: "系统验收", path: "/certification", icon: ListChecks },
 ];
 const definitions = [
   { label: "数据集", code: "Dataset", kind: "dataset", icon: Database },
-  { label: "模型", code: "Model", kind: "model", icon: Boxes },
+  { label: "模型", code: "Model", kind: "model", icon: Box },
   {
     label: "训练配方",
     code: "Recipe",
@@ -49,7 +55,7 @@ const definitions = [
   },
 ];
 const environments = [
-  { label: "运行环境", code: "Runtime", kind: "runtime", icon: Box },
+  { label: "运行环境", code: "Runtime", kind: "runtime", icon: Container },
   { label: "代码空间", code: "Workspace", kind: "workspace", icon: FolderCode },
 ];
 function Shell() {
@@ -189,14 +195,7 @@ function Shell() {
             <X size={18} />
           </button>
         </div>
-        <div className="workspace-identity">
-          <span className="workspace-mark">N</span>
-          <div>
-            <strong>训练工作空间</strong>
-            <small>Local workspace</small>
-          </div>
-          <ChevronRight size={14} />
-        </div>
+        <div className="workspace-identity">训练工作空间</div>
         <nav>
           <p className="nav-label">工作台</p>
           {nav.map((n) => (
@@ -210,7 +209,7 @@ function Shell() {
                 "nav-item " + (isActive ? "active" : "")
               }
             >
-              <n.icon size={17} />
+              <n.icon size={18} strokeWidth={1.5} aria-hidden="true" />
               <span className="nav-text">{n.label}</span>
               <span className="nav-tooltip" aria-hidden="true">
                 {n.label}
@@ -234,7 +233,7 @@ function Shell() {
                     "nav-item " + (isActive ? "active" : "")
                   }
                 >
-                  <n.icon size={17} />
+                  <n.icon size={18} strokeWidth={1.5} aria-hidden="true" />
                   <span className="nav-text">{n.label}</span>
                   <span className="nav-tooltip" aria-hidden="true">
                     {n.label}
@@ -247,6 +246,14 @@ function Shell() {
         <div className="sidebar-bottom">
           <div
             className="daemon-health"
+            role="status"
+            aria-label={
+              health.error
+                ? "平台连接中断"
+                : health.data?.docker === "available"
+                  ? "Docker 已连接"
+                  : "检查 Docker 连接"
+            }
             title={
               health.error
                 ? "平台连接中断"
@@ -255,19 +262,18 @@ function Shell() {
                   : "检查 Docker 连接"
             }
           >
-            <span
-              className={
-                "health-dot " +
-                (health.data?.docker === "available" ? "good" : "")
-              }
-            />
+            <Server size={18} className="status-icon" aria-hidden="true" />
+            <span className="status-key">Docker</span>
             <span className="health-label">
               {health.error
-                ? "平台连接中断"
+                ? "连接中断"
                 : health.data?.docker === "available"
-                  ? "Docker 已连接"
-                  : "检查 Docker 连接"}
+                  ? "已连接"
+                  : "检查连接"}
             </span>
+          </div>
+          <div className="execution-resource">
+            <span className="status-key">执行</span>
             <span className="mono">CPU</span>
           </div>
           <a
@@ -278,7 +284,7 @@ function Shell() {
             title="Ninna 项目仓库"
           >
             <Github size={14} />
-            <span>Ninna / v0.1</span>
+            <span>项目仓库</span>
             <ArrowUpRight size={13} />
           </a>
         </div>
@@ -293,8 +299,18 @@ function Shell() {
             本地执行 <span className="topbar-separator" /> Docker Engine
           </div>
         </div>
-        <main id="main">
-          <Routes>
+        <main
+          key={location.pathname}
+          id="main"
+          className={
+            location.pathname === "/" ||
+            location.pathname === "/runs" ||
+            /^\/runs\/run-/.test(location.pathname)
+              ? "task-main"
+              : "document-main"
+          }
+        >
+          <Routes key={location.pathname}>
             <Route path="/" element={<RunsPage />} />
             <Route path="/runs" element={<RunsPage />} />
             <Route path="/runs/new" element={<CreatePage />} />
@@ -315,10 +331,6 @@ function Shell() {
             />
           </Routes>
         </main>
-        <footer className="page-footer">
-          <span>Ninna · 每一次训练，有迹可循。</span>
-          <span className="mono">DATASET × MODEL × RECIPE</span>
-        </footer>
       </div>
     </div>
   );

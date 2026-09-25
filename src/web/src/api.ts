@@ -28,9 +28,11 @@ export function useData<T>(path: string, interval = 0) {
     [loading, setLoading] = useState(true);
   const active = useRef(0);
   const requestId = useRef(0);
+  const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(async () => {
     const generation = active.current;
     const ticket = ++requestId.current;
+    setRefreshing(true);
     try {
       const result = await api<T>(path);
       if (generation === active.current && ticket === requestId.current) {
@@ -41,8 +43,10 @@ export function useData<T>(path: string, interval = 0) {
       if (generation === active.current && ticket === requestId.current)
         setError((e as Error).message);
     } finally {
-      if (generation === active.current && ticket === requestId.current)
+      if (generation === active.current && ticket === requestId.current) {
         setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, [path]);
   useEffect(() => {
@@ -57,5 +61,5 @@ export function useData<T>(path: string, interval = 0) {
       window.clearInterval(timer);
     };
   }, [refresh, interval]);
-  return { data, error, loading, refresh };
+  return { data, error, loading, refreshing, refresh };
 }

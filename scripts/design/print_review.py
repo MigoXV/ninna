@@ -1,4 +1,4 @@
-"""将 Figma 的逐页 2x PNG 导出整理成 A3 横向审阅稿；长界面自动续页。"""
+"""将 Figma 的逐页 PNG 导出整理成 A3 横向审阅稿；长界面自动续页。"""
 
 from __future__ import annotations
 
@@ -14,10 +14,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", type=Path, default=Path("outputs/ui-evidence/figma-print"))
     parser.add_argument("--manifest", type=Path, default=Path("docs/figma-pages.json"))
-    parser.add_argument("--output", type=Path, default=Path("docs/design/ui-v0.2.1-review.pdf"))
+    parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text())
+    version = manifest["version"]
+    args.output = args.output or Path(f"docs/design/{version}-review.pdf")
     width, height, margin = 3307, 2339, 100  # A3 landscape, 200 dpi.
     normal = ImageFont.truetype(args.font, 34)
     small = ImageFont.truetype(args.font, 26)
@@ -64,7 +66,7 @@ def main() -> None:
             sheet.paste(crop, ((width - target_width) // 2, 130))
             draw.text(
                 (margin, height - 65),
-                f"Ninna · ui-v0.2.1 · Figma 可编辑源稿 · {i:02d} / 22",
+                f"Ninna · {version} · Figma 可编辑源稿 · {i:02d} / 22",
                 font=small,
                 fill="#686b65",
             )
@@ -77,7 +79,7 @@ def main() -> None:
     draw.text((margin, 100), "Ninna / 界面审阅稿", font=title_font, fill="#282b29")
     draw.text(
         (margin, 215),
-        "ui-v0.2.1 · A3 横向 · 一个界面对应一个 Figma Page",
+        f"{version} · A3 横向 · 一个界面对应一个 Figma Page",
         font=normal,
         fill="#686b65",
     )
