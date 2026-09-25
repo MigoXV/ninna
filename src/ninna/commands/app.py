@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 import json
 import urllib.request
 import urllib.error
@@ -44,39 +43,6 @@ def mcp(url: str = typer.Option("http://127.0.0.1:8000", envvar="NINNA_API_URL")
 @app.command()
 def initialize(url: str = typer.Option("http://127.0.0.1:8000", envvar="NINNA_API_URL")):
     typer.echo(json.dumps(request(url + "/api/initialize", {}), ensure_ascii=False))
-
-
-@app.command()
-def certify(
-    quick: bool = typer.Option(False),
-    url: str = typer.Option("http://127.0.0.1:8000", envvar="NINNA_API_URL"),
-):
-    try:
-        record = request(url + "/api/certifications", {"quick": quick})
-        typer.echo("MNIST Platform Certification\n")
-        seen = 0
-        deadline = time.monotonic() + 4000
-        while True:
-            record = request(url + "/api/certifications/" + record["id"])
-            for check in record["checks"][seen:]:
-                typer.echo(
-                    f"{check['name']:<44} {check['status']}"
-                    + (f"  {check['evidence']}" if "accuracy" in check["name"] else "")
-                )
-            seen = len(record["checks"])
-            if record["status"] != "RUNNING":
-                break
-            if time.monotonic() > deadline:
-                raise TimeoutError("Certification timed out")
-            time.sleep(2)
-        typer.echo(f"\nReport: {record['id']}\nRuns: {', '.join(record['run_ids'])}")
-        typer.echo(f"\nOVERALL {record['status']}")
-        if record["status"] != "PASS":
-            typer.echo(record["failure_reason"])
-            raise typer.Exit(1)
-    except (urllib.error.URLError, TimeoutError) as exc:
-        typer.echo(f"OVERALL FAIL\n{exc}")
-        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

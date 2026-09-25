@@ -381,3 +381,114 @@ main {
     margin: 12px 0 20px;
   }
 }
+
+/* Project identity is organizational context; model metrics belong to a run. */
+.projects-page {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.project-list {
+  border-top: 1px solid var(--line);
+}
+.project-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 125px 150px 16px;
+  gap: 20px;
+  align-items: center;
+  padding: 22px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+}
+.project-row:hover {
+  background: var(--surface);
+}
+.project-identity h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.project-identity p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-count,
+.project-updated {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.project-count strong {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 500;
+}
+.project-create {
+  max-width: 620px;
+  padding: 20px 0 24px;
+  border-top: 1px solid var(--line);
+}
+.project-create label,
+.project-selection label {
+  display: block;
+  font-size: 13px;
+  margin: 16px 0 8px;
+}
+.project-create input,
+.project-create textarea,
+.project-selection select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--control-line);
+  border-radius: 5px;
+  background: var(--canvas);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+.project-create p {
+  font-size: 12px;
+}
+.project-create .button {
+  margin-top: 16px;
+}
+.project-create .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.project-create h2 {
+  font-size: 16px;
+}
+.project-tabs {
+  display: flex;
+  gap: 24px;
+  margin: 0 0 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.project-tabs > * {
+  padding: 8px 0 12px;
+  color: var(--muted);
+}
+.project-tabs [aria-current] {
+  border-bottom: 2px solid var(--text);
+  color: var(--text);
+  font-weight: 500;
+}
+@media (max-width: 720px) {
+  .project-row {
+    grid-template-columns: 18px minmax(0, 1fr) 65px 16px;
+    gap: 12px;
+    padding: 18px 0;
+  }
+  .project-updated {
+    display: none;
+  }
+}

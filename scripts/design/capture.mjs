@@ -106,5 +106,5 @@ try {
 } finally {
   socket.close(); browser.kill();
   await once(browser, "exit").catch(() => {});
-  await fs.rm(profile, { recursive: true, force: true });
+  await fs.rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 }

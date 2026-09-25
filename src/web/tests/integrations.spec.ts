@@ -6,7 +6,7 @@ test("Hub and Aim use Ninna UI with real data, responsive layout and accessible 
 }) => {
   const requests: string[] = [];
   page.on("request", (r) => requests.push(r.url()));
-  for (const path of ["/hub", "/experiments"]) {
+  for (const path of ["/hub", "/projects/legacy/experiments"]) {
     await page.goto(path);
     await page.waitForTimeout(1500);
     await expect(page.locator("iframe")).toHaveCount(0);

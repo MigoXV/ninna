@@ -1,3 +1,12 @@
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  run_count: number;
+  active_count: number;
+  last_run_at: string | null;
+};
 export type Ref = { name: string; version: string };
 export type Asset = {
   id: string;
@@ -7,6 +16,7 @@ export type Asset = {
   [key: string]: any;
 };
 export type Run = {
+  project_id: string;
   id: string;
   status: string;
   created_at: string;
@@ -33,15 +43,4 @@ export type Run = {
   metadata: Record<string, unknown>;
   artifacts: { name: string; size: number; sha256: string }[];
   events: { from: string; to: string; at: string }[];
-};
-export type Cert = {
-  id: string;
-  status: string;
-  profile: string;
-  created_at: string;
-  finished_at: string | null;
-  threshold: number;
-  checks: { name: string; status: string; evidence: any }[];
-  run_ids: string[];
-  failure_reason: string | null;
 };

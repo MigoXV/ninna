@@ -155,6 +155,11 @@ class Platform:
 
     def create_run(self, request: CreateRun):
         with self.operation_lock:
+            self.repo.get("projects", request.project_id)
+            if request.parent_run_id:
+                parent = self.repo.get("runs", request.parent_run_id)
+                if self.repo.run_project(parent) != request.project_id:
+                    raise ValueError("A retried run must belong to its parent's project")
             training = request.training_spec.model_dump()
             execution = request.execution_spec.model_dump()
             assets = {kind: self.repo.asset(kind, ref) for kind, ref in training.items()}
@@ -181,6 +186,7 @@ class Platform:
             run = {
                 "id": run_id,
                 "run_id": run_id,
+                "project_id": request.project_id,
                 "training_spec": training,
                 "execution_spec": execution,
                 "assets": assets,
@@ -455,6 +461,7 @@ class Platform:
     def get_run_diagnostic_context(self, key):
         run = self.repo.get("runs", key)
         result = copy.deepcopy(run)
+        result["project_id"] = self.repo.run_project(run)
         try:
             result["tracking"] = self.repo.get("tracking", key)
         except KeyError:
@@ -469,25 +476,6 @@ class Platform:
             )
         result["resource_info"] = run["execution_spec"]["resources"]
         return result
-
-    def verify_checkpoint(self, run):
-        container = self.docker.containers.create(
-            run["assets"]["runtime"]["image_id"],
-            ["python", "-u", "/workspace/verify.py"],
-            working_dir="/workspace",
-            mounts=self.mounts(run, output_read_only=True),
-            network_disabled=True,
-            network_mode="none",
-            labels={"ninna.run_id": run["id"], "ninna.role": "verification"},
-            mem_limit="4g",
-            nano_cpus=4 * 10**9,
-        )
-        container.start()
-        result = container.wait(timeout=600)
-        logs = container.logs().decode(errors="replace")
-        if result["StatusCode"] != 0:
-            raise ValueError(f"Checkpoint reload failed in {container.id}: {logs}")
-        return {**json.loads(logs.strip().splitlines()[-1]), "container_id": container.id}
 
     def promote(self, key, version):
         from ninna.domain.schemas import Ref

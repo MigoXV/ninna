@@ -7,30 +7,23 @@ import {
   Box,
   Boxes,
   Check,
-  ChevronRight,
   Database,
-  Download,
   FileCode2,
   FolderCode,
   LoaderCircle,
   Play,
   Search,
-  ShieldCheck,
   SlidersHorizontal,
-  X,
 } from "lucide-react";
 import { api, useData } from "./api";
-import type { Asset, Cert } from "./types";
+import type { Asset } from "./types";
 import {
   Empty,
   ErrorNotice,
   Json,
   Loading,
   PageHeader,
-  percent,
   SectionHeader,
-  Status,
-  time,
 } from "./ui";
 const definitions: Record<
   string,
@@ -503,240 +496,6 @@ function WorkspaceFiles({ name }: { name: string }) {
           </header>
           <pre tabIndex={0}>{content}</pre>
         </div>
-      </div>
-    </>
-  );
-}
-export function CertificationPage() {
-  const {
-    data: records,
-    error,
-    refresh,
-  } = useData<Cert[]>("/certifications", 2000);
-  const [selected, setSelected] = useState(""),
-    [quick, setQuick] = useState(false),
-    [busy, setBusy] = useState(false),
-    [operationError, setOperationError] = useState("");
-  const record = records?.find((r) => r.id === selected) || records?.[0];
-  const running = records?.some((r) => r.status === "RUNNING");
-  async function start() {
-    setBusy(true);
-    setOperationError("");
-    try {
-      const r = await api<Cert>("/certifications", { quick });
-      setSelected(r.id);
-      await refresh();
-    } catch (e) {
-      setOperationError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
-  const passCount =
-    record?.checks.filter((c) => c.status === "PASS").length || 0;
-  return (
-    <>
-      <PageHeader
-        eyebrow="系统验证 / Certification"
-        title="让训练链路自己证明"
-        description="从数据挂载到模型重载，用一次真实实验检查平台的每一个环节。"
-        actions={
-          <button
-            className="button primary"
-            onClick={start}
-            disabled={busy || running}
-          >
-            {busy || running ? (
-              <LoaderCircle size={16} className="spin" />
-            ) : (
-              <Play size={16} />
-            )}{" "}
-            {running ? "验收进行中" : "运行 MNIST 验收"}
-          </button>
-        }
-      />
-      <ErrorNotice error={error} onRetry={refresh} />
-      <ErrorNotice error={operationError} />
-      <div className="cert-intro">
-        <div className="cert-intro-mark">
-          <ShieldCheck size={38} strokeWidth={1.2} />
-        </div>
-        <div>
-          <h2>MNIST Platform Certification</h2>
-          <p>
-            同一个 Dataset，同一个 Model，分别使用 Adam 与 SGD。
-            <br />
-            检查真实容器、模型更新、loss 下降，以及完整测试集上的准确率。
-          </p>
-        </div>
-        <label className="cert-mode">
-          <span>验收模式</span>
-          <select
-            aria-label="验收模式"
-            disabled={running}
-            value={quick ? "quick" : "full"}
-            onChange={(e) => setQuick(e.target.value === "quick")}
-          >
-            <option value="full">完整验收 · &gt; 98%</option>
-            <option value="quick">快速验收 · &gt; 95%</option>
-          </select>
-        </label>
-      </div>
-      <div className="cert-layout">
-        <section>
-          <SectionHeader
-            title={record ? "验收记录" : "准备检查"}
-            aside={
-              record ? (
-                <span className="mono muted text-small">{record.id}</span>
-              ) : undefined
-            }
-          />
-          {record ? (
-            <>
-              <div className="cert-result">
-                <Status value={record.status} />
-                <span>{passCount} 项已通过</span>
-                <span className="muted">
-                  {record.profile === "full" ? "完整验收" : "快速验收"} ·{" "}
-                  {time(record.created_at)}
-                </span>
-              </div>
-              {record.failure_reason && (
-                <ErrorNotice error={record.failure_reason} />
-              )}
-              <div className="check-list">
-                {record.checks.map((c, i) => (
-                  <details key={i} className="check-item">
-                    <summary>
-                      <span className="check-number">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className={"check-icon " + c.status.toLowerCase()}>
-                        {c.status === "PASS" ? (
-                          <Check size={15} />
-                        ) : (
-                          <X size={15} />
-                        )}
-                      </span>
-                      <span>{c.name}</span>
-                      {c.name.includes("accuracy") &&
-                        c.evidence?.accuracy !== undefined && (
-                          <strong className="mono">
-                            {percent(c.evidence.accuracy)}
-                          </strong>
-                        )}
-                      <ChevronRight size={14} />
-                    </summary>
-                    <div className="check-evidence">
-                      <Json value={c.evidence ?? "检查通过，无附加证据"} />
-                    </div>
-                  </details>
-                ))}
-              </div>
-              {record.status === "RUNNING" && (
-                <div className="cert-running" role="status">
-                  <LoaderCircle className="spin" size={17} />
-                  <div>
-                    <strong>正在真实容器中训练与验证</strong>
-                    <p>
-                      完整验收需要几分钟。你可以离开此页，稍后回来查看结果。
-                    </p>
-                  </div>
-                </div>
-              )}
-              {record.status !== "RUNNING" && (
-                <div className={"overall " + record.status.toLowerCase()}>
-                  <span>OVERALL</span>
-                  <strong>{record.status}</strong>
-                  <a
-                    href={"/api/certifications/" + record.id}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-link"
-                  >
-                    <Download size={14} />
-                    JSON 报告
-                  </a>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="cert-preview">
-              {[
-                "资产注册与 Runtime 可用性",
-                "Docker 容器与真实挂载",
-                "训练进程与日志采集",
-                "Checkpoint 保存与独立重载",
-                "模型 Hash 变化与 Loss 下降",
-                "测试准确率与 Recipe 解耦",
-              ].map((label, i) => (
-                <div key={label}>
-                  <span className="check-number">0{i + 1}</span>
-                  <span>{label}</span>
-                  <span className="muted text-small">待运行</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-        <aside className="cert-aside">
-          <h3>验收门槛</h3>
-          <div className="threshold">
-            <strong>
-              {record ? record.threshold * 100 : quick ? 95 : 98}
-              <span>%</span>
-            </strong>
-            <span>测试准确率须高于此值</span>
-          </div>
-          <p>
-            使用完整的 10,000 张 MNIST
-            测试图像。权重必须发生变化，固定样本集上的 loss 必须下降。
-          </p>
-          <div className="aside-rule" />
-          <h3>关联训练</h3>
-          {record?.run_ids.length ? (
-            record.run_ids.map((id, i) => (
-              <Link className="linked-run" to={"/runs/" + id} key={id}>
-                <div>
-                  <strong>
-                    {i === 0 ? "Recipe A · Adam" : "Recipe B · SGD"}
-                  </strong>
-                  <span className="mono">{id}</span>
-                </div>
-                <ArrowUpRight size={15} />
-              </Link>
-            ))
-          ) : (
-            <p>启动验收后，将创建两次独立 Training Run。</p>
-          )}
-          {record?.run_ids.length === 2 && (
-            <Link
-              className="text-link"
-              to={"/runs/compare?ids=" + record.run_ids.join(",")}
-            >
-              比较两次训练 <ArrowRight size={14} />
-            </Link>
-          )}
-          <div className="aside-rule" />
-          <h3>历史验收</h3>
-          {records?.length ? (
-            records.map((r) => (
-              <button
-                className={
-                  "cert-history " + (record?.id === r.id ? "selected" : "")
-                }
-                key={r.id}
-                onClick={() => setSelected(r.id)}
-              >
-                <span>{time(r.created_at)}</span>
-                <Status value={r.status} />
-              </button>
-            ))
-          ) : (
-            <p>尚无验收记录。</p>
-          )}
-        </aside>
       </div>
     </>
   );

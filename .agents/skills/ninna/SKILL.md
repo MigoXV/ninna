@@ -10,12 +10,12 @@ description: 使用 Ninna MCP 发现训练资产、组合真实 Docker Training 
 
 ## 发起训练
 
-1. `platform_health`，然后 `list_assets` / `describe_asset` 选择实际注册的精确版本；不要猜测资产名或把初始 Model 当成已训练模型。
+1. `list_projects` 选择项目，必要时 `create_project` 新建；`create_run` 和 `list_runs` 必须传 `project_id`。随后 `platform_health`，然后 `list_assets` / `describe_asset` 选择实际注册的精确版本；不要猜测资产名或把初始 Model 当成已训练模型。
 2. `training_spec` 只包含 Dataset、Model、Recipe；`execution_spec` 包含 Runtime、Workspace snapshot、CPU resources。阅读资产说明确认输入、预处理和配方解释一致。
 3. `create_run` 一次，保存 ID；`get_run` 约每 2 秒观察进度。`read_run_logs` 按返回的字节 offset 继续读取。Agent 退出不停止训练。
 4. 完成后检查状态、container_id、退出码、hash 变化、loss 下降、准确率及 `list_run_artifacts`。报告 Run ID 和产物下载路径，不能只报告提交成功。
 
-比较 Recipe 时先 `snapshot_workspace`，复用同一 Dataset、Model、Runtime、snapshot 和 resources，仅替换 Recipe。用户要系统验收时使用 `start_certification` + `get_certification`，由平台核验容器与 checkpoint 重载。
+比较 Recipe 时先 `snapshot_workspace`，复用同一 Dataset、Model、Runtime、snapshot 和 resources，仅替换 Recipe。比较和重训在同一项目内进行。生产接口不提供系统验收；开发回归位于 `tests/integration/`。
 
 ## 失败与迭代
 

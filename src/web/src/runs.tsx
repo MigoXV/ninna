@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { api, useData } from "./api";
-import type { Asset, Run } from "./types";
+import type { Asset, Run, Project } from "./types";
 import { useRegionScroll, useViewState } from "./workspace";
 import {
   AssetLink,
@@ -47,16 +47,29 @@ import {
 } from "./ui";
 const terminal = ["SUCCESS", "FAILED", "CANCELLED"];
 export function RunsPage() {
-  const { data: runs, error, loading, refresh } = useData<Run[]>("/runs", 2500);
-  const [search, setSearch] = useViewState("runs.search", ""),
-    [filter, setFilter] = useViewState("runs.filter", "ALL"),
-    [page, setPage] = useViewState("runs.page", 1),
+  const { projectId } = useParams();
+  const project = useData<Project>("/projects/" + projectId);
+  const {
+    data: runs,
+    error,
+    loading,
+    refresh,
+  } = useData<Run[]>(`/projects/${projectId}/runs`, 2500);
+  const [search, setSearch] = useViewState(
+      `project.${projectId}.runs.search`,
+      "",
+    ),
+    [filter, setFilter] = useViewState(
+      `project.${projectId}.runs.filter`,
+      "ALL",
+    ),
+    [page, setPage] = useViewState(`project.${projectId}.runs.page`, 1),
     [selected, setSelected] = useState<string[]>([]),
     [busy, setBusy] = useState(false),
     [initError, setInitError] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
   const scrollRef = useRegionScroll(
-    `runs:${filter}:${search}:${page}`,
+    `project:${projectId}:runs:${filter}:${search}:${page}`,
     !loading,
   );
   useEffect(() => {
@@ -104,11 +117,6 @@ export function RunsPage() {
     setPage(1);
     searchInput.current?.focus();
   }
-  const active = runs?.filter((r) => !terminal.includes(r.status)).length || 0;
-  const completed = runs?.filter((r) => r.status === "SUCCESS") || [];
-  const best = completed.length
-    ? Math.max(...completed.map((r) => r.metrics?.test_accuracy || 0))
-    : undefined;
   async function init() {
     setBusy(true);
     setInitError("");
@@ -125,12 +133,21 @@ export function RunsPage() {
   return (
     <section className="work-page runs-workspace" aria-label="训练运行工作区">
       <div className="work-heading">
+        <Link className="back-link" to="/projects">
+          <ArrowLeft size={14} />
+          所有项目
+        </Link>
         <PageHeader
           eyebrow="实验 / Experiments"
-          title="训练运行"
-          description="把训练定义变成一次可追溯的实验。"
+          title={project.data?.name || "项目"}
+          description={
+            project.data?.description || "在这个项目中组织训练运行。"
+          }
           actions={
-            <Link className="button primary" to="/runs/new">
+            <Link
+              className="button primary"
+              to={`/runs/new?project=${projectId}`}
+            >
               <Plus size={17} />
               创建训练
             </Link>
@@ -138,44 +155,10 @@ export function RunsPage() {
         />
         <ErrorNotice error={error} onRetry={refresh} />
         <ErrorNotice error={initError} />
-        <div className="overview-strip">
-          <Metric
-            label="正在运行"
-            value={
-              <>
-                {active}
-                <span className="metric-unit">runs</span>
-              </>
-            }
-            detail="真实 Docker 容器执行"
-          />
-          <Metric
-            label="已完成训练"
-            value={
-              <>
-                {completed.length}
-                <span className="metric-unit">runs</span>
-              </>
-            }
-            detail="保留权重、指标与完整日志"
-          />
-          <Metric
-            label="最佳测试准确率"
-            value={percent(best)}
-            detail="已完成 Run · MNIST test split"
-          />
-          <Link to="/certification" className="cert-entry">
-            <span className="cert-emblem">
-              <Play size={18} />
-            </span>
-            <div>
-              <strong>验证整条训练链路</strong>
-              <span>
-                MNIST Certification <ArrowUpRight size={13} />
-              </span>
-            </div>
-          </Link>
-        </div>
+        <nav className="project-tabs" aria-label="项目视图">
+          <span aria-current="page">运行</span>
+          <Link to={`/projects/${projectId}/experiments`}>实验比较</Link>
+        </nav>
         {assets.data?.length === 0 && (
           <div className="setup-banner">
             <div>
@@ -247,7 +230,7 @@ export function RunsPage() {
             {selected.length === 2 && (
               <Link
                 className="button small"
-                to={"/runs/compare?ids=" + selected.join(",")}
+                to={`/projects/${projectId}/compare?ids=${selected.join(",")}`}
               >
                 <GitCompareArrows size={14} />
                 比较 2 个 Run
@@ -273,7 +256,6 @@ export function RunsPage() {
                 <col className="col-run" />
                 <col className="col-definition" />
                 <col className="col-status" />
-                <col className="col-accuracy" />
                 <col className="col-duration" />
                 <col className="col-time" />
                 <col className="col-action" />
@@ -286,7 +268,6 @@ export function RunsPage() {
                   <th>训练运行</th>
                   <th>训练定义</th>
                   <th>状态</th>
-                  <th>准确率</th>
                   <th>用时</th>
                   <th>创建时间</th>
                   <th>
@@ -341,9 +322,6 @@ export function RunsPage() {
                     <td>
                       <Status value={r.status} />
                     </td>
-                    <td className="numeric">
-                      {percent(r.metrics?.test_accuracy)}
-                    </td>
                     <td className="numeric muted">
                       {duration(r.started_at, r.finished_at)}
                     </td>
@@ -378,7 +356,10 @@ export function RunsPage() {
                   清空筛选
                 </button>
               ) : (
-                <Link to="/runs/new" className="text-link">
+                <Link
+                  to={`/runs/new?project=${projectId}`}
+                  className="text-link"
+                >
                   创建训练 <ArrowRight size={15} />
                 </Link>
               )
@@ -420,6 +401,8 @@ export function RunsPage() {
 export function CreatePage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const projects = useData<Project[]>("/projects");
+  const [projectId, setProjectId] = useState(params.get("project") || "");
   const [all, setAll] = useState<Record<string, Asset[]>>({}),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -481,6 +464,7 @@ export function CreatePage() {
         if (parent) {
           const r = await api<Run>("/runs/" + parent);
           if (!current) return;
+          setProjectId(r.project_id);
           for (const kind of ["dataset", "model", "recipe"] as const)
             defaults[kind] = r.assets[kind].id;
           if (assets.runtime.some((a) => a.id === r.assets.runtime.id))
@@ -519,6 +503,7 @@ export function CreatePage() {
         version: chosen(kind)!.version,
       });
       const r = await api<Run>("/runs", {
+        project_id: projectId,
         training_spec: {
           dataset: ref("dataset"),
           model: ref("model"),
@@ -580,9 +565,12 @@ export function CreatePage() {
   }
   return (
     <>
-      <Link to="/runs" className="back-link">
+      <Link
+        to={projectId ? `/projects/${projectId}` : "/projects"}
+        className="back-link"
+      >
         <ArrowLeft size={14} />
-        训练运行
+        返回项目
       </Link>
       <PageHeader
         eyebrow="新实验 / New experiment"
@@ -597,11 +585,36 @@ export function CreatePage() {
         </p>
       </details>
       <ErrorNotice error={error} />
-      {loading ? (
+      {loading || projects.loading ? (
         <Loading />
       ) : (
         <form onSubmit={submit} className="create-layout">
           <div>
+            <section className="form-section project-selection">
+              <label htmlFor="run-project">所属项目</label>
+              <select
+                id="run-project"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                required
+                disabled={!!params.get("from")}
+              >
+                <option value="" disabled>
+                  选择项目
+                </option>
+                {projects.data?.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <ErrorNotice error={projects.error} onRetry={projects.refresh} />
+              {!projects.loading && !projects.data?.length && (
+                <Link className="text-link" to="/projects">
+                  先创建一个项目
+                </Link>
+              )}
+            </section>
             <section className="form-section">
               <div className="numbered-heading">
                 <span>01</span>
@@ -708,7 +721,12 @@ export function CreatePage() {
             <button
               type="submit"
               className="button primary wide"
-              disabled={busy || Object.values(selection).some((v) => !v)}
+              disabled={
+                busy ||
+                !projectId ||
+                !!projects.error ||
+                Object.values(selection).some((v) => !v)
+              }
             >
               {busy ? (
                 <LoaderCircle size={16} className="spin" />
@@ -921,9 +939,9 @@ export function RunPage() {
   return (
     <section className="work-page run-workspace" aria-label="运行详情工作区">
       <div className="work-heading">
-        <Link to="/runs" className="back-link">
+        <Link to={`/projects/${run.project_id}`} className="back-link">
           <ArrowLeft size={14} />
-          训练运行
+          {run.project_id} / 运行
         </Link>
         <PageHeader
           eyebrow={run.id}
@@ -949,7 +967,7 @@ export function RunPage() {
               <Link
                 className="button icon-only"
                 aria-label="比较运行"
-                to={"/runs/compare?ids=" + id}
+                to={`/projects/${run.project_id}/compare?ids=${id}`}
               >
                 <GitCompareArrows size={17} />
               </Link>
@@ -1253,16 +1271,17 @@ export function RunPage() {
   );
 }
 export function ComparePage() {
+  const { projectId } = useParams();
   const [params] = useSearchParams();
   const ids = (params.get("ids") || "").split(",").filter(Boolean);
-  const data = useData<Run[]>("/runs", 3000);
+  const data = useData<Run[]>(`/projects/${projectId}/runs`, 3000);
   const [a, setA] = useState(ids[0] || ""),
     [b, setB] = useState(ids[1] || "");
   const left = data.data?.find((r) => r.id === a),
     right = data.data?.find((r) => r.id === b);
   return (
     <>
-      <Link to="/runs" className="back-link">
+      <Link to={`/projects/${projectId}`} className="back-link">
         <ArrowLeft size={14} />
         训练运行
       </Link>

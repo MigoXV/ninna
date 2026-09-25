@@ -6,9 +6,9 @@ test("real workspace navigation, filtering, form and responsive pages", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   await expect(
-    page.getByRole("heading", { name: "训练运行", exact: true }),
+    page.getByRole("heading", { name: "legacy", exact: true }),
   ).toBeVisible();
   await page.keyboard.press("/");
   await expect(page.getByPlaceholder("搜索运行、模型或 Recipe")).toBeFocused();
@@ -25,16 +25,12 @@ test("real workspace navigation, filtering, form and responsive pages", async ({
   await page.goto("/assets/workspace");
   await page.getByRole("button", { name: /mnist-hf.*v1/ }).click();
   await expect(page.getByText("只读预览")).toBeVisible();
-  await page.goto("/certification");
-  await expect(
-    page.getByRole("heading", { name: "让训练链路自己证明" }),
-  ).toBeVisible();
   for (const width of [320, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const path of [
-      "/runs",
+      "/projects/legacy",
       "/runs/new",
-      "/certification",
+      "/projects",
       "/assets/dataset",
     ]) {
       await page.goto(path);
@@ -58,9 +54,9 @@ test("key routes have no serious accessibility violations", async ({
   page,
 }) => {
   for (const path of [
-    "/runs",
+    "/projects/legacy",
     "/runs/new",
-    "/certification",
+    "/projects",
     "/assets/dataset",
   ]) {
     await page.goto(path);
@@ -89,7 +85,7 @@ test("mobile keyboard navigation opens and closes with restored focus", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   const toggle = page.getByRole("button", { name: "打开导航" });
   await toggle.focus();
   await page.keyboard.press("Enter");
@@ -102,7 +98,7 @@ test("create a real training Run from the UI and download its checkpoint", async
   page,
 }) => {
   test.setTimeout(240000);
-  await page.goto("/runs/new");
+  await page.goto("/runs/new?project=legacy");
   await page
     .locator("#recipe")
     .selectOption({ label: "mnist-adam / quick-v1" });

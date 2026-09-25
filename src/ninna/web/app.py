@@ -10,15 +10,10 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from ninna.config import Settings
-from ninna.domain.schemas import CreateRun
+from ninna.domain.schemas import CreateRun, CreateProject
 from ninna.domain.integrations import IntegrationUpdate, HubPublish, HubImport
-from ninna.services.certification import Certification
 from ninna.services.platform import Platform
 from ninna.agent.server import create_server
-
-
-class CertRequest(BaseModel):
-    quick: bool = False
 
 
 class PromoteRequest(BaseModel):
@@ -28,22 +23,10 @@ class PromoteRequest(BaseModel):
 def create_app(settings=None, serve_frontend=True):
     settings = settings or Settings.from_env()
     platform = Platform(settings)
-    certifier = Certification(platform)
 
     @asynccontextmanager
     async def lifespan(app):
         platform.start()
-        # A previous certification thread cannot survive a process restart.
-        for record in platform.repo.list("certifications"):
-            if record["status"] == "RUNNING":
-                from ninna.storage.repository import now
-
-                record.update(
-                    status="FAIL",
-                    failure_reason="Platform restarted; create a new certification",
-                    finished_at=now(),
-                )
-                platform.repo.save("certifications", record)
         try:
             async with mcp_server.session_manager.run():
                 yield
@@ -101,8 +84,16 @@ def create_app(settings=None, serve_frontend=True):
         return platform.hub.submit("import", request)
 
     @app.get("/api/experiments")
-    def experiments():
-        return {"tracking": platform.tracking.status(), "runs": platform.tracking.experiments()}
+    def experiments(project_id: str):
+        members = {run["id"] for run in platform.repo.project_runs(project_id)}
+        return {
+            "tracking": platform.tracking.status(),
+            "runs": [
+                {**run, "project_id": project_id}
+                for run in platform.tracking.experiments()
+                if run["id"] in members
+            ],
+        }
 
     @app.get("/api/experiments/{run_id}/metrics")
     def experiment_metrics(run_id: str):
@@ -189,17 +180,51 @@ def create_app(settings=None, serve_frontend=True):
             raise HTTPException(404, "File not found")
         return {"path": path, "content": resolved.read_text(errors="replace")[:100000]}
 
+    @app.post("/api/projects", status_code=201)
+    def create_project(request: CreateProject):
+        return platform.repo.create_project(request)
+
+    @app.get("/api/projects")
+    def projects():
+        runs = platform.repo.list("runs")
+        result = []
+        for project in platform.repo.list("projects"):
+            members = [run for run in runs if platform.repo.run_project(run) == project["id"]]
+            result.append(
+                {
+                    **project,
+                    "run_count": len(members),
+                    "active_count": sum(
+                        run["status"] not in {"SUCCESS", "FAILED", "CANCELLED"} for run in members
+                    ),
+                    "last_run_at": members[0]["created_at"] if members else None,
+                }
+            )
+        return result
+
+    @app.get("/api/projects/{project_id}")
+    def project(project_id: str):
+        return platform.repo.get("projects", project_id)
+
+    @app.get("/api/projects/{project_id}/runs")
+    def project_runs(project_id: str):
+        return [{**run, "project_id": project_id} for run in platform.repo.project_runs(project_id)]
+
     @app.post("/api/runs", status_code=201)
     def create_run(request: CreateRun):
         return platform.create_run(request)
 
     @app.get("/api/runs")
-    def runs():
-        return platform.repo.list("runs")
+    def runs(project_id: str | None = None):
+        records = (
+            platform.repo.project_runs(project_id) if project_id else platform.repo.list("runs")
+        )
+        return [{**run, "project_id": platform.repo.run_project(run)} for run in records]
 
     @app.get("/api/runs/{run_id}")
     def run(run_id: str):
-        return platform.repo.get("runs", run_id)
+        record = platform.repo.get("runs", run_id)
+        return {**record, "project_id": platform.repo.run_project(record)}
 
     @app.post("/api/runs/{run_id}/cancel")
     def cancel(run_id: str):
@@ -245,18 +270,6 @@ def create_app(settings=None, serve_frontend=True):
     @app.post("/api/runs/{run_id}/promote", status_code=201)
     def promote(run_id: str, request: PromoteRequest):
         return platform.promote(run_id, request.version)
-
-    @app.get("/api/certifications")
-    def certifications():
-        return platform.repo.list("certifications")
-
-    @app.post("/api/certifications", status_code=202)
-    def certify(request: CertRequest):
-        return certifier.start(request.quick)
-
-    @app.get("/api/certifications/{key}")
-    def certification(key: str):
-        return platform.repo.get("certifications", key)
 
     @app.api_route("/api/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     def unknown_api(path: str):

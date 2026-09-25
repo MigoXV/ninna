@@ -5,6 +5,7 @@
 - Python 使用 Poetry：`poetry run pytest`、`poetry run ninna ...`。前端使用 `pnpm --dir src/web ...`。
 - 修改前阅读入口和调用链。API：`src/ninna/web/app.py`；领域：`domain/schemas.py`；执行：`services/platform.py`；数据：`storage/repository.py`。
 - MCP：`agent/server.py`。两种传输共用工具，调用现有 API；不能在 stdio 进程创建第二个 Platform 执行器。
+- Run 必须属于 Project；创建和 MCP 查询显式传 project_id，重训保留父运行的项目。指标位于 Run 详情，系统验收仅存在于开发测试。
 - Dataset/Model/Recipe 与 Runtime/Workspace 独立。真实训练只在平台创建的 Docker 容器执行。
 - 终态 Run 和注册资产版本不可修改；重训创建新 Run。Workspace 修改生成新快照。
 - 维护 `agent/guide.md`、Skill、工具描述和资产说明，让 Agent 能找到前提、输入、执行副作用和结果证据。

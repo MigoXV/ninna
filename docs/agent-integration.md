@@ -15,7 +15,7 @@ codex mcp add ninna --url http://127.0.0.1:8000/mcp/
 
 ```text
 使用 $ninna，选择已注册的 MNIST HF 资产做一次快速训练。
-等待完成，报告容器 ID、准确率、模型 hash 变化和 checkpoint 下载地址。
+先选择或创建 Project，创建训练时显式传 project_id。等待完成，报告容器 ID、准确率、模型 hash 变化和 checkpoint 下载地址。
 ```
 
 在其他仓库使用时，将整个 `.agents/skills/ninna` 目录复制到目标仓库的 `.agents/skills/`，或放入个人 Skill 目录。Skill 的 `agents/openai.yaml` 声明本机 MCP 依赖；远程部署时同步修改其中的地址。
@@ -58,7 +58,7 @@ HTTP 默认允许 localhost/127.0.0.1/IPv6 loopback。使用远端域名时，�
 | 执行 | create_run、list_runs、get_run、cancel_run | 创建真实训练；观察；显式取消 |
 | 证据 | read_run_logs、get_run_metrics、get_run_diagnostic_context、list_run_artifacts | 只读；日志分段/诊断截断；模型使用下载路径 |
 | 复用 | promote_model | 从成功 Run 创建新模型版本 |
-| 验收 | start_certification、get_certification | 启动两次真实训练并检查容器/重载/指标 |
+| 项目 | list_projects、create_project | 选择或创建组织上下文；create_run / list_runs 必须传 project_id |
 | 中心存储 | list_hub_repositories、publish_asset、import_asset、list_hub_transfers | 发现；远端发布；导入新版本；观察传输 |
 
 `ninna://assets/{kind}/{name}/{version}` 提供资产详情资源。`diagnose_run` prompt 引导基于日志、容器状态和实际快照诊断。训练不会由于 MCP 会话结束而取消。
@@ -69,6 +69,7 @@ HTTP 默认允许 localhost/127.0.0.1/IPv6 loopback。使用远端域名时，�
 
 ```json
 {
+  "project_id": "mnist",
   "training_spec": {
     "dataset": {"name": "mnist", "version": "v2"},
     "model": {"name": "mnist-cnn", "version": "v2"},

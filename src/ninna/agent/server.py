@@ -136,8 +136,21 @@ def create_server(
         """
         return await call("POST", f"/api/workspaces/{name}/snapshots")
 
+    @server.tool(annotations=READ)
+    async def list_projects() -> dict[str, Any]:
+        """Discover projects before creating or querying runs. Returns IDs, descriptions and run counts."""
+        return {"projects": await call("GET", "/api/projects")}
+
+    @server.tool(annotations=WRITE)
+    async def create_project(name: str, description: str = "") -> dict[str, Any]:
+        """Create an organizational project. Name is unique: lowercase letters, digits, - and _.
+        Does not start training. Use its returned ID in create_run and list_runs.
+        """
+        return await call("POST", "/api/projects", json={"name": name, "description": description})
+
     @server.tool(annotations=WRITE)
     async def create_run(
+        project_id: Identifier,
         training_spec: TrainingSpec,
         execution_spec: ExecutionSpec,
         parent_run_id: Identifier | None = None,
@@ -150,6 +163,7 @@ def create_server(
             "POST",
             "/api/runs",
             json={
+                "project_id": project_id,
                 "training_spec": training_spec.model_dump(),
                 "execution_spec": execution_spec.model_dump(),
                 "parent_run_id": parent_run_id,
@@ -158,14 +172,15 @@ def create_server(
 
     @server.tool(annotations=READ)
     async def list_runs(
-        status: Status | None = None, offset: Offset = 0, limit: Limit = 20
+        project_id: Identifier, status: Status | None = None, offset: Offset = 0, limit: Limit = 20
     ) -> dict[str, Any]:
         """List newest runs, optionally by status. Useful to resolve an uncertain create result."""
-        runs = await call("GET", "/api/runs")
+        runs = await call("GET", "/api/runs", params={"project_id": project_id})
         if status:
             runs = [r for r in runs if r["status"] == status.value]
         fields = (
             "id",
+            "project_id",
             "status",
             "created_at",
             "training_spec",
@@ -246,19 +261,6 @@ def create_server(
         Does not publish to Hub. Existing versions and the source run are immutable.
         """
         return await call("POST", f"/api/runs/{run_id}/promote", json={"version": version})
-
-    @server.tool(annotations=WRITE)
-    async def start_certification(quick: bool = True) -> dict[str, Any]:
-        """Start MNIST platform certification: TWO real Docker runs (Adam and SGD), reload,
-        hashes, loss and accuracy checks. Quick >95%, full >98%. Poll get_certification.
-        If a certification is already running the platform returns that existing record.
-        """
-        return await call("POST", "/api/certifications", json={"quick": quick})
-
-    @server.tool(annotations=READ)
-    async def get_certification(certification_id: Identifier) -> dict[str, Any]:
-        """Read certification checks, evidence and associated runs; terminal result PASS/FAIL."""
-        return await call("GET", f"/api/certifications/{certification_id}")
 
     @server.tool(annotations=READ)
     async def list_hub_repositories(kind: Literal["model", "dataset"] = "model") -> dict[str, Any]:

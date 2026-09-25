@@ -4,7 +4,7 @@ test("real runs own their scroll positions and keep task controls visible", asyn
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   const rows = page.locator(".runs-table tbody tr");
   await expect(rows).toHaveCount(10);
   await page.evaluate(() => document.fonts.ready);
@@ -52,8 +52,9 @@ test("real runs own their scroll positions and keep task controls visible", asyn
     .click();
   await page
     .locator(".sidebar")
-    .getByRole("link", { name: "训练运行" })
+    .getByRole("link", { name: "项目", exact: true })
     .click();
+  await page.locator(".project-row").filter({ hasText: "legacy" }).click();
   await expect(page.locator(".pagination")).toContainText(/2 \/ \d+/);
 });
 
@@ -64,7 +65,7 @@ test("fonts are served locally and narrow layouts retain reachable content", asy
   page.on("response", (r) => {
     if (/\.woff2?/.test(r.url())) fonts.push(r.url());
   });
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   await expect(page.locator("tbody tr")).toHaveCount(10);
   await page.evaluate(() => document.fonts.ready);
   expect(fonts.some((url) => url.includes("inter"))).toBe(true);

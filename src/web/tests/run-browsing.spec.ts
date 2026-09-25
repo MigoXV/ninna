@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("paginate real runs, compare across pages and recover an empty search", async ({
   page,
 }) => {
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   const rows = page.locator(".runs-table tbody tr");
   await expect(rows).toHaveCount(10);
   const first = rows.first().locator('input[type="checkbox"]');

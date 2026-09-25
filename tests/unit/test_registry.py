@@ -5,7 +5,7 @@ import pytest
 from ninna.config import Settings
 from ninna.domain.schemas import CreateRun
 from ninna.services.assets import snapshot
-from ninna.services.certification import default_request
+from tests.support.training import default_request
 from ninna.storage.repository import Repository
 
 
@@ -126,6 +126,9 @@ def test_create_run_captures_snapshot_and_cancellation(tmp_path, monkeypatch):
         "workspace",
         {"name": "mnist-hf", "version": "v1", "path": str(source), "entrypoint": "train.py"},
     )
+    from ninna.domain.schemas import CreateProject
+
+    platform.repo.create_project(CreateProject(name="mnist-tests"))
     run = platform.create_run(CreateRun.model_validate(default_request()))
     (source / "train.py").write_text("print('changed')")
     assert run["execution_spec"]["workspace"]["snapshot"] != "current"
@@ -136,3 +139,13 @@ def test_create_run_captures_snapshot_and_cancellation(tmp_path, monkeypatch):
     cancelled = platform.cancel(run["id"])
     assert cancelled["status"] == "CANCELLED" and cancelled["container_id"] is None
     assert platform.cancel(run["id"]) == cancelled
+    platform.repo.create_project(CreateProject(name="another-project"))
+    wrong = {**default_request(), "project_id": "another-project", "parent_run_id": run["id"]}
+    with pytest.raises(ValueError, match="parent.*project"):
+        platform.create_run(CreateRun.model_validate(wrong))
+    retry = platform.create_run(
+        CreateRun.model_validate({**default_request(), "parent_run_id": run["id"]})
+    )
+    assert retry["project_id"] == run["project_id"] == "mnist-tests"
+    assert retry["id"] != run["id"]
+    assert platform.repo.get("runs", run["id"]) == cancelled

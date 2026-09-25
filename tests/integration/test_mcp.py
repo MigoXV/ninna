@@ -14,7 +14,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.client.streamable_http import streamable_http_client
 
-from ninna.services.certification import default_request
+from tests.support.training import default_request
 
 pytestmark = pytest.mark.integration
 API = os.environ.get("NINNA_API_URL", "http://127.0.0.1:8000").rstrip("/")
@@ -125,3 +125,13 @@ def test_mcp_failure_diagnostic_and_new_run_retry():
                 print(f"MCP FAILED {failed['id']} -> new SUCCESS {retried['id']}")
 
     asyncio.run(exercise())
+
+
+@pytest.fixture(scope="module", autouse=True)
+def training_project():
+    from tests.support.training import ensure_project
+
+    with httpx.Client(
+        base_url=os.environ.get("NINNA_API_URL", "http://127.0.0.1:8000"), timeout=60
+    ) as client:
+        ensure_project(client)

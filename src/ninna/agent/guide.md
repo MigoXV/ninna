@@ -4,6 +4,10 @@
 训练定义是 Dataset × Model × Recipe；执行环境是 Runtime + Workspace snapshot + resources。
 当前支持单机 CPU，device=cpu、gpu_count=0。训练不能在宿主机直接运行。
 
+## Project 组织
+
+先 list_projects 选择项目，或 create_project 新建。create_run 和 list_runs 必须显式传 project_id。项目不改变 TrainingSpec / ExecutionSpec；重训和比较必须在同一项目中。历史运行归入 legacy，执行记录不改写。指标读取单次 Run。验收工具已移出生产接口，开发者使用 tests/integration。
+
 ## 发现和训练
 
 1. platform_health 检查 Docker；list_assets 分页查询五类资产，describe_asset 读取精确版本的说明、文件和元数据。
@@ -13,7 +17,7 @@
 5. 成功证据包括 container_id、退出码、metrics、产物、initial_model_hash != trained_model_hash、final_loss < initial_loss。仅有 checkpoint 文件不代表训练有效。
 6. list_run_artifacts 返回相对下载路径，拼接平台 HTTP 地址下载；二进制模型不进入 Agent 上下文。
 
-对比 Recipe：snapshot_workspace 一次，两次调用 create_run 使用完全相同的 Dataset、Model 和 ExecutionSpec，仅替换 Recipe。MNIST 完整验收使用 Adam/SGD 两个 Run，准确率 >98%；quick 使用 1 epoch，>95%。start_certification 启动后用 get_certification 查看逐项证据。
+对比 Recipe：snapshot_workspace 一次，两次调用 create_run 使用完全相同的 Dataset、Model 和 ExecutionSpec，仅替换 Recipe。
 
 ## 失败和重试
 

@@ -1,3 +1,5 @@
+# 先通过 POST /api/projects 创建 mnist 项目。
+project_id: mnist
 training_spec:
   dataset:
     name: mnist

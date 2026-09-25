@@ -43,7 +43,13 @@ class ExecutionSpec(StrictModel):
     resources: Resources = Field(default_factory=Resources)
 
 
+class CreateProject(StrictModel):
+    name: str = Field(min_length=1, max_length=80, pattern=r"^[a-z0-9][a-z0-9_-]*$")
+    description: str = Field(default="", max_length=1000)
+
+
 class CreateRun(StrictModel):
+    project_id: str = Field(min_length=1, max_length=80)
     training_spec: TrainingSpec
     execution_spec: ExecutionSpec
     parent_run_id: str | None = None

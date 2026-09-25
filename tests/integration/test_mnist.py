@@ -10,7 +10,7 @@ import docker
 import httpx
 import pytest
 
-from ninna.services.certification import default_request
+from tests.support.training import default_request
 
 pytestmark = pytest.mark.integration
 
@@ -22,6 +22,9 @@ def client():
     ) as client:
         response = client.post("/api/initialize")
         response.raise_for_status()
+        from tests.support.training import ensure_project
+
+        ensure_project(client)
         yield client
 
 
@@ -37,17 +40,9 @@ def wait(client, key, timeout=600):
 
 @pytest.fixture(scope="module")
 def certified(client):
-    response = client.post("/api/certifications", json={"quick": False})
-    response.raise_for_status()
-    key = response.json()["id"]
-    deadline = time.monotonic() + 1200
-    while time.monotonic() < deadline:
-        report = client.get("/api/certifications/" + key).json()
-        if report["status"] != "RUNNING":
-            assert report["status"] == "PASS", report
-            return report
-        time.sleep(2)
-    pytest.fail("Certification timed out")
+    from tests.support.training import certify
+
+    return certify(client)
 
 
 def test_mnist_e2e(certified):

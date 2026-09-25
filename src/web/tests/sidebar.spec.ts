@@ -5,7 +5,7 @@ test("desktop rail preserves navigation, keyboard focus and preference across ro
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   const toggle = page.getByRole("button", { name: "收起侧边栏" });
   await toggle.focus();
   await page.keyboard.press("Enter");
@@ -39,7 +39,7 @@ test("desktop rail preserves navigation, keyboard focus and preference across ro
 test("collapsed desktop preference does not hide mobile labels or leave the desktop inert", async ({
   page,
 }) => {
-  await page.goto("/runs");
+  await page.goto("/projects/legacy");
   await page.getByRole("button", { name: "收起侧边栏" }).click();
   await page.setViewportSize({ width: 320, height: 740 });
   await expect(page.locator(".sidebar")).not.toBeVisible();

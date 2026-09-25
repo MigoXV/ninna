@@ -85,7 +85,7 @@ class AimTracking:
             tracked = Run(
                 record["aim_hash"],
                 repo=repo,
-                experiment="Ninna",
+                experiment=self.store.run_project(run) or "legacy",
                 system_tracking_interval=None,
                 log_system_params=False,
                 capture_terminal_logs=False,
@@ -108,6 +108,7 @@ class AimTracking:
                         "failure_reason",
                     ]
                 }
+                tracked["project_id"] = self.store.run_project(run)
                 assets = run.get("assets", {})
                 recipe = assets.get("recipe", {})
                 tracked["recipe"] = {

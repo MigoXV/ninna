@@ -14,7 +14,7 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-RECORD_TABLES = {"runs", "certifications", "hub_transfers", "tracking"}
+RECORD_TABLES = {"runs", "hub_transfers", "tracking", "projects"}
 
 
 class Repository:
@@ -28,11 +28,58 @@ class Repository:
                 CREATE TABLE IF NOT EXISTS assets (
                     kind TEXT, name TEXT, version TEXT, body TEXT NOT NULL,
                     PRIMARY KEY(kind,name,version));
+                CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, body TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS run_projects (run_id TEXT PRIMARY KEY, project_id TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, body TEXT NOT NULL);
-                CREATE TABLE IF NOT EXISTS certifications (id TEXT PRIMARY KEY, body TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS hub_transfers (id TEXT PRIMARY KEY, body TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS tracking (id TEXT PRIMARY KEY, body TEXT NOT NULL);
             """)
+
+        # Historical execution records remain byte-for-byte unchanged. Membership is
+        # an organizational index, separate from the immutable training evidence.
+        with self.connection() as db:
+            historical = db.execute(
+                "SELECT id FROM runs WHERE json_extract(body, '$.project_id') IS NULL "
+                "AND id NOT IN (SELECT run_id FROM run_projects)"
+            ).fetchall()
+            if historical:
+                project = {
+                    "id": "legacy",
+                    "name": "legacy",
+                    "description": "历史训练",
+                    "created_at": now(),
+                }
+                db.execute(
+                    "INSERT OR IGNORE INTO projects VALUES (?, ?)", ("legacy", json.dumps(project))
+                )
+                db.executemany(
+                    "INSERT INTO run_projects VALUES (?, ?)",
+                    [(row[0], "legacy") for row in historical],
+                )
+
+    def create_project(self, request):
+        project = {"id": request.name, **request.model_dump(), "created_at": now()}
+        with self.connection() as db:
+            try:
+                db.execute(
+                    "INSERT INTO projects VALUES (?, ?)", (project["id"], json.dumps(project))
+                )
+            except sqlite3.IntegrityError as exc:
+                raise ValueError("Project name already exists") from exc
+        return project
+
+    def run_project(self, run):
+        if run.get("project_id"):
+            return run["project_id"]
+        with self.connection() as db:
+            row = db.execute(
+                "SELECT project_id FROM run_projects WHERE run_id=?", (run["id"],)
+            ).fetchone()
+        return row[0] if row else None
+
+    def project_runs(self, project_id):
+        self.get("projects", project_id)
+        return [run for run in self.list("runs") if self.run_project(run) == project_id]
 
     @contextmanager
     def connection(self):

@@ -1,8 +1,8 @@
 # Ninna · 深度学习训练工作空间
 
-Ninna 是一个单机 Docker 训练平台。使用 MNIST 跑通真实训练、模型产物、失败诊断和系统验收。前端采用接近白色的极淡金色 MANAS 工作空间。
+Ninna 是一个单机 Docker 训练平台。以 Project 组织真实训练运行、模型产物和失败诊断。前端采用接近白色的极淡金色 MANAS 工作空间。
 
-界面资料：[Figma · 22 个独立界面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4)、[A3 打印审阅稿 · ui-v0.4.0](docs/design/ui-v0.4.0-review.pdf)、[UI 版本记录](docs/ui-releases.md)。
+界面资料：[Figma · 22 个独立界面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4)、[A3 打印审阅稿 · ui-v0.5.0](docs/design/ui-v0.5.0-review.pdf)、[UI 版本记录](docs/ui-releases.md)。
 
 桌面工作区固定标题和任务工具栏，运行记录与详情分别滚动；返回列表恢复筛选、分页和位置，不同 Run 与详情标签独立保存滚动位置。小屏恢复文档滚动。Inter、Noto Sans SC 和 IBM Plex Mono 随前端静态资源提供，字体许可见 `src/web/public/fonts/`。中心存储首次检查显示中性等待，实际失败才显示错误与重试。
 
@@ -30,28 +30,28 @@ git clone https://github.com/MigoXV/ninna.git
 cd ninna
 ./scripts/install-compose.sh
 ./scripts/platform.sh up
-./scripts/mnist-certify.sh
 ```
 
 浏览器打开 `http://localhost:8000`。第一次启动会构建平台与 CPU Runtime，并下载、校验和注册 MNIST。随后启动不会重复下载数据。
 
 初始化同时完成离线 HF 格式转换：逐条核对全部图片和标签，验证预处理、初始权重和 logits 一致。v1 资产和历史 Run 保留，默认使用 v2 HF 资产。
 
-完整验收分别运行 Adam 和 SGD，验证容器、挂载、进程、日志、checkpoint 独立重载、权重变化、loss 下降以及 >98% 的测试准确率。最后输出：
+## 项目与运行
 
-```text
-MNIST Platform Certification
-...
-OVERALL PASS
-```
+首页是项目目录。创建 Project（名称使用小写字母、数字、短横线或下划线），进入项目后创建训练。每个 Run 必须指定 `project_id`；Project 是组织上下文，不属于 TrainingSpec 或 ExecutionSpec。数据集、模型、配方和执行资产仍在平台内复用。
 
-任何关键检查失败返回非零退出码。快速验收使用独立的 `quick-v1` Recipe（各 1 epoch、准确率 >95%）：
+项目运行列表显示定义、状态和时间；准确率、loss、训练曲线与 checkpoint 在单次 Run 内查看。实验比较限制在当前项目。重训创建新 Run 并保留相同项目和 `parent_run_id`。项目列表、Run 页面与返回位置按项目隔离。
+
+旧运行通过单独的组织索引归入 `legacy`（历史训练），原始数据库执行记录、run.json 和 checkpoint 不被改写。空安装不会创建默认项目。
+
+系统验收已从生产 UI、API、MCP 和 CLI 移除。开发回归保留在测试目录，不参与应用启动；需要 Poetry 开发依赖和 Docker 时执行：
 
 ```bash
-./scripts/mnist-certify.sh --quick
+poetry install
+./scripts/mnist-certify.sh
 ```
 
-页面中的“系统验收”调用同一个验收服务。切换页面不会停止训练。
+这是 opt-in 的真实 Docker pytest 套件，会创建 `mnist-tests` 项目和训练记录，测试 Adam/SGD、容器挂载、checkpoint 重载、HF 格式、hash、loss 和准确率。失败返回非零退出码。
 
 ## 容器内操作 Docker：挂载路径
 
@@ -126,7 +126,6 @@ Run 定义与资产快照不可修改，生命周期字段可向前推进；终�
 outputs/platform/
 ├── ninna.sqlite3
 ├── snapshots/<snapshot-hash>/
-├── certifications/<certification-id>.json
 └── runs/<run-id>/
     ├── config/run.json
     ├── model/                 # HF config、Safetensors、processor、自定义模型代码
@@ -171,17 +170,18 @@ OpenAPI：`http://localhost:8000/docs`。
 | `GET /api/runs/{id}/artifacts/{filename}` | 下载产物 |
 | `POST /api/runs/{id}/promote` | 注册模型新版本，body 为 `{"version":"trained-001"}` |
 | `GET /api/runs/{id}/diagnostics` | 完整诊断上下文 |
-| `GET/POST /api/certifications` | 查询/发起验收 |
-| `GET /api/certifications/{id}` | 验收结果与逐项证据 |
+| `GET/POST /api/projects` | 查询/创建项目 |
+| `GET /api/projects/{id}/runs` | 仅查询该项目的运行 |
 
 `Platform.get_run_diagnostic_context(run_id)` 是诊断服务实现；HTTP 接口返回 TrainingSpec、ExecutionSpec、资产信息、Workspace 快照、stdout/stderr、exit code、metrics、inspect、资源和状态事件。未来 Harness 可读取诊断、修改 Workspace 或创建 Recipe 新版本，然后新建 Run。历史 Run 无写入接口。
 
 创建 Run 示例：
 
 ```bash
+curl -sS http://localhost:8000/api/projects -H 'Content-Type: application/json' -d '{"name":"mnist"}'
 curl -sS http://localhost:8000/api/runs \
   -H 'Content-Type: application/json' \
-  -d '{"training_spec":{"dataset":{"name":"mnist","version":"v2"},"model":{"name":"mnist-cnn","version":"v2"},"recipe":{"name":"mnist-adam","version":"v1"}},"execution_spec":{"runtime":{"name":"mnist-pytorch-runtime","version":"v3"},"workspace":{"name":"mnist-hf","snapshot":"current"},"resources":{"device":"cpu","gpu_count":0,"cpu_threads":4,"memory_mb":4096}}}'
+  -d '{"project_id":"mnist","training_spec":{"dataset":{"name":"mnist","version":"v2"},"model":{"name":"mnist-cnn","version":"v2"},"recipe":{"name":"mnist-adam","version":"v1"}},"execution_spec":{"runtime":{"name":"mnist-pytorch-runtime","version":"v3"},"workspace":{"name":"mnist-hf","snapshot":"current"},"resources":{"device":"cpu","gpu_count":0,"cpu_threads":4,"memory_mb":4096}}}'
 ```
 
 ## Hugging Face 格式与离线推理
@@ -208,7 +208,7 @@ with torch.inference_mode():
     predictions = model(**batch).logits.argmax(-1)
 ```
 
-独立的 `examples/mnist/workspace-hf/inference.py` 管理模型一次加载与 CPU / FP32 / eager 推理。Model 只返回 logits，Criterion、Optimizer 和训练循环仍在 Workspace。Certification 在新容器中加载 HF 模型，与 `checkpoint.pt` 对齐 logits 和 hash，并验证单张/批量推理误差与全部测试集准确率。
+独立的 `examples/mnist/workspace-hf/inference.py` 管理模型一次加载与 CPU / FP32 / eager 推理。Model 只返回 logits，Criterion、Optimizer 和训练循环仍在 Workspace。开发测试在新容器中加载 HF 模型，与 `checkpoint.pt` 对齐 logits 和 hash，并验证单张/批量推理误差与全部测试集准确率。
 
 继续训练时，将完整 HF 模型目录注册为新的 Model 版本，创建新 Run。已有 v1 Run、资产和快照不被迁移覆盖。源格式兼容性也有真实 Docker 回归测试。
 
@@ -310,7 +310,7 @@ Aim 3.29.1 通过 Python SDK 记录真实 Run 的 TrainingSpec、ExecutionSpec�
 | `POST /api/hub/publish` | 发布 HF 资产，返回后台传输记录 |
 | `POST /api/hub/import` | 固定 revision 导入并注册新版本 |
 | `GET /api/hub/transfers` | 传输状态、commit、校验结果与失败原因 |
-| `GET /api/experiments` | Aim 实验参数、状态和摘要 |
+| `GET /api/experiments?project_id={id}` | Aim 实验参数、状态和摘要 |
 | `GET /api/experiments/{run_id}/metrics` | 从 Aim SDK 读取指标序列 |
 
 真实 Hub / Docker / Aim 联合验收（先启动平台并在页面配置 Hub）：

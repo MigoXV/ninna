@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ArrowUpRight, ChartNoAxesCombined, Search } from "lucide-react";
 import {
   CartesianGrid,
@@ -49,10 +49,11 @@ const metrics = {
 const colors = ["#63734c", "#a57c31", "#587c91", "#945b6d"];
 
 export function ExperimentsPage() {
+  const { projectId } = useParams();
   const data = useData<{
     tracking: { enabled: boolean; error: string | null; tracked_runs: number };
     runs: Experiment[];
-  }>("/experiments", 3000);
+  }>(`/experiments?project_id=${projectId}`, 3000);
   const [selected, setSelected] = useState<string[]>([]),
     [search, setSearch] = useState(""),
     [status, setStatus] = useState("");
@@ -135,9 +136,12 @@ export function ExperimentsPage() {
   }
   return (
     <>
+      <Link className="back-link" to={`/projects/${projectId}`}>
+        {projectId} / 运行
+      </Link>
       <PageHeader
         eyebrow="实验观察 / Experiments"
-        title="读懂每一次学习"
+        title="实验比较"
         description="从 Aim 读取训练曲线与实验参数，在同一个工作空间里比较结果。"
         actions={
           <Link className="button" to="/hub">
@@ -171,7 +175,10 @@ export function ExperimentsPage() {
           title="等待第一个实验"
           description="平台会把真实 Run 的参数、状态和指标同步到 Aim。创建一次训练后即可查看。"
           action={
-            <Link className="button primary" to="/runs/new">
+            <Link
+              className="button primary"
+              to={`/runs/new?project=${projectId}`}
+            >
               创建训练
             </Link>
           }

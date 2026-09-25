@@ -2,6 +2,7 @@ import { StrictMode, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BrowserRouter,
+  Navigate,
   Link,
   NavLink,
   Route,
@@ -11,10 +12,8 @@ import {
 import {
   ListTodo,
   ArrowUpRight,
-  ListChecks,
   Box,
   HardDrive,
-  ChartNoAxesCombined,
   Container,
   Server,
   ChevronRight,
@@ -29,7 +28,8 @@ import {
 } from "lucide-react";
 import { useData } from "./api";
 import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
-import { AssetsPage, CertificationPage } from "./pages";
+import { AssetsPage } from "./pages";
+import { ProjectsPage } from "./projects";
 import { HubPage } from "./integrations";
 import { ExperimentsPage } from "./experiments";
 import "@fontsource-variable/inter";
@@ -39,10 +39,8 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "./style.css";
 import "./workspace.css";
 const nav = [
-  { label: "训练运行", path: "/runs", icon: ListTodo },
-  { label: "实验观察", path: "/experiments", icon: ChartNoAxesCombined },
+  { label: "项目", path: "/projects", icon: ListTodo },
   { label: "中心存储", path: "/hub", icon: HardDrive },
-  { label: "系统验收", path: "/certification", icon: ListChecks },
 ];
 const definitions = [
   { label: "数据集", code: "Dataset", kind: "dataset", icon: Database },
@@ -152,7 +150,7 @@ function Shell() {
         >
           <Menu size={20} />
         </button>
-        <Link to="/runs" className="brand">
+        <Link to="/projects" className="brand">
           ninna<span className="brand-period">.</span>
         </Link>
         <span className="mono">WORKSPACE</span>
@@ -165,7 +163,7 @@ function Shell() {
         aria-label="主导航"
       >
         <div className="brand-row">
-          <Link className="brand" to="/runs" aria-label="Ninna 首页">
+          <Link className="brand" to="/projects" aria-label="Ninna 首页">
             <span className="brand-full">
               ninna<span className="brand-period">.</span>
             </span>
@@ -290,7 +288,7 @@ function Shell() {
         </div>
       </aside>
       <div className="main-shell" inert={open ? true : undefined}>
-        <div className="topbar">
+        <div className="topbar" role="region" aria-label="工作空间上下文">
           <span>Ninna</span>
           <ChevronRight size={12} />
           <span>训练工作空间</span>
@@ -304,28 +302,35 @@ function Shell() {
           id="main"
           className={
             location.pathname === "/" ||
-            location.pathname === "/runs" ||
+            /^\/projects\/[^/]+$/.test(location.pathname) ||
             /^\/runs\/run-/.test(location.pathname)
               ? "task-main"
               : "document-main"
           }
         >
           <Routes key={location.pathname}>
-            <Route path="/" element={<RunsPage />} />
-            <Route path="/runs" element={<RunsPage />} />
+            <Route path="/" element={<Navigate to="/projects" replace />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/:projectId" element={<RunsPage />} />
+            <Route
+              path="/projects/:projectId/compare"
+              element={<ComparePage />}
+            />
+            <Route
+              path="/projects/:projectId/experiments"
+              element={<ExperimentsPage />}
+            />
+            <Route path="/runs" element={<Navigate to="/projects" replace />} />
             <Route path="/runs/new" element={<CreatePage />} />
-            <Route path="/runs/compare" element={<ComparePage />} />
             <Route path="/runs/:id" element={<RunPage />} />
             <Route path="/assets/:kind" element={<AssetsPage />} />
             <Route path="/hub" element={<HubPage />} />
-            <Route path="/experiments" element={<ExperimentsPage />} />
-            <Route path="/certification" element={<CertificationPage />} />
             <Route
               path="*"
               element={
                 <div className="empty">
                   <h1>页面不存在</h1>
-                  <Link to="/runs">返回训练运行</Link>
+                  <Link to="/projects">返回项目</Link>
                 </div>
               }
             />

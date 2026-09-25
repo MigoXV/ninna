@@ -33,6 +33,13 @@ def test_mcp_http_catalog_resource_and_asset_roundtrip(tmp_path):
                 async with ClientSession(reader, writer) as session:
                     await session.initialize()
                     tools = {tool.name: tool for tool in (await session.list_tools()).tools}
+                    assert "start_certification" not in tools
+                    assert "get_certification" not in tools
+                    project = await session.call_tool("create_project", {"name": "mcp-project"})
+                    assert not project.isError
+                    projects = await session.call_tool("list_projects", {})
+                    assert projects.structuredContent["projects"][0]["id"] == "mcp-project"
+                    assert "project_id" in tools["create_run"].inputSchema["required"]
                     assert tools["describe_asset"].annotations.readOnlyHint
                     assert not tools["create_run"].annotations.idempotentHint
                     assert tools["cancel_run"].annotations.destructiveHint
@@ -91,7 +98,7 @@ def test_invalid_resources_never_reach_api_and_transport_errors_are_actionable()
                 transport=httpx.MockTransport(handler), base_url="http://localhost"
             )
         )
-        from ninna.services.certification import default_request
+        from tests.support.training import default_request
 
         request = default_request()
         request["execution_spec"]["resources"]["device"] = "cuda"

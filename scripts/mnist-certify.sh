@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-exec ./scripts/platform.sh exec -T platform poetry run ninna certify "$@"
+# Development regression suite, outside the production API and MCP catalog.
+NINNA_INTEGRATION=1 exec poetry run pytest tests/integration/test_mnist.py "$@"

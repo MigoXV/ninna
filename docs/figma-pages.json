@@ -1,25 +1,34 @@
 {
   "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
-  "version": "ui-v0.4.0",
+  "version": "ui-v0.5.0",
   "paper": "A3 landscape",
   "screens": [
     {
-      "name": "01 · 训练运行",
+      "name": "00a · 项目",
+      "page": "44:2591",
+      "frame": "120:318",
+      "width": 1440,
+      "height": 900,
+      "source": "projects",
+      "path": "/projects"
+    },
+    {
+      "name": "01 · 项目 · 运行",
       "page": "44:2572",
-      "frame": "77:318",
+      "frame": "122:318",
       "width": 1440,
       "height": 900,
       "source": "runs",
-      "path": "/runs"
+      "path": "/projects/legacy"
     },
     {
       "name": "02 · 创建训练",
       "page": "44:2573",
-      "frame": "102:318",
+      "frame": "121:318",
       "width": 1440,
       "height": 900,
       "source": "create",
-      "path": "/runs/new"
+      "path": "/runs/new?project=legacy"
     },
     {
       "name": "03 · Run · 训练详情",
@@ -66,7 +75,7 @@
       "width": 1440,
       "height": 900,
       "source": "compare",
-      "path": "/runs/compare?ids=run-b196f3593b05,run-4b1e02fe8b09"
+      "path": "/projects/legacy/compare?ids=run-b196f3593b05,run-4b1e02fe8b09"
     },
     {
       "name": "08 · Dataset · 列表",
@@ -168,40 +177,31 @@
       "path": "/hub"
     },
     {
-      "name": "19 · 实验观察",
+      "name": "19 · 项目 · 实验比较",
       "page": "44:2590",
-      "frame": "93:318",
+      "frame": "127:318",
       "width": 1440,
       "height": 900,
       "source": "experiments",
-      "path": "/experiments"
+      "path": "/projects/legacy/experiments"
     },
     {
-      "name": "20 · 系统验收",
-      "page": "44:2591",
-      "frame": "108:318",
-      "width": 1440,
-      "height": 900,
-      "source": "certification",
-      "path": "/certification"
-    },
-    {
-      "name": "21 · 移动端 · 训练运行",
+      "name": "21 · 移动端 · 项目运行",
       "page": "44:2592",
-      "frame": "91:318",
+      "frame": "125:318",
       "width": 375,
       "height": 1095,
       "source": "mobile-runs",
-      "path": "/runs"
+      "path": "/projects/legacy"
     },
     {
       "name": "22 · 桌面 · 收起导航",
       "page": "44:2593",
-      "frame": "95:318",
+      "frame": "126:318",
       "width": 1440,
       "height": 900,
       "source": "collapsed-runs",
-      "path": "/runs",
+      "path": "/projects/legacy",
       "collapsed": true
     }
   ]

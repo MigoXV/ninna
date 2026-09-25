@@ -7,7 +7,7 @@ import uuid
 import httpx
 import pytest
 
-from ninna.services.certification import default_request
+from tests.support.training import default_request
 
 pytestmark = [
     pytest.mark.integration,
@@ -136,7 +136,9 @@ def test_hub_to_training_to_hub_and_aim():
         deadline = time.monotonic() + 60
         while time.monotonic() < deadline:
             response = client.get(f"/api/experiments/{run['id']}/metrics")
-            experiments = client.get("/api/experiments").json()["runs"]
+            experiments = client.get(
+                "/api/experiments", params={"project_id": "mnist-tests"}
+            ).json()["runs"]
             experiment = next((item for item in experiments if item["id"] == run["id"]), None)
             if response.status_code == 200 and experiment and experiment["status"] == "SUCCESS":
                 curves = response.json()
@@ -206,7 +208,7 @@ def test_optional_hub_offline_training_and_aim_backfill():
             submit(client, "/api/integrations", {"hub": hub, "aim": previous["aim"]})
         deadline = time.monotonic() + 60
         while time.monotonic() < deadline:
-            data = client.get("/api/experiments").json()
+            data = client.get("/api/experiments", params={"project_id": "mnist-tests"}).json()
             if any(
                 item["id"] == run["id"] and item["status"] == "SUCCESS" for item in data["runs"]
             ):
@@ -216,3 +218,13 @@ def test_optional_hub_offline_training_and_aim_backfill():
             pytest.fail("Aim did not backfill metrics after re-enabling")
         metrics = client.get(f"/api/experiments/{run['id']}/metrics").json()
         assert metrics["source"] == "aim" and metrics["series"]
+
+
+@pytest.fixture(scope="module", autouse=True)
+def training_project():
+    from tests.support.training import ensure_project
+
+    with httpx.Client(
+        base_url=os.environ.get("NINNA_API_URL", "http://127.0.0.1:8000"), timeout=60
+    ) as client:
+        ensure_project(client)
