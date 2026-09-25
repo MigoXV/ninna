@@ -99,10 +99,13 @@ def test_worker_lock_prevents_two_executors(tmp_path):
     second.close()
 
 
-def test_create_run_captures_snapshot_and_cancellation(tmp_path):
+def test_create_run_captures_snapshot_and_cancellation(tmp_path, monkeypatch):
     from ninna.services.platform import Platform
 
     platform = Platform(Settings(tmp_path, tmp_path, tmp_path / "state"))
+    monkeypatch.setattr(
+        platform.runtime_validator, "validate", lambda asset: {"test": "domain-only"}
+    )
     source = tmp_path / "workspace"
     source.mkdir()
     (source / "train.py").write_text("print('initial')")
@@ -112,7 +115,13 @@ def test_create_run_captures_snapshot_and_cancellation(tmp_path):
         ("recipe", "mnist-adam"),
         ("runtime", "mnist-pytorch-runtime"),
     ]:
-        platform.repo.register(kind, {"name": name, "version": "v1" if kind == "recipe" else "v2"})
+        platform.repo.register(
+            kind,
+            {
+                "name": name,
+                "version": "v3" if kind == "runtime" else "v1" if kind == "recipe" else "v2",
+            },
+        )
     platform.repo.register(
         "workspace",
         {"name": "mnist-hf", "version": "v1", "path": str(source), "entrypoint": "train.py"},

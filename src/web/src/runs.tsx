@@ -352,7 +352,17 @@ export function CreatePage() {
     let current = true;
     Promise.all(
       ["dataset", "model", "recipe", "runtime", "workspace"].map(
-        async (kind) => [kind, await api<Asset[]>("/assets/" + kind)] as const,
+        async (kind) => {
+          const assets = await api<Asset[]>("/assets/" + kind);
+          return [
+            kind,
+            kind === "runtime"
+              ? assets.filter(
+                  (a) => a.metadata.transformers && a.metadata.datasets,
+                )
+              : assets,
+          ] as const;
+        },
       ),
     )
       .then(async (pairs) => {
@@ -372,9 +382,11 @@ export function CreatePage() {
             list.find(
               (a) =>
                 a.version ===
-                  (["dataset", "model", "runtime"].includes(kind)
-                    ? "v2"
-                    : "v1") && a.name === preferred[kind],
+                  (kind === "runtime"
+                    ? "v3"
+                    : ["dataset", "model"].includes(kind)
+                      ? "v2"
+                      : "v1") && a.name === preferred[kind],
             )?.id ||
               list.find((a) => a.version === "v1")?.id ||
               "",
@@ -386,7 +398,8 @@ export function CreatePage() {
           if (!current) return;
           for (const kind of ["dataset", "model", "recipe"] as const)
             defaults[kind] = r.assets[kind].id;
-          defaults.runtime = r.assets.runtime.id;
+          if (assets.runtime.some((a) => a.id === r.assets.runtime.id))
+            defaults.runtime = r.assets.runtime.id;
           defaults.workspace = r.assets.workspace.id;
           setThreads(r.execution_spec.resources.cpu_threads);
           setMemory(r.execution_spec.resources.memory_mb);

@@ -38,6 +38,15 @@ class Platform:
         self.worker_lock = None
         self.operation_lock = threading.RLock()
         self.bootstrap_lock = threading.Lock()
+        from ninna.services.integrations import IntegrationSettings
+        from ninna.services.hub import HubService
+        from ninna.services.tracking import AimTracking
+        from ninna.services.runtime import HFRuntimeValidator
+
+        self.integrations = IntegrationSettings(settings.state)
+        self.hub = HubService(self)
+        self.tracking = AimTracking(self)
+        self.runtime_validator = HFRuntimeValidator(lambda: self.docker)
 
     @property
     def docker(self):
@@ -58,8 +67,12 @@ class Platform:
         self.stop_event.clear()
         self.thread = threading.Thread(target=self._loop, daemon=True, name="ninna-executor")
         self.thread.start()
+        self.hub.recover()
+        self.tracking.start()
 
     def close(self):
+        self.tracking.close()
+        self.hub.close()
         self.stop_event.set()
         if self.thread:
             self.thread.join(timeout=35)
@@ -146,6 +159,7 @@ class Platform:
             execution = request.execution_spec.model_dump()
             assets = {kind: self.repo.asset(kind, ref) for kind, ref in training.items()}
             assets["runtime"] = self.repo.asset("runtime", execution["runtime"])
+            runtime_evidence = self.runtime_validator.validate(assets["runtime"])
             workspace_ref = execution["workspace"]
             if workspace_ref["snapshot"] == "current":
                 workspace = self.workspace_snapshot(workspace_ref["name"])
@@ -185,6 +199,7 @@ class Platform:
                 "container_state": None,
                 "metadata": {},
                 "monitor_error": None,
+                "runtime_validation": runtime_evidence,
             }
             output = self.output(run_id)
             output.mkdir(parents=True)
@@ -222,7 +237,7 @@ class Platform:
         if manifest(Path(workspace["snapshot_path"])) != workspace["files"]:
             raise ValueError("Workspace snapshot checksum changed")
         image_id = run["assets"]["runtime"]["image_id"]
-        self.docker.images.get(image_id)
+        self.runtime_validator.validate(run["assets"]["runtime"])
         with self.operation_lock:
             run = self.repo.get("runs", key)
             if run["status"] in TERMINAL or run["cancel_requested"]:
@@ -440,6 +455,10 @@ class Platform:
     def get_run_diagnostic_context(self, key):
         run = self.repo.get("runs", key)
         result = copy.deepcopy(run)
+        try:
+            result["tracking"] = self.repo.get("tracking", key)
+        except KeyError:
+            result["tracking"] = None
         output = self.output(key)
         for stream in ["stdout", "stderr"]:
             result[stream] = (output / (stream + ".log")).read_text(errors="replace")

@@ -9,7 +9,7 @@ services:
     environment:
       NINNA_ROOT: ${NINNA_ROOT:?Run scripts/platform.sh to resolve paths}
       NINNA_HOST_ROOT: ${NINNA_HOST_ROOT:?Docker daemon host path is required}
-      NINNA_RUNTIME_IMAGE: ninna/pytorch-runtime:v1
+      NINNA_RUNTIME_IMAGE: ninna/pytorch-runtime:v3
     volumes:
       - type: bind
         source: ${NINNA_HOST_ROOT}
@@ -26,5 +26,5 @@ services:
       retries: 10
   runtime:
     profiles: [build]
-    image: ninna/pytorch-runtime:v1
-    build: runtimes/pytorch
+    image: ninna/pytorch-runtime:v3
+    build: runtimes/pytorch-hf

@@ -10,7 +10,7 @@ class Settings:
     root: Path
     host_root: Path
     state: Path
-    runtime_image: str = "ninna/pytorch-runtime:v1"
+    runtime_image: str = "ninna/pytorch-runtime:v3"
 
     @classmethod
     def from_env(cls):
@@ -20,7 +20,7 @@ class Settings:
             root,
             host_root,
             root / "outputs" / "platform",
-            os.environ.get("NINNA_RUNTIME_IMAGE", "ninna/pytorch-runtime:v1"),
+            os.environ.get("NINNA_RUNTIME_IMAGE", "ninna/pytorch-runtime:v3"),
         )
 
     def host_path(self, path: Path) -> str:

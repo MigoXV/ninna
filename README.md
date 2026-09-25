@@ -93,7 +93,7 @@ export NINNA_HOST_ROOT=/mnt/zkyx-asr/home/wcw/repositories/apps/ninna
 | Model | `mnist-cnn/v2` | HF PreTrainedModel，421,642 参数，配置与 Safetensors 权重 |
 | Recipe | `mnist-adam/v1` | CrossEntropy、Adam、lr 0.001、3 epochs |
 | Recipe | `mnist-sgd/v1` | CrossEntropy、SGD、lr 0.05、momentum 0.9、5 epochs |
-| Runtime | `mnist-pytorch-runtime/v2` | Python 3.10、PyTorch 2.8.0 CPU、Transformers 4.57.1、Datasets 4.4.1 |
+| Runtime | `mnist-pytorch-runtime/v3` | Python 3.10、PyTorch 2.8.0 CPU、Transformers 4.57.1、Datasets 4.4.1 |
 | Workspace | `mnist-hf/v1` | 可编辑本地代码目录，Run 使用内容寻址快照 |
 
 Runtime Dockerfile 不包含训练业务代码。Dataset、Model、Workspace、解析配置以只读方式挂载，output 可写。训练容器关闭网络且不接触 Docker socket。实际训练入口是容器中的 Python 进程。
@@ -175,7 +175,7 @@ OpenAPI：`http://localhost:8000/docs`。
 ```bash
 curl -sS http://localhost:8000/api/runs \
   -H 'Content-Type: application/json' \
-  -d '{"training_spec":{"dataset":{"name":"mnist","version":"v2"},"model":{"name":"mnist-cnn","version":"v2"},"recipe":{"name":"mnist-adam","version":"v1"}},"execution_spec":{"runtime":{"name":"mnist-pytorch-runtime","version":"v2"},"workspace":{"name":"mnist-hf","snapshot":"current"},"resources":{"device":"cpu","gpu_count":0,"cpu_threads":4,"memory_mb":4096}}}'
+  -d '{"training_spec":{"dataset":{"name":"mnist","version":"v2"},"model":{"name":"mnist-cnn","version":"v2"},"recipe":{"name":"mnist-adam","version":"v1"}},"execution_spec":{"runtime":{"name":"mnist-pytorch-runtime","version":"v3"},"workspace":{"name":"mnist-hf","snapshot":"current"},"resources":{"device":"cpu","gpu_count":0,"cpu_threads":4,"memory_mb":4096}}}'
 ```
 
 ## Hugging Face 格式与离线推理
@@ -267,3 +267,54 @@ NINNA_INTEGRATION=1 poetry run pytest tests/integration \
 单机可信用户、CPU、串行执行、SQLite + 本地目录；不包含 Kubernetes、多租户、权限系统、分布式训练、DAG 或 Agent。数据资产和模型资产存储为绝对路径，移动整个存储根目录需要显式迁移路径。输入快照由平台校验并只读挂载；宿主机管理员仍可修改文件，后续运行会检测校验变化。
 
 设计与页面状态约定位于 [docs/ui-design.md](docs/ui-design.md)。运行证据和验证结论见 [docs/validation.md](docs/validation.md)。
+
+## 可选中心存储：KohakuHub
+
+在“中心存储 → 连接设置”中填写 Hub 地址、命名空间和访问令牌，然后启用。当前实际接入地址是 `http://192.168.0.222:28080`。令牌仅保存在后端 `outputs/platform/integrations.json`（权限 0600），API 不回显，也不会传进训练容器或历史 Run。
+
+- **发布**：选择已注册的 HF Dataset / Model，将完整文件和 `ninna-asset.json` 训练元数据清单上传到 Hub；记录返回的 commit。
+- **导入**：指定 repository 和 commit / branch。平台先将 branch 解析成固定 commit，只下载清单声明的文件，逐个校验 SHA-256，再注册新的本地资产版本。
+- **继续训练**：选择导入的 Dataset 和 Model，使用 HF Runtime + Workspace 创建新 Run。容器仍然只读挂载本地下载缓存且关闭网络。
+- **保存训练成果**：在 Run 产物页晋升为新的 Model 版本，再从中心存储发布该完整 HF 模型。
+- **关闭集成**：不依赖 Hub 的本地训练继续可用。已导入资产可离线重复使用。
+
+中心存储支持标准 HF `save_pretrained` / `DatasetDict.save_to_disk` 目录。可浏览远端其他仓库；自动注册训练资产要求仓库包含 Ninna 清单，以避免猜测架构、初始化和 split。未带清单的仓库会在下载模型/数据文件前明确报错。历史 commit 和历史 Run 不会因新的发布而被覆盖。
+
+部署实例使用专门的 `ninna-platform` Hub 服务账号，只在它自己的仓库内执行集成验收。使用自己的部署时，在连接设置中配置自己的令牌和命名空间即可。SSH 凭据不写入项目配置或 Git。
+
+## 所有新训练必须使用 HF Runtime
+
+默认 Runtime 为 `mnist-pytorch-runtime/v3`。平台在实际镜像中启动探测容器，验证 `torch`、`transformers`、`datasets`、`huggingface_hub`、`safetensors` 和 Auto 类可导入，记录版本与 image ID。注册 Runtime 和创建 Training Run 都执行该检查，伪造 metadata 无法跳过它。
+
+旧 v1 Runtime 只保留历史记录，不能创建新训练。新镜像只提供 HF 生态环境；`runtimes/hf-base` 构建 HF 基础镜像 v2，`runtimes/pytorch-hf` 构建版本化的 v3。`scripts/platform.sh up` 会按顺序准备缺失镜像，不再构建独立的非 HF 训练 Runtime。旧格式资产需要重用时，也必须使用通过验证的 HF Runtime。
+
+## Aim 数据与 Ninna 自定义实验界面
+
+Aim 3.29.1 通过 Python SDK 记录真实 Run 的 TrainingSpec、ExecutionSpec、完整 Recipe 参数、资产校验值、Runtime image ID、Workspace snapshot、生命周期、训练/测试 loss、准确率、学习率和用时。数据保存于 `outputs/platform/aim/.aim`；平台维护 Aim 索引，页面通过 Ninna API 从 Aim 读回曲线，**不启动、不嵌入 Aim 自带 UI**。
+
+“实验观察”支持筛选、最多四个实验的曲线比较、指标切换、原始数值表和原 Run 跳转。取消与失败状态也会记录。Aim 同步与训练执行独立：同步异常显示在页面中，持久化日志仍可用于恢复；关闭 Aim 后可查看已有实验，重新启用会补录期间的 Run。历史 Run 内容保持封存，Aim 关联单独记录在数据库中。
+
+主要扩展 API：
+
+| 接口 | 用途 |
+| --- | --- |
+| `GET/POST /api/integrations` | 查询/配置 Hub 与 Aim，响应不含令牌 |
+| `GET /api/hub/status` | 真实连通性与当前账号 |
+| `GET /api/hub/repositories?kind=model` | 浏览模型或 dataset 仓库 |
+| `POST /api/hub/publish` | 发布 HF 资产，返回后台传输记录 |
+| `POST /api/hub/import` | 固定 revision 导入并注册新版本 |
+| `GET /api/hub/transfers` | 传输状态、commit、校验结果与失败原因 |
+| `GET /api/experiments` | Aim 实验参数、状态和摘要 |
+| `GET /api/experiments/{run_id}/metrics` | 从 Aim SDK 读取指标序列 |
+
+真实 Hub / Docker / Aim 联合验收（先启动平台并在页面配置 Hub）：
+
+```bash
+NINNA_INTEGRATION=1 NINNA_HUB_INTEGRATION=1 \
+  poetry run pytest tests/integration/test_central_storage.py -v
+pnpm --dir src/web exec playwright test tests/integrations.spec.ts
+```
+
+联合验收会在所配置命名空间的 `mnist` / `mnist-cnn` 仓库创建新的 commit，校验发布、下载、训练、产物回传和旧版本复现。所有远端操作仅针对测试配置指向的资产仓库。
+
+本轮部署、真实 Hub 往返与 Aim 的验收证据见 [中心存储与实验观察验收](docs/central-storage-validation.md)。

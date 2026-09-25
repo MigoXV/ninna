@@ -14,6 +14,9 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+RECORD_TABLES = {"runs", "certifications", "hub_transfers", "tracking"}
+
+
 class Repository:
     def __init__(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -27,6 +30,8 @@ class Repository:
                     PRIMARY KEY(kind,name,version));
                 CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, body TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS certifications (id TEXT PRIMARY KEY, body TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS hub_transfers (id TEXT PRIMARY KEY, body TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS tracking (id TEXT PRIMARY KEY, body TEXT NOT NULL);
             """)
 
     @contextmanager
@@ -79,7 +84,7 @@ class Repository:
         return json.loads(row[0])
 
     def save(self, table, value):
-        if table not in {"runs", "certifications"}:
+        if table not in RECORD_TABLES:
             raise ValueError("Unknown record type")
         with self.connection() as db:
             db.execute(
@@ -88,7 +93,7 @@ class Repository:
             )
 
     def get(self, table, key):
-        if table not in {"runs", "certifications"}:
+        if table not in RECORD_TABLES:
             raise ValueError("Unknown record type")
         with self.connection() as db:
             row = db.execute(f"SELECT body FROM {table} WHERE id=?", (key,)).fetchone()
@@ -97,7 +102,7 @@ class Repository:
         return json.loads(row[0])
 
     def list(self, table):
-        if table not in {"runs", "certifications"}:
+        if table not in RECORD_TABLES:
             raise ValueError("Unknown record type")
         with self.connection() as db:
             values = [json.loads(row[0]) for row in db.execute(f"SELECT body FROM {table}")]

@@ -8,11 +8,11 @@ if [[ -z "${NINNA_HOST_ROOT:-}" ]]; then
 fi
 case "${1:-up}" in
   up)
-    if ! docker image inspect ninna/pytorch-runtime:v1 >/dev/null 2>&1; then
-      docker build -t ninna/pytorch-runtime:v1 runtimes/pytorch
-    fi
     if ! docker image inspect ninna/pytorch-runtime:v2 >/dev/null 2>&1; then
-      docker build -t ninna/pytorch-runtime:v2 runtimes/pytorch-hf
+      docker build -t ninna/pytorch-runtime:v2 runtimes/hf-base
+    fi
+    if ! docker image inspect ninna/pytorch-runtime:v3 >/dev/null 2>&1; then
+      docker build -t ninna/pytorch-runtime:v3 runtimes/pytorch-hf
     fi
     docker build -t ninna/platform:0.1.0 .
     docker compose up -d --no-build --wait platform

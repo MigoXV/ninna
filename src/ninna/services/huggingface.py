@@ -13,13 +13,13 @@ from ninna.services.assets import manifest, manifest_hash
 
 def initialize_hf(platform):
     settings, repo = platform.settings, platform.repo
-    image = platform.docker.images.get("ninna/pytorch-runtime:v2")
+    image = platform.docker.images.get(settings.runtime_image)
     repo.register(
         "runtime",
         {
             "name": "mnist-pytorch-runtime",
-            "version": "v2",
-            "image": "ninna/pytorch-runtime:v2",
+            "version": "v3",
+            "image": settings.runtime_image,
             "image_id": image.id,
             "metadata": {
                 "python": "3.10",

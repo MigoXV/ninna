@@ -246,11 +246,10 @@ def test_hf_formats_and_inference_alignment(client, certified):
     assert all(check["evidence"]["hf_logits_exact"] for check in checks)
 
 
-def test_legacy_assets_remain_executable(client):
+def test_legacy_assets_use_hf_runtime(client):
     request = default_request(version="quick-v1")
     for kind in ("dataset", "model"):
         request["training_spec"][kind]["version"] = "v1"
-    request["execution_spec"]["runtime"]["version"] = "v1"
     request["execution_spec"]["workspace"]["name"] = "mnist"
     run = client.post("/api/runs", json=request)
     run.raise_for_status()

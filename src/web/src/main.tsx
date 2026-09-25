@@ -13,6 +13,8 @@ import {
   ArrowUpRight,
   Award,
   Box,
+  Cloud,
+  ChartNoAxesCombined,
   Boxes,
   ChevronRight,
   Database,
@@ -25,9 +27,13 @@ import {
 import { useData } from "./api";
 import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
 import { AssetsPage, CertificationPage } from "./pages";
+import { HubPage } from "./integrations";
+import { ExperimentsPage } from "./experiments";
 import "./style.css";
 const nav = [
   { label: "训练运行", path: "/runs", icon: Activity },
+  { label: "实验观察", path: "/experiments", icon: ChartNoAxesCombined },
+  { label: "中心存储", path: "/hub", icon: Cloud },
   { label: "系统验收", path: "/certification", icon: Award },
 ];
 const definitions = [
@@ -215,6 +221,8 @@ function Shell() {
             <Route path="/runs/compare" element={<ComparePage />} />
             <Route path="/runs/:id" element={<RunPage />} />
             <Route path="/assets/:kind" element={<AssetsPage />} />
+            <Route path="/hub" element={<HubPage />} />
+            <Route path="/experiments" element={<ExperimentsPage />} />
             <Route path="/certification" element={<CertificationPage />} />
             <Route
               path="*"

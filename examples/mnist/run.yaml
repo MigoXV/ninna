@@ -11,7 +11,7 @@ training_spec:
 execution_spec:
   runtime:
     name: mnist-pytorch-runtime
-    version: v2
+    version: v3
   workspace:
     name: mnist-hf
     snapshot: current

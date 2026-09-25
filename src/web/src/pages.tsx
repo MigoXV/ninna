@@ -125,7 +125,8 @@ function AssetContent({
           selected ? `${info.en} asset · ${selected.version}` : info.description
         }
         actions={
-          selected ? (
+          selected &&
+          !(kind === "runtime" && !selected.metadata.transformers) ? (
             <Link
               className="button"
               to={"/runs/new?" + kind + "=" + encodeURIComponent(selected.id)}
@@ -165,6 +166,12 @@ function AssetContent({
               </p>
             </div>
           </div>
+          {kind === "runtime" && !selected.metadata.transformers && (
+            <div className="integration-notice">
+              历史 Runtime · 不满足 HF 生态要求，无法用于新训练。请选择 HF
+              Runtime v3。
+            </div>
+          )}
           {kind === "dataset" && (
             <>
               <div className="asset-facts">

@@ -17,7 +17,7 @@ def default_request(recipe="mnist-adam", version="v1", snapshot="current"):
             "recipe": {"name": recipe, "version": version},
         },
         "execution_spec": {
-            "runtime": {"name": "mnist-pytorch-runtime", "version": "v2"},
+            "runtime": {"name": "mnist-pytorch-runtime", "version": "v3"},
             "workspace": {"name": "mnist-hf", "snapshot": snapshot},
             "resources": {"device": "cpu", "gpu_count": 0, "cpu_threads": 4, "memory_mb": 4096},
         },
@@ -79,7 +79,7 @@ class Certification:
             check(
                 "Runtime available",
                 True,
-                platform.repo.asset("runtime", {"name": "mnist-pytorch-runtime", "version": "v2"})[
+                platform.repo.asset("runtime", {"name": "mnist-pytorch-runtime", "version": "v3"})[
                     "image_id"
                 ],
             )

@@ -73,22 +73,6 @@ MNIST_FILES = {
 
 def initialize(platform):
     settings, repo = platform.settings, platform.repo
-    runtime = platform.docker.images.get(settings.runtime_image)
-    repo.register(
-        "runtime",
-        {
-            "name": "mnist-pytorch-runtime",
-            "version": "v1",
-            "image": settings.runtime_image,
-            "image_id": runtime.id,
-            "metadata": {
-                "python": "3.10",
-                "torch": "2.8.0",
-                "torchvision": "0.23.0",
-                "device": "cpu",
-            },
-        },
-    )
     dataset = settings.root / "data-bin" / "mnist" / "v1"
     raw = dataset / "MNIST" / "raw"
     raw.mkdir(parents=True, exist_ok=True)

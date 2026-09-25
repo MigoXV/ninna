@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from ninna.config import Settings
 from ninna.domain.schemas import CreateRun
+from ninna.domain.integrations import IntegrationUpdate, HubPublish, HubImport
 from ninna.services.certification import Certification
 from ninna.services.platform import Platform
 
@@ -56,6 +57,42 @@ def create_app(settings=None, serve_frontend=True):
     async def missing(request: Request, exc: KeyError):
         return JSONResponse(status_code=404, content={"detail": f"Not found: {exc}"})
 
+    @app.get("/api/integrations")
+    def integrations():
+        return {**platform.integrations.public(), "tracking": platform.tracking.status()}
+
+    @app.post("/api/integrations")
+    def configure_integrations(request: IntegrationUpdate):
+        return platform.integrations.update(request.hub, request.aim)
+
+    @app.get("/api/hub/status")
+    def hub_status():
+        return platform.hub.status()
+
+    @app.get("/api/hub/repositories")
+    def hub_repositories(kind: Literal["model", "dataset"] = "model"):
+        return platform.hub.repositories(kind)
+
+    @app.get("/api/hub/transfers")
+    def hub_transfers():
+        return platform.repo.list("hub_transfers")
+
+    @app.post("/api/hub/publish", status_code=202)
+    def hub_publish(request: HubPublish):
+        return platform.hub.submit("publish", request)
+
+    @app.post("/api/hub/import", status_code=202)
+    def hub_import(request: HubImport):
+        return platform.hub.submit("import", request)
+
+    @app.get("/api/experiments")
+    def experiments():
+        return {"tracking": platform.tracking.status(), "runs": platform.tracking.experiments()}
+
+    @app.get("/api/experiments/{run_id}/metrics")
+    def experiment_metrics(run_id: str):
+        return platform.tracking.metrics(run_id)
+
     @app.get("/api/health")
     def health():
         return platform.health()
@@ -95,6 +132,8 @@ def create_app(settings=None, serve_frontend=True):
             Path(asset["entrypoint"]).is_absolute() or ".." in Path(asset["entrypoint"]).parts
         ):
             raise ValueError("Workspace entrypoint must be a relative path")
+        if kind == "runtime":
+            platform.runtime_validator.validate(asset)
         return platform.repo.register(kind, asset)
 
     @app.post("/api/workspaces/{name}/snapshots")
