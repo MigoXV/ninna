@@ -1,0 +1,211 @@
+from __future__ import annotations
+
+import os
+from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Literal
+
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse, JSONResponse
+from pydantic import BaseModel, Field
+
+from ninna.config import Settings
+from ninna.domain.schemas import CreateRun
+from ninna.services.certification import Certification
+from ninna.services.platform import Platform
+
+
+class CertRequest(BaseModel):
+    quick: bool = False
+
+
+class PromoteRequest(BaseModel):
+    version: str = Field(pattern=r"^[a-zA-Z0-9_.-]+$")
+
+
+def create_app(settings=None, serve_frontend=True):
+    settings = settings or Settings.from_env()
+    platform = Platform(settings)
+    certifier = Certification(platform)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        platform.start()
+        # A previous certification thread cannot survive a process restart.
+        for record in platform.repo.list("certifications"):
+            if record["status"] == "RUNNING":
+                from ninna.storage.repository import now
+
+                record.update(
+                    status="FAIL",
+                    failure_reason="Platform restarted; create a new certification",
+                    finished_at=now(),
+                )
+                platform.repo.save("certifications", record)
+        yield
+        platform.close()
+
+    app = FastAPI(title="Ninna Training Platform", lifespan=lifespan)
+    app.state.platform = platform
+
+    @app.exception_handler(ValueError)
+    async def invalid(request: Request, exc: ValueError):
+        return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+    @app.exception_handler(KeyError)
+    async def missing(request: Request, exc: KeyError):
+        return JSONResponse(status_code=404, content={"detail": f"Not found: {exc}"})
+
+    @app.get("/api/health")
+    def health():
+        return platform.health()
+
+    @app.post("/api/initialize")
+    def initialize():
+        return platform.initialize()
+
+    @app.get("/api/assets/{kind}")
+    def assets(kind: Literal["dataset", "model", "recipe", "runtime", "workspace"]):
+        return platform.repo.assets(kind)
+
+    @app.post("/api/assets/{kind}", status_code=201)
+    def register(kind: Literal["dataset", "model", "recipe", "runtime", "workspace"], asset: dict):
+        from ninna.domain.schemas import Ref
+
+        Ref.model_validate({key: asset.get(key) for key in ["name", "version"]})
+        required = {
+            "dataset": ["path", "files", "checksum", "train_split", "test_split"],
+            "model": ["path", "files", "architecture", "initialization", "parameter_count"],
+            "recipe": [
+                "optimizer",
+                "loss",
+                "epochs",
+                "batch_size",
+                "gradient_accumulation",
+                "seed",
+            ],
+            "runtime": ["image_id", "image"],
+            "workspace": ["path", "entrypoint"],
+        }[kind]
+        if any(key not in asset for key in required):
+            raise ValueError("Required asset fields: " + ", ".join(required))
+        if kind in {"dataset", "model", "workspace"}:
+            platform.settings.host_path(Path(asset["path"]))
+        if kind == "workspace" and (
+            Path(asset["entrypoint"]).is_absolute() or ".." in Path(asset["entrypoint"]).parts
+        ):
+            raise ValueError("Workspace entrypoint must be a relative path")
+        return platform.repo.register(kind, asset)
+
+    @app.post("/api/workspaces/{name}/snapshots")
+    def snapshot(name: str):
+        return platform.workspace_snapshot(name)
+
+    @app.get("/api/workspaces/{name}/files")
+    def files(name: str, path: str | None = None):
+        workspace = platform.repo.asset("workspace", {"name": name, "version": "v1"})
+        from ninna.services.assets import EXCLUDED
+
+        root = Path(workspace["path"]).resolve()
+        if path is None:
+            return [
+                str(p.relative_to(root))
+                for p in sorted(root.rglob("*"))
+                if p.is_file()
+                and not any(
+                    part in EXCLUDED or part.startswith(".env.")
+                    for part in p.relative_to(root).parts
+                )
+            ]
+        resolved = (root / path).resolve()
+        if not resolved.is_relative_to(root) or any(
+            part in EXCLUDED or part.startswith(".env.") for part in Path(path).parts
+        ):
+            raise HTTPException(403, "Path not allowed")
+        if not resolved.is_file():
+            raise HTTPException(404, "File not found")
+        return {"path": path, "content": resolved.read_text(errors="replace")[:100000]}
+
+    @app.post("/api/runs", status_code=201)
+    def create_run(request: CreateRun):
+        return platform.create_run(request)
+
+    @app.get("/api/runs")
+    def runs():
+        return platform.repo.list("runs")
+
+    @app.get("/api/runs/{run_id}")
+    def run(run_id: str):
+        return platform.repo.get("runs", run_id)
+
+    @app.post("/api/runs/{run_id}/cancel")
+    def cancel(run_id: str):
+        return platform.cancel(run_id)
+
+    @app.get("/api/runs/{run_id}/logs")
+    def logs(
+        run_id: str, stream: Literal["stdout", "stderr"] = "stdout", offset: int = Query(0, ge=0)
+    ):
+        platform.repo.get("runs", run_id)
+        path = platform.output(run_id) / (stream + ".log")
+        with path.open("rb") as source:
+            source.seek(offset)
+            content = source.read(128 * 1024)
+            return {"content": content.decode(errors="replace"), "offset": source.tell()}
+
+    @app.get("/api/runs/{run_id}/metrics")
+    def metrics(run_id: str):
+        return {
+            "events": platform.metric_events(run_id),
+            "final": platform.repo.get("runs", run_id)["metrics"],
+        }
+
+    @app.get("/api/runs/{run_id}/diagnostics")
+    def diagnostic(run_id: str):
+        return platform.get_run_diagnostic_context(run_id)
+
+    @app.get("/api/runs/{run_id}/artifacts/{filename}")
+    def artifact(run_id: str, filename: str):
+        run = platform.repo.get("runs", run_id)
+        allowed = {item["name"] for item in run["artifacts"]} | {
+            "run.json",
+            "stdout.log",
+            "stderr.log",
+        }
+        if filename not in allowed or Path(filename).name != filename:
+            raise HTTPException(404, "Artifact not found")
+        path = platform.output(run_id) / filename
+        if not path.is_file():
+            raise HTTPException(404, "Artifact not found")
+        return FileResponse(path, filename=filename)
+
+    @app.post("/api/runs/{run_id}/promote", status_code=201)
+    def promote(run_id: str, request: PromoteRequest):
+        return platform.promote(run_id, request.version)
+
+    @app.get("/api/certifications")
+    def certifications():
+        return platform.repo.list("certifications")
+
+    @app.post("/api/certifications", status_code=202)
+    def certify(request: CertRequest):
+        return certifier.start(request.quick)
+
+    @app.get("/api/certifications/{key}")
+    def certification(key: str):
+        return platform.repo.get("certifications", key)
+
+    @app.api_route("/api/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)
+    def unknown_api(path: str):
+        raise HTTPException(404, "API route not found")
+
+    @app.api_route("/api", methods=["GET", "HEAD"], include_in_schema=False)
+    def api_root():
+        raise HTTPException(404, "API route not found")
+
+    if serve_frontend:
+        dist = Path(os.environ.get("NINNA_WEB_DIST", settings.root / "src" / "web" / "dist"))
+        if not dist.is_dir():
+            raise RuntimeError("Frontend missing. Run pnpm --dir src/web run build first.")
+        app.frontend("/", directory=dist, fallback="index.html")
+    return app

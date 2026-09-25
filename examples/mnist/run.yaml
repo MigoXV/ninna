@@ -1,0 +1,22 @@
+training_spec:
+  dataset:
+    name: mnist
+    version: v2
+  model:
+    name: mnist-cnn
+    version: v2
+  recipe:
+    name: mnist-adam
+    version: v1
+execution_spec:
+  runtime:
+    name: mnist-pytorch-runtime
+    version: v2
+  workspace:
+    name: mnist-hf
+    snapshot: current
+  resources:
+    device: cpu
+    gpu_count: 0
+    cpu_threads: 4
+    memory_mb: 4096

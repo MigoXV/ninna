@@ -1,0 +1,30 @@
+name: ninna
+services:
+  platform:
+    build: .
+    image: ninna/platform:0.1.0
+    restart: unless-stopped
+    ports:
+      - "${NINNA_PORT:-8000}:8000"
+    environment:
+      NINNA_ROOT: ${NINNA_ROOT:?Run scripts/platform.sh to resolve paths}
+      NINNA_HOST_ROOT: ${NINNA_HOST_ROOT:?Docker daemon host path is required}
+      NINNA_RUNTIME_IMAGE: ninna/pytorch-runtime:v1
+    volumes:
+      - type: bind
+        source: ${NINNA_HOST_ROOT}
+        target: ${NINNA_ROOT}
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+  runtime:
+    profiles: [build]
+    image: ninna/pytorch-runtime:v1
+    build: runtimes/pytorch

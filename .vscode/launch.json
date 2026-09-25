@@ -1,0 +1,1 @@
+{"version":"0.2.0","configurations":[{"name":"Ninna web","type":"debugpy","request":"launch","module":"ninna.commands.app","args":["serve"],"envFile":"${workspaceFolder}/.env","preLaunchTask":"web: build"},{"name":"Ninna CLI","type":"debugpy","request":"launch","module":"ninna.commands.app","args":[],"envFile":"${workspaceFolder}/.env"}]}

@@ -1,0 +1,19 @@
+name: mnist-sgd
+version: v1
+training_loop: supervised_classification
+loss: CrossEntropyLoss
+optimizer:
+  name: SGD
+  params:
+    lr: 0.05
+    momentum: 0.9
+scheduler: null
+epochs: 5
+batch_size: 128
+gradient_accumulation: 1
+freeze:
+  prefixes: []
+  unfreeze_epoch: null
+seed: 42
+metadata:
+  profile: full

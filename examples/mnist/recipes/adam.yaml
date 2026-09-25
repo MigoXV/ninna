@@ -1,0 +1,18 @@
+name: mnist-adam
+version: v1
+training_loop: supervised_classification
+loss: CrossEntropyLoss
+optimizer:
+  name: Adam
+  params:
+    lr: 0.001
+scheduler: null
+epochs: 3
+batch_size: 128
+gradient_accumulation: 1
+freeze:
+  prefixes: []
+  unfreeze_epoch: null
+seed: 42
+metadata:
+  profile: full

@@ -1,0 +1,9 @@
+.git
+.venv
+**/node_modules
+**/__pycache__
+outputs
+data-bin
+model-bin
+tmp-workspace
+.env

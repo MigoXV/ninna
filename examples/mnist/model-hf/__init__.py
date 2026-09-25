@@ -1,0 +1,12 @@
+from transformers import AutoConfig, AutoModel, AutoModelForImageClassification, AutoImageProcessor
+from .configuration_mnist import MnistConfig
+from .modeling_mnist import MnistForImageClassification
+from .processing_mnist import MnistImageProcessor
+
+AutoConfig.register(MnistConfig.model_type, MnistConfig)
+AutoModel.register(MnistConfig, MnistForImageClassification)
+AutoModelForImageClassification.register(MnistConfig, MnistForImageClassification)
+AutoImageProcessor.register(MnistConfig, slow_image_processor_class=MnistImageProcessor)
+MnistConfig.register_for_auto_class()
+MnistForImageClassification.register_for_auto_class("AutoModelForImageClassification")
+MnistImageProcessor.register_for_auto_class("AutoImageProcessor")
