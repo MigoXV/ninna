@@ -34,6 +34,14 @@ def serve(
 
 
 @app.command()
+def mcp(url: str = typer.Option("http://127.0.0.1:8000", envvar="NINNA_API_URL")):
+    """启动 stdio MCP，连接已运行的平台；不创建第二个训练执行器。"""
+    from ninna.agent.server import create_server
+
+    create_server(url).run(transport="stdio")
+
+
+@app.command()
 def initialize(url: str = typer.Option("http://127.0.0.1:8000", envvar="NINNA_API_URL")):
     typer.echo(json.dumps(request(url + "/api/initialize", {}), ensure_ascii=False))
 

@@ -132,6 +132,12 @@ class HubService:
         staging = self.platform.settings.state / "hub-staging" / record["id"]
         staging.parent.mkdir(exist_ok=True)
         shutil.copytree(source, staging)
+        # Repository documentation is outside the immutable asset payload when absent.
+        # Preserve an existing asset README and its checksum verbatim.
+        if not (staging / "README.md").exists():
+            from ninna.services.asset_docs import asset_card
+
+            (staging / "README.md").write_text(asset_card(request["kind"], asset))
         portable = {key: value for key, value in asset.items() if key not in {"path", "id"}}
         document = {
             "schema_version": 1,

@@ -4,6 +4,8 @@ Ninna 是一个单机 Docker 训练平台。使用 MNIST 跑通真实训练、�
 
 界面资料：[Figma · 22 个独立界面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4)、[A3 打印审阅稿](docs/design/ui-v0.2.1-review.pdf)、[UI 版本记录](docs/ui-releases.md)。
 
+Agent 接口：[MCP 接入与 Skill](docs/agent-integration.md)。平台启动后执行 `codex mcp add ninna --url http://127.0.0.1:8000/mcp/`，使用仓库内的 `$ninna` 操作训练、诊断和模型资产。
+
 ```text
 训练定义：Dataset × Model × Recipe
 执行环境：Runtime + Workspace snapshot + CPU resources

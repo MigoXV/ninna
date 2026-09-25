@@ -1,0 +1,11 @@
+interface:
+  display_name: "Ninna 训练平台"
+  short_description: "通过 MCP 创建 Docker 训练、诊断失败并管理 HF 模型资产"
+  default_prompt: "使用 $ninna 发现可用资产，创建训练并验证容器、指标和模型产物。"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ninna"
+      description: "Ninna 训练平台 MCP"
+      transport: "streamable_http"
+      url: "http://127.0.0.1:8000/mcp/"

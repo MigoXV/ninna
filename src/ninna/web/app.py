@@ -14,6 +14,7 @@ from ninna.domain.schemas import CreateRun
 from ninna.domain.integrations import IntegrationUpdate, HubPublish, HubImport
 from ninna.services.certification import Certification
 from ninna.services.platform import Platform
+from ninna.agent.server import create_server
 
 
 class CertRequest(BaseModel):
@@ -43,11 +44,25 @@ def create_app(settings=None, serve_frontend=True):
                     finished_at=now(),
                 )
                 platform.repo.save("certifications", record)
-        yield
-        platform.close()
+        try:
+            async with mcp_server.session_manager.run():
+                yield
+        finally:
+            platform.close()
 
     app = FastAPI(title="Ninna Training Platform", lifespan=lifespan)
     app.state.platform = platform
+    import httpx
+
+    mcp_server = create_server(
+        client_factory=lambda: httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://ninna",
+            timeout=120,
+        )
+    )
+    app.state.mcp = mcp_server
+    app.mount("/mcp", mcp_server.streamable_http_app())
 
     @app.exception_handler(ValueError)
     async def invalid(request: Request, exc: ValueError):
@@ -135,6 +150,15 @@ def create_app(settings=None, serve_frontend=True):
         if kind == "runtime":
             platform.runtime_validator.validate(asset)
         return platform.repo.register(kind, asset)
+
+    @app.get("/api/assets/{kind}/{name}/{version}")
+    def asset_detail(
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace"], name: str, version: str
+    ):
+        from ninna.services.asset_docs import describe_asset
+
+        asset = platform.repo.asset(kind, {"name": name, "version": version})
+        return describe_asset(kind, asset, platform.settings.root)
 
     @app.post("/api/workspaces/{name}/snapshots")
     def snapshot(name: str):

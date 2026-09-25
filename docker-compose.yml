@@ -10,6 +10,7 @@ services:
       NINNA_ROOT: ${NINNA_ROOT:?Run scripts/platform.sh to resolve paths}
       NINNA_HOST_ROOT: ${NINNA_HOST_ROOT:?Docker daemon host path is required}
       NINNA_RUNTIME_IMAGE: ninna/pytorch-runtime:v3
+      NINNA_MCP_ALLOWED_HOSTS: ${NINNA_MCP_ALLOWED_HOSTS:-}
     volumes:
       - type: bind
         source: ${NINNA_HOST_ROOT}
