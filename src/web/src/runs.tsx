@@ -50,6 +50,7 @@ export function RunsPage() {
   const { data: runs, error, loading, refresh } = useData<Run[]>("/runs", 2500);
   const [search, setSearch] = useState(""),
     [filter, setFilter] = useState("ALL"),
+    [page, setPage] = useState(1),
     [selected, setSelected] = useState<string[]>([]),
     [busy, setBusy] = useState(false),
     [initError, setInitError] = useState("");
@@ -72,7 +73,10 @@ export function RunsPage() {
   const rows =
     runs?.filter(
       (r) =>
-        (filter === "ALL" || r.status === filter) &&
+        (filter === "ALL" ||
+          (filter === "ACTIVE"
+            ? !terminal.includes(r.status)
+            : r.status === filter)) &&
         (
           r.id +
           " " +
@@ -83,6 +87,19 @@ export function RunsPage() {
           .toLowerCase()
           .includes(search.toLowerCase()),
     ) || [];
+  const pageSize = 10;
+  const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleRows = rows.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+  function resetFilters() {
+    setSearch("");
+    setFilter("ALL");
+    setPage(1);
+    searchInput.current?.focus();
+  }
   const active = runs?.filter((r) => !terminal.includes(r.status)).length || 0;
   const completed = runs?.filter((r) => r.status === "SUCCESS") || [];
   const best = completed.length
@@ -174,14 +191,19 @@ export function RunsPage() {
         <div className="tabs compact" aria-label="运行筛选">
           {[
             ["ALL", "全部运行"],
-            ["RUNNING", "训练中"],
+            ["ACTIVE", "进行中"],
             ["SUCCESS", "已完成"],
             ["FAILED", "失败"],
+            ["CANCELLED", "已取消"],
           ].map(([value, label]) => (
             <button
               key={value}
               className={filter === value ? "selected" : ""}
-              onClick={() => setFilter(value)}
+              aria-pressed={filter === value}
+              onClick={() => {
+                setFilter(value);
+                setPage(1);
+              }}
             >
               {label}
               {value === "ALL" && (
@@ -191,6 +213,30 @@ export function RunsPage() {
           ))}
         </div>
         <div className="toolbar-right">
+          <label className="search-field">
+            <Search size={16} />
+            <input
+              ref={searchInput}
+              aria-label="搜索训练运行"
+              placeholder="搜索运行、模型或 Recipe"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+            <kbd>/</kbd>
+          </label>
+        </div>
+      </div>
+      {selected.length > 0 && (
+        <div className="selection-bar" aria-label="比较选择">
+          <span role="status">
+            已选择 {selected.length} / 2 个 Run，可跨页选择
+          </span>
+          <button className="text-button" onClick={() => setSelected([])}>
+            清空选择
+          </button>
           {selected.length === 2 && (
             <Link
               className="button small"
@@ -200,19 +246,8 @@ export function RunsPage() {
               比较 2 个 Run
             </Link>
           )}
-          <label className="search-field">
-            <Search size={16} />
-            <input
-              ref={searchInput}
-              aria-label="搜索训练运行"
-              placeholder="搜索运行、模型或 Recipe"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <kbd>/</kbd>
-          </label>
         </div>
-      </div>
+      )}
       {loading && !runs ? (
         <Loading />
       ) : rows.length ? (
@@ -235,8 +270,13 @@ export function RunsPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr key={r.id}>
+              {visibleRows.map((r) => (
+                <tr
+                  key={r.id}
+                  className={
+                    selected.includes(r.id) ? "row-selected" : undefined
+                  }
+                >
                   <td>
                     <input
                       type="checkbox"
@@ -308,15 +348,45 @@ export function RunsPage() {
               : "选择数据集、模型和 Recipe，让每一个结果都能被验证。"
           }
           action={
-            <Link to="/runs/new" className="text-link">
-              创建训练 <ArrowRight size={15} />
-            </Link>
+            search || filter !== "ALL" ? (
+              <button className="button" onClick={resetFilters}>
+                清空筛选
+              </button>
+            ) : (
+              <Link to="/runs/new" className="text-link">
+                创建训练 <ArrowRight size={15} />
+              </Link>
+            )
           }
         />
       )}
       <div className="list-footnote">
-        <span>{rows.length} 条运行记录</span>
-        <span>选择两条记录，比较训练定义与结果</span>
+        <span role="status">
+          {rows.length} 条运行记录
+          {rows.length > 0 &&
+            ` · 第 ${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, rows.length)} 条`}
+        </span>
+        <nav className="pagination" aria-label="运行列表分页">
+          <button
+            className="icon-button"
+            aria-label="上一页"
+            disabled={currentPage === 1}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <span>
+            {currentPage} / {pageCount}
+          </span>
+          <button
+            className="icon-button"
+            aria-label="下一页"
+            disabled={currentPage === pageCount}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            <ArrowRight size={16} />
+          </button>
+        </nav>
       </div>
       <div className="definition-note">
         <span className="note-number">01 —</span>
@@ -464,7 +534,7 @@ export function CreatePage() {
     description: string,
   ) {
     return (
-      <div className="asset-field">
+      <div className="asset-field" data-asset-kind={kind}>
         <label htmlFor={kind}>
           {label}
           <span>{kind[0].toUpperCase() + kind.slice(1)}</span>
@@ -593,7 +663,7 @@ export function CreatePage() {
             <h2>准备成为一个 Run</h2>
             <div className="composition">
               {(["dataset", "model", "recipe"] as const).map((kind, i) => (
-                <div key={kind}>
+                <div key={kind} data-asset-kind={kind}>
                   {i > 0 && <span className="composition-times">×</span>}
                   <span className="composition-label">{kind}</span>
                   <strong>{chosen(kind)?.name || "尚未选择"}</strong>

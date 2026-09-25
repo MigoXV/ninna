@@ -286,11 +286,11 @@ export function ExperimentsPage() {
                     margin={{ top: 12, right: 20, bottom: 20, left: 0 }}
                     accessibilityLayer
                   >
-                    <CartesianGrid stroke="#e9e1d2" vertical={false} />
+                    <CartesianGrid stroke="var(--line)" vertical={false} />
                     <XAxis
                       dataKey="step"
                       allowDecimals={false}
-                      tick={{ fontSize: 12, fill: "#6c6557" }}
+                      tick={{ fontSize: 12, fill: "var(--muted)" }}
                       label={{
                         value: "epoch",
                         position: "insideBottom",
@@ -298,7 +298,7 @@ export function ExperimentsPage() {
                       }}
                     />
                     <YAxis
-                      tick={{ fontSize: 12, fill: "#6c6557" }}
+                      tick={{ fontSize: 12, fill: "var(--muted)" }}
                       domain={
                         metric === "test_accuracy" ? [0, 1] : ["auto", "auto"]
                       }
@@ -306,8 +306,8 @@ export function ExperimentsPage() {
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "#fffdf8",
-                        border: "1px solid #ded4bf",
+                        background: "var(--elevated)",
+                        border: "1px solid var(--line)",
                         borderRadius: 6,
                         fontSize: 12,
                       }}

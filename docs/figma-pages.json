@@ -1,0 +1,183 @@
+{
+  "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
+  "version": "ui-v0.2.1",
+  "paper": "A3 landscape",
+  "screens": [
+    {
+      "name": "01 · 训练运行",
+      "page": "44:2572",
+      "frame": "55:364",
+      "width": 1440,
+      "height": 1628,
+      "source": "runs"
+    },
+    {
+      "name": "02 · 创建训练",
+      "page": "44:2573",
+      "frame": "55:1501",
+      "width": 1440,
+      "height": 1372,
+      "source": "create"
+    },
+    {
+      "name": "03 · Run · 训练详情",
+      "page": "44:2574",
+      "frame": "55:2028",
+      "width": 1440,
+      "height": 1356,
+      "source": "run-success"
+    },
+    {
+      "name": "04 · Run · 产物",
+      "page": "44:2575",
+      "frame": "55:2648",
+      "width": 1440,
+      "height": 1585,
+      "source": "run-artifacts"
+    },
+    {
+      "name": "05 · Run · 执行与诊断",
+      "page": "44:2576",
+      "frame": "55:3339",
+      "width": 1440,
+      "height": 1981,
+      "source": "run-diagnostics"
+    },
+    {
+      "name": "06 · Run · 失败",
+      "page": "44:2577",
+      "frame": "55:3816",
+      "width": 1440,
+      "height": 1456,
+      "source": "run-failure"
+    },
+    {
+      "name": "07 · Run · 比较",
+      "page": "44:2578",
+      "frame": "55:4344",
+      "width": 1440,
+      "height": 1341,
+      "source": "compare"
+    },
+    {
+      "name": "08 · Dataset · 列表",
+      "page": "44:2579",
+      "frame": "55:4889",
+      "width": 1440,
+      "height": 1000,
+      "source": "dataset-list"
+    },
+    {
+      "name": "09 · Dataset · 详情",
+      "page": "44:2580",
+      "frame": "55:5309",
+      "width": 1440,
+      "height": 1194,
+      "source": "dataset"
+    },
+    {
+      "name": "10 · Model · 列表",
+      "page": "44:2581",
+      "frame": "55:5675",
+      "width": 1440,
+      "height": 2546,
+      "source": "model-list"
+    },
+    {
+      "name": "11 · Model · 详情",
+      "page": "44:2582",
+      "frame": "55:6780",
+      "width": 1440,
+      "height": 1337,
+      "source": "model"
+    },
+    {
+      "name": "12 · Recipe · 列表",
+      "page": "44:2583",
+      "frame": "55:7197",
+      "width": 1440,
+      "height": 1286,
+      "source": "recipe-list"
+    },
+    {
+      "name": "13 · Recipe · 详情",
+      "page": "44:2584",
+      "frame": "56:322",
+      "width": 1440,
+      "height": 1331,
+      "source": "recipe"
+    },
+    {
+      "name": "14 · Runtime · 列表",
+      "page": "44:2585",
+      "frame": "56:685",
+      "width": 1440,
+      "height": 1000,
+      "source": "runtime-list"
+    },
+    {
+      "name": "15 · Runtime · 详情",
+      "page": "44:2586",
+      "frame": "56:1043",
+      "width": 1440,
+      "height": 1000,
+      "source": "runtime"
+    },
+    {
+      "name": "16 · Workspace · 列表",
+      "page": "44:2587",
+      "frame": "56:1392",
+      "width": 1440,
+      "height": 2255,
+      "source": "workspace-list"
+    },
+    {
+      "name": "17 · Workspace · 详情",
+      "page": "44:2588",
+      "frame": "57:322",
+      "width": 1440,
+      "height": 1264,
+      "source": "workspace"
+    },
+    {
+      "name": "18 · 中心存储",
+      "page": "44:2589",
+      "frame": "57:734",
+      "width": 1440,
+      "height": 4621,
+      "source": "hub"
+    },
+    {
+      "name": "19 · 实验观察",
+      "page": "44:2590",
+      "frame": "57:4438",
+      "width": 1440,
+      "height": 1214,
+      "source": "experiments"
+    },
+    {
+      "name": "20 · 系统验收",
+      "page": "44:2591",
+      "frame": "57:6275",
+      "width": 1440,
+      "height": 2564,
+      "source": "certification"
+    },
+    {
+      "name": "21 · 移动端 · 训练运行",
+      "page": "44:2592",
+      "frame": "57:7746",
+      "width": 375,
+      "height": 1637,
+      "source": "mobile-runs"
+    },
+    {
+      "name": "22 · 桌面 · 收起导航",
+      "page": "44:2593",
+      "frame": "57:8363",
+      "width": 1440,
+      "height": 1628,
+      "source": "collapsed-runs"
+    }
+  ]
+}

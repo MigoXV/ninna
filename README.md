@@ -2,6 +2,8 @@
 
 Ninna 是一个单机 Docker 训练平台。使用 MNIST 跑通真实训练、模型产物、失败诊断和系统验收。前端采用接近白色的极淡金色 MANAS 工作空间。
 
+界面资料：[Figma · 22 个独立界面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4)、[A3 打印审阅稿](docs/design/ui-v0.2.1-review.pdf)、[UI 版本记录](docs/ui-releases.md)。
+
 ```text
 训练定义：Dataset × Model × Recipe
 执行环境：Runtime + Workspace snapshot + CPU resources

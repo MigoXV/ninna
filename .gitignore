@@ -13,6 +13,7 @@ wandb/
 # core.*
 vad.ini
 *.pdf
+!docs/design/*-review.pdf
 ./nohup.out
 # Byte-compiled / optimized / DLL files
 __pycache__/

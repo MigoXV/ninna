@@ -243,7 +243,7 @@ export function LossChart({
               margin={{ top: 15, right: 15, bottom: 5, left: -24 }}
             >
               <CartesianGrid
-                stroke="#e9e4d8"
+                stroke="var(--line)"
                 vertical={false}
                 strokeDasharray="3 5"
               />
@@ -251,7 +251,7 @@ export function LossChart({
                 dataKey="epoch"
                 tickLine={false}
                 axisLine={false}
-                tick={{ fontSize: 12, fill: "#716b5e" }}
+                tick={{ fontSize: 12, fill: "var(--muted)" }}
                 label={{
                   value: "Epoch",
                   position: "insideBottomRight",
@@ -262,12 +262,12 @@ export function LossChart({
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tick={{ fontSize: 12, fill: "#716b5e" }}
+                tick={{ fontSize: 12, fill: "var(--muted)" }}
               />
               <Tooltip
                 contentStyle={{
-                  background: "#fffefa",
-                  border: "1px solid #d9d2c2",
+                  background: "var(--elevated)",
+                  border: "1px solid var(--line)",
                   borderRadius: 6,
                   fontSize: 12,
                 }}

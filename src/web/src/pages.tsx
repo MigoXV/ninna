@@ -142,7 +142,7 @@ function AssetContent({
       {loading ? (
         <Loading />
       ) : selected ? (
-        <div className="asset-detail">
+        <div className="asset-detail" data-asset-kind={kind}>
           <div className="asset-overview">
             <div className="asset-large-icon">
               <Icon size={30} strokeWidth={1.3} />
@@ -394,7 +394,7 @@ function AssetContent({
             </label>
           </div>
           {rows.length ? (
-            <div className="asset-catalog">
+            <div className="asset-catalog" data-asset-kind={kind}>
               {rows.map((a) => (
                 <button
                   className="asset-catalog-row"

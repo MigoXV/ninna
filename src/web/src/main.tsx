@@ -21,6 +21,8 @@ import {
   FolderCode,
   Github,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   SlidersHorizontal,
   X,
 } from "lucide-react";
@@ -52,6 +54,14 @@ const environments = [
 ];
 function Shell() {
   const [open, setOpen] = useState(false);
+  const [tooltipsDismissed, setTooltipsDismissed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("ninna.sidebar.collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
   const location = useLocation();
   const menu = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLElement>(null);
@@ -63,6 +73,28 @@ function Shell() {
     setOpen(false);
   }, [location.pathname]);
   useEffect(() => {
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTooltipsDismissed(true);
+    };
+    document.addEventListener("keydown", dismiss);
+    return () => document.removeEventListener("keydown", dismiss);
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("ninna.sidebar.collapsed", String(collapsed));
+    } catch {
+      // Navigation still works when browser storage is unavailable.
+    }
+  }, [collapsed]);
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 641px)");
+    const closeDrawer = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeDrawer);
+    return () => desktop.removeEventListener("change", closeDrawer);
+  }, []);
+  useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement;
     sidebar.current?.querySelector<HTMLElement>("a")?.focus();
@@ -72,8 +104,9 @@ function Shell() {
         menu.current?.focus();
       }
       if (e.key === "Tab") {
-        const nodes =
-          sidebar.current?.querySelectorAll<HTMLElement>("a,button");
+        const nodes = Array.from(
+          sidebar.current?.querySelectorAll<HTMLElement>("a,button") || [],
+        ).filter((node) => node.getClientRects().length > 0);
         if (!nodes?.length) return;
         const first = nodes[0],
           last = nodes[nodes.length - 1];
@@ -93,7 +126,13 @@ function Shell() {
     };
   }, [open]);
   return (
-    <div className="app">
+    <div
+      className={
+        "app" +
+        (collapsed ? " sidebar-collapsed" : "") +
+        (tooltipsDismissed ? " tooltips-dismissed" : "")
+      }
+    >
       <a href="#main" className="skip-link">
         跳到主要内容
       </a>
@@ -115,14 +154,33 @@ function Shell() {
       {open && <div className="nav-backdrop" onClick={() => setOpen(false)} />}
       <aside
         ref={sidebar}
+        id="primary-navigation"
         className={"sidebar " + (open ? "open" : "")}
         aria-label="主导航"
       >
         <div className="brand-row">
-          <Link className="brand" to="/runs">
-            ninna<span className="brand-period">.</span>
+          <Link className="brand" to="/runs" aria-label="Ninna 首页">
+            <span className="brand-full">
+              ninna<span className="brand-period">.</span>
+            </span>
+            <span className="brand-short" aria-hidden="true">
+              n.
+            </span>
           </Link>
-          <span className="edition">LAB / 01</span>
+          <button
+            className="icon-button sidebar-collapse"
+            aria-label={collapsed ? "展开侧边栏" : "收起侧边栏"}
+            aria-expanded={!collapsed}
+            aria-controls="primary-navigation"
+            title={collapsed ? "展开侧边栏" : "收起侧边栏"}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            {collapsed ? (
+              <PanelLeftOpen size={18} />
+            ) : (
+              <PanelLeftClose size={18} />
+            )}
+          </button>
           <button
             className="icon-button close-nav"
             aria-label="关闭导航"
@@ -145,13 +203,18 @@ function Shell() {
             <NavLink
               key={n.path}
               to={n.path}
+              aria-label={n.label}
+              onPointerEnter={() => setTooltipsDismissed(false)}
+              onFocus={() => setTooltipsDismissed(false)}
               className={({ isActive }) =>
                 "nav-item " + (isActive ? "active" : "")
               }
             >
               <n.icon size={17} />
-              <span>{n.label}</span>
-              {n.path === "/runs" && <span className="nav-dot" />}
+              <span className="nav-text">{n.label}</span>
+              <span className="nav-tooltip" aria-hidden="true">
+                {n.label}
+              </span>
             </NavLink>
           ))}
           {[
@@ -164,26 +227,41 @@ function Shell() {
                 <NavLink
                   key={n.kind}
                   to={"/assets/" + n.kind}
+                  aria-label={n.label}
+                  onPointerEnter={() => setTooltipsDismissed(false)}
+                  onFocus={() => setTooltipsDismissed(false)}
                   className={({ isActive }) =>
                     "nav-item " + (isActive ? "active" : "")
                   }
                 >
                   <n.icon size={17} />
-                  <span>{n.label}</span>
+                  <span className="nav-text">{n.label}</span>
+                  <span className="nav-tooltip" aria-hidden="true">
+                    {n.label}
+                  </span>
                 </NavLink>
               ))}
             </div>
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="daemon-health">
+          <div
+            className="daemon-health"
+            title={
+              health.error
+                ? "平台连接中断"
+                : health.data?.docker === "available"
+                  ? "Docker 已连接 · CPU"
+                  : "检查 Docker 连接"
+            }
+          >
             <span
               className={
                 "health-dot " +
                 (health.data?.docker === "available" ? "good" : "")
               }
             />
-            <span>
+            <span className="health-label">
               {health.error
                 ? "平台连接中断"
                 : health.data?.docker === "available"
@@ -196,9 +274,11 @@ function Shell() {
             href="https://github.com/MigoXV/ninna"
             target="_blank"
             rel="noreferrer"
+            aria-label="Ninna 项目仓库"
+            title="Ninna 项目仓库"
           >
             <Github size={14} />
-            Ninna / v0.1
+            <span>Ninna / v0.1</span>
             <ArrowUpRight size={13} />
           </a>
         </div>
