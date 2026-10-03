@@ -14,7 +14,7 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-RECORD_TABLES = {"runs", "hub_transfers", "tracking", "projects"}
+RECORD_TABLES = {"runs", "hub_transfers", "tracking", "projects", "image_pulls"}
 
 
 class Repository:
@@ -32,6 +32,7 @@ class Repository:
                 CREATE TABLE IF NOT EXISTS run_projects (run_id TEXT PRIMARY KEY, project_id TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, body TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS hub_transfers (id TEXT PRIMARY KEY, body TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS image_pulls (id TEXT PRIMARY KEY, body TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS tracking (id TEXT PRIMARY KEY, body TEXT NOT NULL);
             """)
 
@@ -168,3 +169,22 @@ class Repository:
             run.update(changes)
             self.save("runs", run)
             return run
+
+    def complete_image_pull(self, asset, job):
+        with self.connection() as db:
+            previous = db.execute(
+                "SELECT body FROM assets WHERE kind='image' AND name=? AND version=?",
+                (asset["name"], asset["version"]),
+            ).fetchone()
+            if previous:
+                old = json.loads(previous[0])
+                if old.get("pull_id") != job["id"] or old["image_id"] != asset["image_id"]:
+                    raise ValueError("Image asset version conflict")
+            else:
+                db.execute(
+                    "INSERT INTO assets VALUES (?,?,?,?)",
+                    ("image", asset["name"], asset["version"], json.dumps(asset, sort_keys=True)),
+                )
+            db.execute(
+                "INSERT OR REPLACE INTO image_pulls VALUES (?,?)", (job["id"], json.dumps(job))
+            )

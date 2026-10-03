@@ -131,7 +131,8 @@ class AimTracking:
                 tracked["provenance"] = {
                     "dataset_checksum": assets.get("dataset", {}).get("checksum"),
                     "model_checksum": assets.get("model", {}).get("checksum"),
-                    "runtime_image_id": assets.get("runtime", {}).get("image_id"),
+                    "runtime_image_id": assets.get("image", {}).get("image_id")
+                    or assets.get("runtime", {}).get("image_id"),
                     "workspace_snapshot": assets.get("workspace", {}).get("snapshot"),
                     "git_commit": assets.get("workspace", {}).get("git_commit"),
                 }

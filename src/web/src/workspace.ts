@@ -30,7 +30,9 @@ export function useRegionScroll(key: string, ready = true) {
     const save = () => positions.set(key, node.scrollTop);
     node.addEventListener("scroll", save, { passive: true });
     return () => {
-      save();
+      // React has already replaced this region's contents during a tab change.
+      // Reading scrollTop here would save the new content's clamped position
+      // under the previous tab. Scroll events retain the last valid position.
       node.removeEventListener("scroll", save);
     };
   }, [key, ready]);

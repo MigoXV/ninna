@@ -426,7 +426,10 @@ export function CreatePage() {
             kind,
             kind === "runtime"
               ? assets.filter(
-                  (a) => a.metadata.transformers && a.metadata.datasets,
+                  (a) =>
+                    a.image_ref &&
+                    a.metadata.transformers &&
+                    a.metadata.datasets,
                 )
               : assets,
           ] as const;
@@ -451,7 +454,7 @@ export function CreatePage() {
               (a) =>
                 a.version ===
                   (kind === "runtime"
-                    ? "v3"
+                    ? "v4"
                     : ["dataset", "model"].includes(kind)
                       ? "v2"
                       : "v1") && a.name === preferred[kind],
@@ -560,6 +563,24 @@ export function CreatePage() {
           <ChevronDown size={15} />
         </div>
         <p>{description}</p>
+        {kind === "runtime" &&
+          all.runtime?.find((a) => a.id === selection.runtime)?.image_ref &&
+          (() => {
+            const image = all.runtime.find(
+              (a) => a.id === selection.runtime,
+            )!.image_ref;
+            return (
+              <p className="break">
+                镜像资产 ·{" "}
+                <Link
+                  className="text-link"
+                  to={`/assets/image?name=${encodeURIComponent(image.name)}&version=${encodeURIComponent(image.version)}`}
+                >
+                  {image.name} / {image.version}
+                </Link>
+              </p>
+            );
+          })()}
       </div>
     );
   }
@@ -1204,8 +1225,23 @@ export function RunPage() {
               <dl className="detail-list">
                 <dt>Container ID</dt>
                 <dd className="mono break">{run.container_id || "尚未创建"}</dd>
+                {run.assets.image && (
+                  <>
+                    <dt>镜像资产</dt>
+                    <dd className="mono break">
+                      <Link
+                        className="text-link"
+                        to={`/assets/image?name=${encodeURIComponent(run.assets.image.name)}&version=${encodeURIComponent(run.assets.image.version)}`}
+                      >
+                        {run.assets.image.name} / {run.assets.image.version}
+                      </Link>
+                    </dd>
+                  </>
+                )}
                 <dt>Runtime image ID</dt>
-                <dd className="mono break">{run.assets.runtime.image_id}</dd>
+                <dd className="mono break">
+                  {run.assets.image?.image_id || run.assets.runtime.image_id}
+                </dd>
                 <dt>退出码</dt>
                 <dd>{run.exit_code ?? "—"}</dd>
                 <dt>开始时间</dt>

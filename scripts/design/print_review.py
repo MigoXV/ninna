@@ -13,13 +13,25 @@ from PIL import Image, ImageDraw, ImageFont
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", type=Path, default=Path("outputs/ui-evidence/figma-print"))
+    parser.add_argument("--theme", choices=["vallum", "abyssus"], default="vallum")
     parser.add_argument("--manifest", type=Path, default=Path("docs/figma-pages.json"))
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text())
     version = manifest["version"]
-    args.output = args.output or Path(f"docs/design/{version}-review.pdf")
+    theme_label = "白垣 · VALLUM" if args.theme == "vallum" else "苍渊 · ABYSSUS"
+    tokens = json.loads(
+        Path(manifest.get("tokenSource", "src/web/src/tokens.dtcg.json")).read_text()
+    )
+    colors = tokens["semantic"][args.theme]
+    ink = colors["textPrimary"]["$value"]
+    muted = colors["textSecondary"]["$value"]
+    canvas = colors["bgPrimary"]["$value"]
+    # 页面采用当前主题，打印边注统一使用白垣文字以便阅读。
+    paper_ink = tokens["semantic"]["vallum"]["textPrimary"]["$value"]
+    paper_muted = tokens["semantic"]["vallum"]["textSecondary"]["$value"]
+    args.output = args.output or Path(f"docs/design/{version}-{args.theme}-review.pdf")
     width, height, margin = 3307, 2339, 100  # A3 landscape, 200 dpi.
     normal = ImageFont.truetype(args.font, 34)
     small = ImageFont.truetype(args.font, 26)
@@ -41,7 +53,10 @@ def main() -> None:
                 band = source.crop((0, band_start, source.width, end))
                 band = band.convert("L").resize((400, band.height))
                 scores = [
-                    sum(v < 225 for v in band.crop((0, y, 400, y + 1)).tobytes())
+                    sum(
+                        (v > 55 if args.theme == "abyssus" else v < 225)
+                        for v in band.crop((0, y, 400, y + 1)).tobytes()
+                    )
                     for y in range(band.height)
                 ]
                 # A single pale scanline can be inside a glyph. Require a blank band.
@@ -62,47 +77,49 @@ def main() -> None:
             sheet = Image.new("RGB", (width, height), "white")
             draw = ImageDraw.Draw(sheet)
             suffix = f" · 续页 {part}" if part > 1 else ""
-            draw.text((margin, 45), screen["name"] + suffix, font=normal, fill="#282b29")
+            draw.text((margin, 45), screen["name"] + suffix, font=normal, fill=paper_ink)
             sheet.paste(crop, ((width - target_width) // 2, 130))
             draw.text(
                 (margin, height - 65),
-                f"Ninna · {version} · Figma 可编辑源稿 · {i:02d} / 22",
+                f"Ninna · {version} · {theme_label} · Figma 可编辑源稿 · {i:02d} / {len(manifest['screens'])}",
                 font=small,
-                fill="#686b65",
+                fill=paper_muted,
             )
-            draw.text((width - 240, height - 65), str(len(pages) + 2), font=small, fill="#686b65")
+            draw.text((width - 240, height - 65), str(len(pages) + 2), font=small, fill=paper_muted)
             pages.append(sheet)
             start, part = end, part + 1
         index.append((screen["name"], first_page, len(pages) + 1))
-    cover = Image.new("RGB", (width, height), "#fffefb")
+    cover = Image.new("RGB", (width, height), canvas)
     draw = ImageDraw.Draw(cover)
-    draw.text((margin, 100), "Ninna / 界面审阅稿", font=title_font, fill="#282b29")
+    draw.text((margin, 100), f"Ninna / {theme_label} / 界面审阅稿", font=title_font, fill=ink)
     draw.text(
         (margin, 215),
         f"{version} · A3 横向 · 一个界面对应一个 Figma Page",
         font=normal,
-        fill="#686b65",
+        fill=muted,
     )
     draw.text(
         (margin, 280),
-        "保留全部界面内容；长列表、表单和验收报告以续页排版。数据为真实平台快照。",
+        "保留采集视口内容；长画板以续页排版。数据为真实平台快照。",
         font=normal,
-        fill="#686b65",
+        fill=muted,
     )
+    rows = math.ceil(len(index) / 2)
+    row_height = min(118, (height - 720) // rows)
     for i, (name, first, last) in enumerate(index):
-        x, y = margin + (i // 11) * 1570, 470 + (i % 11) * 118
-        draw.text((x, y), name, font=normal, fill="#282b29")
+        x, y = margin + (i // rows) * 1570, 470 + (i % rows) * row_height
+        draw.text((x, y), name, font=normal, fill=ink)
         draw.text(
             (x + 1120, y),
             str(first) if first == last else f"{first}–{last}",
             font=normal,
-            fill="#686b65",
+            fill=muted,
         )
     draw.text(
         (margin, height - 180),
         "设计文件：figma.com/design/ab3EG1a9aEHNyNZRJCzmD4",
         font=normal,
-        fill="#686b65",
+        fill=muted,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     cover.save(args.output, "PDF", save_all=True, append_images=pages, resolution=200, quality=95)

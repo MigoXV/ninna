@@ -1,0 +1,12 @@
+# Optional deployment-side Docker auth. Path is on the Docker daemon host.
+services:
+  platform:
+    environment:
+      DOCKER_CONFIG: /run/ninna/docker-config
+    volumes:
+      - type: bind
+        source: ${NINNA_DOCKER_CONFIG:?Set Docker config directory on daemon host}
+        target: /run/ninna/docker-config
+        read_only: true
+        bind:
+          create_host_path: false

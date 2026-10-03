@@ -12,34 +12,6 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --canvas: #fffefb;
-  --surface: #fcfcfa;
-  --elevated: #ffffff;
-  --hover: #f7f7f4;
-  --selection: #f1f2ee;
-  --text: #282b29;
-  --muted: #686b65;
-  --nav-muted: #64696d;
-  --nav-selection: #f3f3f1;
-  --line: #e7e8e2;
-  --control-line: #8d9387;
-  --button-line: #d7dad2;
-  --accent: #776a46;
-  --accent-soft: #f6f5f0;
-  --action: #343a34;
-  --action-hover: #464e44;
-  --green: #397352;
-  --red: #a84335;
-  --dataset: #36766e;
-  --dataset-soft: #eff6f3;
-  --model: #4d6d96;
-  --model-soft: #f0f4fa;
-  --recipe: #806b40;
-  --recipe-soft: #f8f5ec;
-  --runtime: #77638c;
-  --runtime-soft: #f5f2f8;
-  --workspace: #626b56;
-  --workspace-soft: #f3f5ef;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 14px;
   line-height: 1.6;
@@ -160,7 +132,7 @@ kbd {
   top: -100px;
   left: 240px;
   background: var(--action);
-  color: #fff;
+  color: var(--button-primary-text);
   padding: 12px;
   z-index: 100;
 }
@@ -298,7 +270,7 @@ kbd {
   flex-shrink: 0;
 }
 .health-dot.good {
-  background: #668265;
+  background: var(--av-success);
 }
 .sidebar-bottom > a {
   display: flex;
@@ -396,7 +368,7 @@ main {
 }
 .button.primary {
   background: var(--action);
-  color: var(--elevated);
+  color: var(--button-primary-text);
   border-color: var(--action);
 }
 .button.primary:hover {
@@ -416,9 +388,9 @@ main {
   width: 100%;
 }
 .button.danger {
-  background: #a84335;
-  color: white;
-  border-color: #a84335;
+  background: var(--text-primary);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
 }
 .button.icon-only {
   padding: 0;
@@ -701,11 +673,11 @@ input[type="checkbox"] {
 }
 .status-success,
 .status-pass {
-  color: #397352;
+  color: var(--text-primary);
 }
 .status-failed,
 .status-fail {
-  color: #a84335;
+  color: var(--text-primary);
 }
 .status-running,
 .status-preparing {
@@ -790,11 +762,11 @@ input[type="checkbox"] {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: #fbefe8;
-  border-left: 2px solid #b16250;
+  background: var(--surface-subtle);
+  border-left: 2px solid var(--av-danger);
   padding: 13px 16px;
   margin: 15px 0;
-  color: #913e30;
+  color: var(--text-primary);
   font-size: 12px;
   overflow-wrap: anywhere;
 }
@@ -1121,7 +1093,7 @@ input[readonly] {
   background: var(--accent);
 }
 .chart-legend span:nth-child(2) i {
-  background: #557d83;
+  background: var(--chart-secondary);
 }
 .chart-placeholder {
   height: 260px;
@@ -1193,7 +1165,7 @@ input[readonly] {
 .segmented button.selected {
   background: var(--canvas);
   color: var(--text);
-  box-shadow: 0 1px 2px #282b290a;
+  box-shadow: 0 1px 2px transparent;
 }
 .log-search {
   display: flex;
@@ -1239,7 +1211,7 @@ input[readonly] {
   padding: 0 20px;
 }
 .log-output.stderr .log-line {
-  color: #a14b3d;
+  color: var(--text-primary);
 }
 .log-bottom {
   display: flex;
@@ -1261,9 +1233,9 @@ input[readonly] {
   align-items: flex-start;
   gap: 15px;
   padding: 20px;
-  background: #fbf0e8;
+  background: var(--surface-subtle);
   margin: 10px 0 22px;
-  border-left: 2px solid #ad6c50;
+  border-left: 2px solid var(--av-danger);
 }
 .failure-banner strong {
   font-size: 13px;
@@ -1399,11 +1371,11 @@ dialog {
   border-radius: 8px;
   width: min(460px, calc(100% - 32px));
   padding: 25px;
-  box-shadow: 0 15px 80px #282b2918;
+  box-shadow: 0 15px 80px transparent;
   color: var(--text);
 }
 dialog::backdrop {
-  background: #282b2933;
+  background: var(--scrim);
   backdrop-filter: blur(2px);
 }
 .dialog-heading {
@@ -1635,7 +1607,7 @@ dialog > p {
   gap: 10px;
   align-items: center;
   font-size: 12px;
-  color: #397352;
+  color: var(--text-primary);
   padding: 13px 0;
 }
 .cert-intro {
@@ -1724,10 +1696,10 @@ dialog > p {
 }
 .check-icon {
   display: flex;
-  color: #397352;
+  color: var(--text-primary);
 }
 .check-icon.fail {
-  color: #a84335;
+  color: var(--text-primary);
 }
 .check-item summary > svg:last-child {
   margin-left: auto;
@@ -1741,7 +1713,7 @@ dialog > p {
   margin-left: auto;
   font-size: 12px;
   font-weight: 400;
-  color: #397352;
+  color: var(--text-primary);
 }
 .check-evidence {
   padding: 0 0 15px 32px;
@@ -1851,9 +1823,9 @@ dialog > p {
   gap: 25px;
   padding: 22px 0;
   margin-top: 20px;
-  border-top: 2px solid #a8bca0;
+  border-top: 2px solid var(--av-success);
   font-family: var(--mono);
-  color: #397352;
+  color: var(--text-primary);
 }
 .overall > span {
   font-size: 12px;
@@ -1869,8 +1841,8 @@ dialog > p {
   font-size: 12px;
 }
 .overall.fail {
-  color: #a84335;
-  border-top-color: #c78672;
+  color: var(--text-primary);
+  border-top-color: var(--av-danger);
 }
 .cert-preview > div {
   display: flex;
@@ -2168,7 +2140,7 @@ dialog > p {
   .nav-backdrop {
     position: fixed;
     inset: 0;
-    background: #282b2940;
+    background: var(--scrim);
     z-index: 19;
   }
   .main-shell {
@@ -2722,7 +2694,7 @@ dialog > p {
 }
 .status-running,
 .status-preparing {
-  color: #7e5a19;
+  color: var(--text-secondary);
 }
 .segmented button {
   color: var(--muted);
@@ -2762,7 +2734,7 @@ dialog > p {
   color: var(--muted);
 }
 .connection-state.connected {
-  color: #4b6643;
+  color: var(--text-primary);
 }
 .integration-notice {
   display: flex;
@@ -2772,7 +2744,7 @@ dialog > p {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 6px;
-  color: #465c3b;
+  color: var(--text-primary);
   margin: 0 0 20px;
   font-size: 13px;
 }
@@ -2833,7 +2805,7 @@ dialog > p {
 .check-control input {
   width: 16px;
   min-height: 16px;
-  accent-color: #63734c;
+  accent-color: var(--button-primary-bg);
 }
 .muted {
   font-size: 12px;
@@ -2930,7 +2902,7 @@ dialog > p {
   overflow-wrap: anywhere;
 }
 .transfer-row p.transfer-error {
-  color: #965141;
+  color: var(--text-primary);
 }
 .transfer-row .status {
   white-space: nowrap;
@@ -2995,7 +2967,7 @@ dialog > p {
 }
 .experiment-pick > input {
   margin-top: 3px;
-  accent-color: #63734c;
+  accent-color: var(--button-primary-bg);
 }
 .experiment-pick > div {
   display: flex;
@@ -3069,7 +3041,7 @@ dialog > p {
   gap: 6px;
   align-items: center;
   font-size: 12px;
-  color: #536744;
+  color: var(--text-secondary);
 }
 .experiment-summary dl {
   display: grid;
@@ -3287,7 +3259,7 @@ input[type="checkbox"] {
     font-size: 12px;
     font-weight: 400;
     border-radius: 4px;
-    box-shadow: 0 3px 12px #282b2912;
+    box-shadow: 0 3px 12px transparent;
     z-index: 30;
     pointer-events: auto;
   }

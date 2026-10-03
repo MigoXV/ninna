@@ -14,7 +14,7 @@ def repo(tmp_path):
     return Repository(tmp_path / "test.sqlite3")
 
 
-@pytest.mark.parametrize("kind", ["dataset", "model", "recipe", "runtime", "workspace"])
+@pytest.mark.parametrize("kind", ["dataset", "model", "recipe", "image", "runtime", "workspace"])
 def test_asset_registry(repo, kind):
     asset = {"name": "asset", "version": "v1", "metadata": {"count": 1}}
     stored = repo.register(kind, asset)
@@ -106,6 +106,9 @@ def test_create_run_captures_snapshot_and_cancellation(tmp_path, monkeypatch):
     monkeypatch.setattr(
         platform.runtime_validator, "validate", lambda asset: {"test": "domain-only"}
     )
+    monkeypatch.setattr(
+        platform.images, "resolve_runtime", lambda asset: {"image_id": "domain-only"}
+    )
     source = tmp_path / "workspace"
     source.mkdir()
     (source / "train.py").write_text("print('initial')")
@@ -119,7 +122,7 @@ def test_create_run_captures_snapshot_and_cancellation(tmp_path, monkeypatch):
             kind,
             {
                 "name": name,
-                "version": "v3" if kind == "runtime" else "v1" if kind == "recipe" else "v2",
+                "version": "v4" if kind == "runtime" else "v1" if kind == "recipe" else "v2",
             },
         )
     platform.repo.register(

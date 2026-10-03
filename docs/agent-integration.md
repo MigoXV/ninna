@@ -1,6 +1,6 @@
 # MCP 与 Agent Skill
 
-Ninna 提供官方 MCP Python SDK 实现的 **Streamable HTTP** 和 **stdio**，共用 21 个工具、平台指南资源、资产资源模板及失败诊断 prompt。接口直接使用当前领域模型。
+Ninna 提供官方 MCP Python SDK 实现的 **Streamable HTTP** 和 **stdio**，共用 26 个工具、平台指南资源、资产资源模板及失败诊断 prompt。接口直接使用当前领域模型。
 
 ## 接入 Codex
 
@@ -76,7 +76,7 @@ HTTP 默认允许 localhost/127.0.0.1/IPv6 loopback。使用远端域名时，�
     "recipe": {"name": "mnist-adam", "version": "quick-v1"}
   },
   "execution_spec": {
-    "runtime": {"name": "mnist-pytorch-runtime", "version": "v3"},
+    "runtime": {"name": "mnist-pytorch-runtime", "version": "v4"},
     "workspace": {"name": "mnist-hf", "snapshot": "current"},
     "resources": {"device": "cpu", "gpu_count": 0, "cpu_threads": 4, "memory_mb": 4096}
   }
@@ -115,3 +115,14 @@ NINNA_INTEGRATION=1 poetry run pytest tests/integration/test_mcp.py -q -s
 - Ruff、Skill frontmatter 校验通过；构建 wheel 后确认平台指南随包交付。
 
 Hub 发布说明的文件清单不变性使用暂存区测试验证；本轮没有重新发布远端模型仓库。UI 已先 squash 到 `dev` 并标记 `ui-v0.2.1`，MCP 工作保留在独立功能分支。
+
+### 镜像工具
+
+MCP 新增 `list_local_images`、`pull_image`、`list_image_pulls`、`get_image_pull`；通用资产工具支持 `kind=image`。Runtime 注册参数改为 `name/version/image_ref/description`。Image 可独立纳管任意 Docker 镜像；创建 Runtime 才验证训练依赖。Run 诊断的 `assets.image` 包含实际执行镜像身份。
+
+
+### 镜像目录浏览
+
+`browse_images()` 返回已登记的站点。依次传 `registry`、`namespace`、`repository` 进入命名空间、镜像和版本；`q` 在当前层级内搜索路径、标签与资产名称。`GET /api/images/catalog` 提供同样的只读目录接口。父级参数必须完整。
+
+目录依据注册时来源派生，不扫描远端仓库，不修改资产。相同仓库引用和 image ID 的重复登记聚合展示；`assets` 保留所有精确 name/version 引用，选择后用 `describe_asset` 查看。按 image ID 登记的内容属于 `local` 站点；标签无法确定唯一仓库时归入未分类。目录统计不证明当前 Docker 可用，执行前仍需读取资产可用性。

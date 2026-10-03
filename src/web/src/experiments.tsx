@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { api, useData } from "./api";
+import { chartSeries } from "./chart-theme";
 import {
   Empty,
   ErrorNotice,
@@ -46,7 +47,6 @@ const metrics = {
   lr: "学习率",
   elapsed_time: "累计用时 / s",
 };
-const colors = ["#63734c", "#a57c31", "#587c91", "#945b6d"];
 
 export function ExperimentsPage() {
   const { projectId } = useParams();
@@ -296,15 +296,20 @@ export function ExperimentsPage() {
                     <CartesianGrid stroke="var(--line)" vertical={false} />
                     <XAxis
                       dataKey="step"
+                      tickLine={false}
+                      axisLine={false}
                       allowDecimals={false}
                       tick={{ fontSize: 12, fill: "var(--muted)" }}
                       label={{
                         value: "epoch",
                         position: "insideBottom",
                         offset: -12,
+                        fill: "var(--muted)",
                       }}
                     />
                     <YAxis
+                      tickLine={false}
+                      axisLine={false}
                       tick={{ fontSize: 12, fill: "var(--muted)" }}
                       domain={
                         metric === "test_accuracy" ? [0, 1] : ["auto", "auto"]
@@ -324,7 +329,10 @@ export function ExperimentsPage() {
                         key={curve.run_id}
                         name={curve.run_id}
                         dataKey={"run" + i}
-                        stroke={colors[i]}
+                        stroke={chartSeries[i % chartSeries.length].color}
+                        strokeDasharray={
+                          chartSeries[i % chartSeries.length].dash
+                        }
                         strokeWidth={2}
                         dot={{ r: 3 }}
                         connectNulls={false}
@@ -338,7 +346,12 @@ export function ExperimentsPage() {
             <div className="aim-legend">
               {curves.map((curve, i) => (
                 <Link key={curve.run_id} to={"/runs/" + curve.run_id}>
-                  <i style={{ background: colors[i] }} />
+                  <i
+                    style={{
+                      borderColor: chartSeries[i % chartSeries.length].color,
+                      borderTopStyle: i === 0 ? "solid" : "dashed",
+                    }}
+                  />
                   {curve.run_id}
                   <ArrowUpRight size={12} />
                 </Link>

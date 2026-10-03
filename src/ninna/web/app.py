@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from ninna.config import Settings
-from ninna.domain.schemas import CreateRun, CreateProject
+from ninna.domain.schemas import CreateRun, CreateProject, ImageRequest, RuntimeRequest
 from ninna.domain.integrations import IntegrationUpdate, HubPublish, HubImport
 from ninna.services.platform import Platform
 from ninna.agent.server import create_server
@@ -108,13 +108,19 @@ def create_app(settings=None, serve_frontend=True):
         return platform.initialize()
 
     @app.get("/api/assets/{kind}")
-    def assets(kind: Literal["dataset", "model", "recipe", "runtime", "workspace"]):
+    def assets(kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"]):
         return platform.repo.assets(kind)
 
     @app.post("/api/assets/{kind}", status_code=201)
-    def register(kind: Literal["dataset", "model", "recipe", "runtime", "workspace"], asset: dict):
+    def register(
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"], asset: dict
+    ):
         from ninna.domain.schemas import Ref
 
+        if kind == "image":
+            return platform.images.register(ImageRequest.model_validate(asset))
+        if kind == "runtime":
+            return platform.images.register_runtime(RuntimeRequest.model_validate(asset))
         Ref.model_validate({key: asset.get(key) for key in ["name", "version"]})
         required = {
             "dataset": ["path", "files", "checksum", "train_split", "test_split"],
@@ -127,7 +133,6 @@ def create_app(settings=None, serve_frontend=True):
                 "gradient_accumulation",
                 "seed",
             ],
-            "runtime": ["image_id", "image"],
             "workspace": ["path", "entrypoint"],
         }[kind]
         if any(key not in asset for key in required):
@@ -138,18 +143,64 @@ def create_app(settings=None, serve_frontend=True):
             Path(asset["entrypoint"]).is_absolute() or ".." in Path(asset["entrypoint"]).parts
         ):
             raise ValueError("Workspace entrypoint must be a relative path")
-        if kind == "runtime":
-            platform.runtime_validator.validate(asset)
         return platform.repo.register(kind, asset)
 
     @app.get("/api/assets/{kind}/{name}/{version}")
     def asset_detail(
-        kind: Literal["dataset", "model", "recipe", "runtime", "workspace"], name: str, version: str
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"],
+        name: str,
+        version: str,
     ):
         from ninna.services.asset_docs import describe_asset
 
         asset = platform.repo.asset(kind, {"name": name, "version": version})
-        return describe_asset(kind, asset, platform.settings.root)
+        result = describe_asset(kind, asset, platform.settings.root)
+        if kind == "image":
+            from ninna.services.image_catalog import location
+
+            result.update(platform.images.detail(asset))
+            result["location"] = location(asset)
+        if kind == "runtime" and asset.get("image_ref"):
+            result["image"] = platform.repo.asset("image", asset["image_ref"])
+        return result
+
+    @app.get("/api/images/catalog")
+    def image_catalog(
+        registry: str | None = None,
+        namespace: str | None = None,
+        repository: str | None = None,
+        q: str = "",
+    ):
+        from ninna.services.image_catalog import browse
+
+        return browse(platform.repo.assets("image"), registry, namespace, repository, q.strip())
+
+    @app.get("/api/images/reference")
+    def image_reference(source: str):
+        from ninna.services.image_catalog import location
+
+        request = ImageRequest(name="preview", version="v1", source=source)
+        return location({"source_reference": request.source, "tags": []})
+
+    @app.get("/api/images/local")
+    def local_images():
+        return platform.images.local()
+
+    @app.post("/api/image-pulls", status_code=202)
+    def pull_image(request: ImageRequest):
+        return platform.images.submit(request)
+
+    @app.get("/api/image-pulls")
+    def image_pulls():
+        return platform.repo.list("image_pulls")
+
+    @app.get("/api/image-pulls/{job_id}")
+    def image_pull(job_id: str):
+        return platform.repo.get("image_pulls", job_id)
+
+    @app.post("/api/images/migrate-runtimes")
+    def migrate_image_runtimes():
+        return platform.images.migrate()
 
     @app.post("/api/workspaces/{name}/snapshots")
     def snapshot(name: str):

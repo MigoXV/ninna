@@ -33,6 +33,23 @@ def test_mcp_http_catalog_resource_and_asset_roundtrip(tmp_path):
                 async with ClientSession(reader, writer) as session:
                     await session.initialize()
                     tools = {tool.name: tool for tool in (await session.list_tools()).tools}
+                    assert tools["browse_images"].annotations.readOnlyHint
+                    app.state.platform.repo.register(
+                        "image",
+                        {
+                            "name": "test-image",
+                            "version": "v1",
+                            "source_reference": "registry.example/team/pytorch:v1",
+                            "image_id": "sha256:abc",
+                            "tags": [],
+                            "created_at": "2026-09-25",
+                        },
+                    )
+                    catalog = await session.call_tool(
+                        "browse_images", {"registry": "registry.example", "namespace": "team"}
+                    )
+                    assert not catalog.isError
+                    assert catalog.structuredContent["items"][0]["name"] == "pytorch"
                     assert "start_certification" not in tools
                     assert "get_certification" not in tools
                     project = await session.call_tool("create_project", {"name": "mcp-project"})

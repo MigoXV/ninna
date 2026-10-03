@@ -15,18 +15,18 @@ class HFRuntimeValidator:
     def validate(self, asset):
         image_id = asset["image_id"]
         with self.lock:
+            image = self.docker().images.get(image_id)
             if image_id in self.cache:
                 return self.cache[image_id]
-            image = self.docker().images.get(image_id)
             container = self.docker().containers.create(
                 image.id,
                 [
                     "python",
                     "-c",
-                    "import json,torch,transformers,datasets,huggingface_hub,safetensors; "
+                    "import json,platform,torch,torchvision,transformers,datasets,huggingface_hub,safetensors; "
                     "from transformers import AutoModel,AutoConfig,AutoImageProcessor; "
                     "from datasets import DatasetDict,load_from_disk; "
-                    "print(json.dumps({m.__name__:m.__version__ for m in [torch,transformers,datasets,huggingface_hub,safetensors]}))",
+                    "print(json.dumps(dict(python=platform.python_version(), **{m.__name__:m.__version__ for m in [torch,torchvision,transformers,datasets,huggingface_hub,safetensors]})))",
                 ],
                 network_mode="none",
                 network_disabled=True,
@@ -39,7 +39,7 @@ class HFRuntimeValidator:
                 result = container.wait(timeout=120)
                 if result["StatusCode"] != 0:
                     raise ValueError(
-                        "训练 Runtime 必须支持 HF 生态：torch、transformers、datasets、huggingface_hub、safetensors；请使用 HF Runtime v3"
+                        "训练 Runtime 必须支持 HF 生态：torch、transformers、datasets、huggingface_hub、safetensors；请选用包含这些依赖的镜像"
                     )
                 versions = json.loads(
                     container.logs(stdout=True, stderr=False).decode().strip().splitlines()[-1]

@@ -1,6 +1,6 @@
 {
   "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
-  "version": "ui-v0.5.0",
+  "version": "ui-v0.8.0",
   "paper": "A3 landscape",
   "screens": [
     {
@@ -26,7 +26,7 @@
       "page": "44:2573",
       "frame": "121:318",
       "width": 1440,
-      "height": 900,
+      "height": 1310,
       "source": "create",
       "path": "/runs/new?project=legacy"
     },
@@ -203,6 +203,93 @@
       "source": "collapsed-runs",
       "path": "/projects/legacy",
       "collapsed": true
+    },
+    {
+      "source": "images",
+      "path": "/assets/image",
+      "width": 1440,
+      "height": 900,
+      "page": "140:272",
+      "frame": "141:2979",
+      "name": "14a · Image · 站点"
+    },
+    {
+      "source": "image-local",
+      "path": "/assets/image?action=local",
+      "width": 1440,
+      "height": 900,
+      "page": "140:274",
+      "frame": "141:2407",
+      "name": "14c · Image · 注册本地"
+    },
+    {
+      "source": "image-pull",
+      "path": "/assets/image?action=pull",
+      "width": 1440,
+      "height": 900,
+      "page": "140:275",
+      "frame": "141:2694",
+      "name": "14d · Image · 拉取远端"
+    },
+    {
+      "source": "image-detail",
+      "path": "/assets/image?name=ui-image-1790349275943&version=v1",
+      "width": 1440,
+      "height": 900,
+      "page": "140:273",
+      "frame": "141:1986",
+      "name": "14b · Image · 详情"
+    },
+    {
+      "source": "image-namespaces",
+      "path": "/assets/image?registry=registry.cn-hangzhou.aliyuncs.com",
+      "width": 1440,
+      "height": 900,
+      "page": "145:375",
+      "frame": "145:376",
+      "name": "14e · Image · 命名空间"
+    },
+    {
+      "source": "image-repositories",
+      "path": "/assets/image?registry=registry.cn-hangzhou.aliyuncs.com&namespace=migo-dl",
+      "width": 1440,
+      "height": 900,
+      "page": "145:651",
+      "frame": "145:652",
+      "name": "14f · Image · 镜像目录"
+    },
+    {
+      "source": "image-versions",
+      "path": "/assets/image?registry=registry.cn-hangzhou.aliyuncs.com&namespace=migo-dl&repository=pytorch",
+      "width": 1440,
+      "height": 900,
+      "page": "145:927",
+      "frame": "145:928",
+      "name": "14g · Image · 版本"
+    },
+    {
+      "source": "image-search",
+      "path": "/assets/image?registry=registry.cn-hangzhou.aliyuncs.com&namespace=migo-dl&repository=pytorch&q=2.8.0-cu128",
+      "width": 1440,
+      "height": 900,
+      "page": "145:1203",
+      "frame": "145:1204",
+      "name": "14h · Image · 搜索"
+    },
+    {
+      "source": "image-tasks",
+      "path": "/assets/image?action=tasks",
+      "width": 1440,
+      "height": 900,
+      "page": "145:1479",
+      "frame": "145:1480",
+      "name": "14i · Image · 拉取任务"
     }
-  ]
+  ],
+  "themes": [
+    "vallum",
+    "abyssus"
+  ],
+  "defaultTheme": "vallum",
+  "tokenSource": "src/web/src/tokens.dtcg.json"
 }

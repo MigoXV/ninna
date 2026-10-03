@@ -46,10 +46,17 @@ def asset_card(kind: str, asset: dict) -> str:
             "由 Workspace 解释 loss、optimizer、scheduler、epochs、"
             "batch_size、gradient_accumulation、freeze 等配置。修改策略应注册新版本。",
         ]
+    elif kind == "image":
+        sections += [
+            "## 镜像身份",
+            "Docker inspect 注册的不可变镜像资产。tag 只是来源；执行固定完整 image ID。",
+            "通过 Runtime 引用，镜像不包含可变 Workspace。可用性独立于资产版本。",
+            f"Image ID：`{asset['image_id']}`；仓库 digest：`{asset.get('repo_digests', [])}`。",
+        ]
     elif kind == "runtime":
         sections += [
             "## 执行环境",
-            "对应 Docker image_id；创建 Run 前检查镜像和依赖。"
+            "通过 image_ref 引用镜像资产；创建 Run 前检查实际镜像和训练依赖。"
             "业务代码来自 Workspace 挂载；修改 Workspace 无需重建镜像。",
         ]
     else:
@@ -69,6 +76,8 @@ def asset_card(kind: str, asset: dict) -> str:
         "导入固定到 Hub commit；同名同版本不覆盖。"
         "历史 Run 保存实际训练定义、执行环境、容器、日志及产物。",
     ]
+    if kind not in {"model", "dataset"}:
+        sections = sections[:-3] + ["历史 Run 保存实际训练定义、执行环境、容器、日志及产物。"]
     return "\n\n".join(sections) + "\n"
 
 

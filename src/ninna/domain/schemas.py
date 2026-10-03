@@ -70,3 +70,23 @@ TRANSITIONS = {
     "PREPARING": {"RUNNING", "CANCELLED", "FAILED"},
     "RUNNING": TERMINAL,
 }
+
+
+class ImageRequest(Ref):
+    source: str = Field(min_length=1, max_length=512, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_./:@-]*$")
+    description: str = Field(default="", max_length=1000)
+
+    @model_validator(mode="after")
+    def reference_only(self):
+        import re
+
+        if "://" in self.source or (
+            "@" in self.source and not re.fullmatch(r"[^@]+@sha256:[0-9a-f]{64}", self.source)
+        ):
+            raise ValueError("请输入 Docker 镜像引用，不包含 URL 或登录凭据")
+        return self
+
+
+class RuntimeRequest(Ref):
+    image_ref: Ref
+    description: str = Field(default="", max_length=1000)

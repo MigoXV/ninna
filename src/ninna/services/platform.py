@@ -47,6 +47,9 @@ class Platform:
         self.hub = HubService(self)
         self.tracking = AimTracking(self)
         self.runtime_validator = HFRuntimeValidator(lambda: self.docker)
+        from ninna.services.images import ImageService
+
+        self.images = ImageService(self)
 
     @property
     def docker(self):
@@ -68,9 +71,11 @@ class Platform:
         self.thread = threading.Thread(target=self._loop, daemon=True, name="ninna-executor")
         self.thread.start()
         self.hub.recover()
+        self.images.recover()
         self.tracking.start()
 
     def close(self):
+        self.images.close()
         self.tracking.close()
         self.hub.close()
         self.stop_event.set()
@@ -106,7 +111,9 @@ class Platform:
             initialize(self)
             from ninna.services.huggingface import initialize_hf
 
-            return initialize_hf(self)
+            result = initialize_hf(self)
+            result["image_runtimes"] = self.images.migrate()
+            return result
 
     def mount_probe(self):
         path = self.settings.state / "mount-probe.txt"
@@ -164,7 +171,8 @@ class Platform:
             execution = request.execution_spec.model_dump()
             assets = {kind: self.repo.asset(kind, ref) for kind, ref in training.items()}
             assets["runtime"] = self.repo.asset("runtime", execution["runtime"])
-            runtime_evidence = self.runtime_validator.validate(assets["runtime"])
+            assets["image"] = self.images.resolve_runtime(assets["runtime"])
+            runtime_evidence = self.runtime_validator.validate(assets["image"])
             workspace_ref = execution["workspace"]
             if workspace_ref["snapshot"] == "current":
                 workspace = self.workspace_snapshot(workspace_ref["name"])
@@ -242,8 +250,9 @@ class Platform:
         workspace = run["assets"]["workspace"]
         if manifest(Path(workspace["snapshot_path"])) != workspace["files"]:
             raise ValueError("Workspace snapshot checksum changed")
-        image_id = run["assets"]["runtime"]["image_id"]
-        self.runtime_validator.validate(run["assets"]["runtime"])
+        image_id = run["assets"]["image"]["image_id"]
+        self.images.resolve_runtime(run["assets"]["runtime"])
+        self.runtime_validator.validate(run["assets"]["image"])
         with self.operation_lock:
             run = self.repo.get("runs", key)
             if run["status"] in TERMINAL or run["cancel_requested"]:

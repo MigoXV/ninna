@@ -1,1 +1,28 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="theme-color" content="#fffefb"/><meta name="description" content="Ninna · 从训练定义到可验证的模型。"/><title>Ninna · 训练工作空间</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html>
+<html lang="zh-CN" data-theme="vallum">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F8F7F2" />
+    <meta name="description" content="Ninna · 从训练定义到可验证的模型。" />
+    <title>Ninna · 训练工作空间</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Initialize before the first paint. Values match the locked token snapshot.
+      (() => {
+        let theme = "vallum";
+        try {
+          if (localStorage.getItem("ninna.theme") === "abyssus")
+            theme = "abyssus";
+        } catch {}
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content =
+          theme === "abyssus" ? "#080A0D" : "#F8F7F2";
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

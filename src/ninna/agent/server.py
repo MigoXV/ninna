@@ -15,9 +15,9 @@ from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from ninna.domain.integrations import HubImport, HubPublish
-from ninna.domain.schemas import ExecutionSpec, Ref, Status, TrainingSpec
+from ninna.domain.schemas import ExecutionSpec, ImageRequest, Ref, Status, TrainingSpec
 
-Kind = Literal["dataset", "model", "recipe", "runtime", "workspace"]
+Kind = Literal["dataset", "model", "recipe", "image", "runtime", "workspace"]
 Identifier = Annotated[str, Field(min_length=1, pattern=r"^[A-Za-z0-9_.-]+$")]
 Offset = Annotated[int, Field(ge=0)]
 Limit = Annotated[int, Field(ge=1, le=100)]
@@ -116,6 +116,58 @@ def create_server(
         Existing versions cannot be overwritten. Recipe changes need a new version.
         """
         return await call("POST", f"/api/assets/{kind}", json=asset)
+
+    @server.tool(annotations=READ)
+    async def browse_images(
+        registry: str | None = None,
+        namespace: str | None = None,
+        repository: str | None = None,
+        q: str = "",
+    ) -> dict[str, Any]:
+        """Browse registered images by registry → namespace → repository → versions.
+        Omit scope for registries; pass each parent to drill down. q searches within scope.
+        Grouped versions expose all asset refs; describe_asset reads an exact registration.
+        This reads saved evidence, never lists remote registry contents or pulls images.
+        """
+        return await call(
+            "GET",
+            "/api/images/catalog",
+            params={
+                k: v
+                for k, v in dict(
+                    registry=registry, namespace=namespace, repository=repository, q=q
+                ).items()
+                if v is not None
+            },
+        )
+
+    @server.tool(annotations=READ)
+    async def list_local_images() -> dict[str, Any]:
+        """Inspect images on the platform Docker Engine. Register with kind=image and
+        {name, version, source: full_image_id, description} before creating a Runtime.
+        """
+        return {"images": await call("GET", "/api/images/local")}
+
+    @server.tool(annotations=WRITE)
+    async def pull_image(request: ImageRequest) -> dict[str, Any]:
+        """Queue a remote Docker image pull and register a NEW immutable Image Asset.
+        Uses deployment Docker credentials. Saves resolved digest before pulling.
+        Save returned id; poll get_image_pull. Never blindly retry an uncertain submission.
+        Does not build images, create a Runtime or start training.
+        """
+        return await call("POST", "/api/image-pulls", json=request.model_dump())
+
+    @server.tool(annotations=READ)
+    async def list_image_pulls(offset: Offset = 0, limit: Limit = 20) -> dict[str, Any]:
+        """Find persisted pull jobs, including failures, before retrying a submission."""
+        return page(await call("GET", "/api/image-pulls"), offset, limit)
+
+    @server.tool(annotations=READ)
+    async def get_image_pull(pull_id: Identifier) -> dict[str, Any]:
+        """Read image pull status, layer progress, resolved digest and registered asset ID.
+        Terminal states: SUCCESS or FAILED. Poll about every 2 seconds.
+        """
+        return await call("GET", f"/api/image-pulls/{pull_id}")
 
     @server.tool(annotations=READ)
     async def read_workspace(name: Identifier, path: str | None = None) -> dict[str, Any]:

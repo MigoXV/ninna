@@ -50,7 +50,7 @@ const definitions: Record<
   runtime: {
     title: "运行环境",
     en: "Runtime",
-    description: "版本化的 Docker 基础环境，让执行条件保持稳定。",
+    description: "引用固定镜像资产，并验证训练所需的依赖。",
     icon: Box,
   },
   workspace: {
@@ -118,8 +118,7 @@ function AssetContent({
           selected ? `${info.en} asset · ${selected.version}` : info.description
         }
         actions={
-          selected &&
-          !(kind === "runtime" && !selected.metadata.transformers) ? (
+          selected && !(kind === "runtime" && !selected.image_ref) ? (
             <Link
               className="button"
               to={"/runs/new?" + kind + "=" + encodeURIComponent(selected.id)}
@@ -159,10 +158,10 @@ function AssetContent({
               </p>
             </div>
           </div>
-          {kind === "runtime" && !selected.metadata.transformers && (
+          {kind === "runtime" && !selected.image_ref && (
             <div className="integration-notice">
-              历史 Runtime · 不满足 HF 生态要求，无法用于新训练。请选择 HF
-              Runtime v3。
+              历史 Runtime ·
+              尚未引用镜像资产，无法用于新训练。请选择迁移后的版本。
             </div>
           )}
           {kind === "dataset" && (
@@ -305,10 +304,23 @@ function AssetContent({
             <>
               <SectionHeader title="运行环境" />
               <dl className="detail-list horizontal">
-                <dt>Docker image</dt>
-                <dd className="mono break">{selected.image}</dd>
+                <dt>镜像资产</dt>
+                <dd className="mono break">
+                  {selected.image_ref ? (
+                    <Link
+                      className="text-link"
+                      to={`/assets/image?name=${encodeURIComponent(selected.image_ref.name)}&version=${encodeURIComponent(selected.image_ref.version)}`}
+                    >
+                      {selected.image_ref.name} / {selected.image_ref.version}
+                    </Link>
+                  ) : (
+                    selected.image
+                  )}
+                </dd>
                 <dt>固定 image ID</dt>
-                <dd className="mono break">{selected.image_id}</dd>
+                <dd className="mono break">
+                  {selected.validation?.image_id || selected.image_id}
+                </dd>
                 <dt>Python</dt>
                 <dd>{String(selected.metadata.python)}</dd>
                 <dt>PyTorch</dt>

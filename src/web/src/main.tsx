@@ -15,6 +15,7 @@ import {
   Box,
   HardDrive,
   Container,
+  Layers,
   Server,
   ChevronRight,
   Database,
@@ -28,16 +29,20 @@ import {
 } from "lucide-react";
 import { useData } from "./api";
 import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
+import { ImagesPage } from "./images";
 import { AssetsPage } from "./pages";
 import { ProjectsPage } from "./projects";
 import { HubPage } from "./integrations";
 import { ExperimentsPage } from "./experiments";
+import { ThemeSwitch } from "./theme";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-sc";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
+import "./tokens.css";
 import "./style.css";
 import "./workspace.css";
+import "./design-system.css";
 const nav = [
   { label: "项目", path: "/projects", icon: ListTodo },
   { label: "中心存储", path: "/hub", icon: HardDrive },
@@ -53,6 +58,7 @@ const definitions = [
   },
 ];
 const environments = [
+  { label: "镜像资产", code: "Image", kind: "image", icon: Layers },
   { label: "运行环境", code: "Runtime", kind: "runtime", icon: Container },
   { label: "代码空间", code: "Workspace", kind: "workspace", icon: FolderCode },
 ];
@@ -153,7 +159,7 @@ function Shell() {
         <Link to="/projects" className="brand">
           ninna<span className="brand-period">.</span>
         </Link>
-        <span className="mono">WORKSPACE</span>
+        <ThemeSwitch />
       </header>
       {open && <div className="nav-backdrop" onClick={() => setOpen(false)} />}
       <aside
@@ -295,6 +301,8 @@ function Shell() {
           <div className="topbar-right">
             <span className="local-marker" />
             本地执行 <span className="topbar-separator" /> Docker Engine
+            <span className="topbar-separator" />
+            <ThemeSwitch />
           </div>
         </div>
         <main
@@ -323,6 +331,7 @@ function Shell() {
             <Route path="/runs" element={<Navigate to="/projects" replace />} />
             <Route path="/runs/new" element={<CreatePage />} />
             <Route path="/runs/:id" element={<RunPage />} />
+            <Route path="/assets/image" element={<ImagesPage />} />
             <Route path="/assets/:kind" element={<AssetsPage />} />
             <Route path="/hub" element={<HubPage />} />
             <Route

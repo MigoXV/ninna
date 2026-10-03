@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { chartSeries } from "./chart-theme";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -257,6 +258,7 @@ export function LossChart({
                   position: "insideBottomRight",
                   offset: -2,
                   fontSize: 11,
+                  fill: "var(--muted)",
                 }}
               />
               <YAxis
@@ -277,7 +279,7 @@ export function LossChart({
                 name={comparison ? "Run A · train loss" : "Train loss"}
                 type="linear"
                 dataKey="train_loss"
-                stroke="#8a651f"
+                stroke={chartSeries[0].color}
                 strokeWidth={2}
                 dot={{ r: 3 }}
                 isAnimationActive={false}
@@ -286,7 +288,8 @@ export function LossChart({
                 name={comparison ? "Run B · train loss" : "Test loss"}
                 type="linear"
                 dataKey={comparison ? "comparison" : "test_loss"}
-                stroke="#557d83"
+                stroke={chartSeries[1].color}
+                strokeDasharray={chartSeries[1].dash}
                 strokeWidth={2}
                 dot={{ r: 3 }}
                 isAnimationActive={false}
