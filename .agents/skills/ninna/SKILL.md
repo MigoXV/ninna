@@ -13,7 +13,7 @@ Codex 是用户入口，Ninna 是持久执行平台。先读取 `ninna://guide` 
 2. 用什么数据、训练什么模型、怎么训练：发现资产、框架能力和精确配方，说明具体方案，不把优化器名称当作用户目标。
 3. `list_sources` / `search_source_assets` 查询多个来源；`acquire_asset` 显式下载，等待 Job 并保存 asset_id。已下载不等于可训练，不要求外部仓库预装 Ninna 清单。
 4. 选择已发布环境，`create_work_item`。必要时先创建环境草稿，通过远端文件与命令工具准备、验证、发布。
-5. `prepare_run_plan` 固定输入、代码和依赖，等待 READY 后 `submit_run`；提交 Job 返回 run_id，继续观察真实 Run 到终态。
+5. 固定配方用 `start_run` 一次完成快照、检查和提交；需要审查方案时用 `prepare_run_plan` 等待 READY 后 `submit_run`。提交 Job 返回 run_id，继续观察真实 Run 到终态。
 6. 检查指标、参数更新、产物与退出码；执行成功和质量达标分别报告。保存 WorkItem 摘要与下一步，供新会话恢复。
 
 ## 远端修复
@@ -36,6 +36,8 @@ Ninna 主机文件通过 local_path 导入；Codex 机器文件通过 `poetry ru
 
 六框架的具体任务、输入和操作以 `describe_asset(kind="framework")` 返回的声明和框架 Skill 为准。不得把图像加载器套到语音模型，不得用 mock 训练或只有 checkpoint 文件证明端到端通过。
 
-## 五分钟 VAD 数据工作流
+## VAD 固定数据工作流
 
-处理 AVA/VAD 数据准备时先读仓库 `docs/vad-data-contract.md`：固定来源 commit、每条 300 秒、原录音级 split、10h→2h 严格子集、AudioFolder 与内嵌 WAV Parquet 双格式、能量粗标签状态均由脚本校验。使用 `scripts/prepare-vad.py` 和 `examples/vad/`，不自行猜字段或切片规则。真实执行使用 `scripts/run-vad.py`，先探测 API v2；证据保存到 `outputs/vad-ava-energy-v1/evidence.json`。不要把对粗标签的指标解释成人工真值上的模型质量。
+用户明确选择旧五分钟能量粗标注方案时，先读仓库 `docs/vad-data-contract.md`：固定来源 commit、每条 300 秒、原录音级 split、10h→2h 严格子集、AudioFolder 与内嵌 WAV Parquet 双格式、能量粗标签状态均由脚本校验。使用 `scripts/prepare-vad.py` 和 `examples/vad/`，不自行猜字段或切片规则。真实执行使用 `scripts/run-vad.py`，先探测 API v2；证据保存到 `outputs/vad-ava-energy-v1/evidence.json`。不要把对粗标签的指标解释成人工真值上的模型质量。
+
+完整人工 AVA 使用 `examples/vad-human/` 与 `scripts/run-vad-training-loop.py`，不套用旧能量数据的裁剪或标注规则。原始资产与训练资产独立，保留全长与 11 个字段，新增 seconds，按固定录音哈希得到 142/16/2；Scratch config 训练导出基线，再分别 Full/LoRA，最后独立测试与推理。核对优化步和 LoRA 冻结底座的逐参数哈希。大音频转换 writer_batch_size=1、每 Parquet 分片最多 16 条。

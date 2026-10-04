@@ -59,10 +59,23 @@ def test_mcp_http_catalog_resource_and_asset_roundtrip(tmp_path):
                     assert "create_run" not in tools and "create_task" not in tools
                     assert tools["describe_asset"].annotations.readOnlyHint
                     assert tools["submit_run"].annotations.idempotentHint
+                    assert tools["start_run"].annotations.idempotentHint
                     assert tools["cancel_run"].annotations.destructiveHint
                     capabilities = await session.call_tool("get_capabilities", {})
                     assert capabilities.structuredContent["api_version"] == 2
                     assert "execute_task_command" in tools
+                    start = await session.call_tool(
+                        "start_run",
+                        {
+                            "request": {
+                                "request_id": "missing-work",
+                                "work_item_id": "absent",
+                                "task": "vad",
+                                "recipe": {"name": "scratch", "version": "v1"},
+                            }
+                        },
+                    )
+                    assert start.isError
                     guide = await session.read_resource("ninna://guide")
                     assert "Ninna" in guide.contents[0].text
                     asset = {
@@ -205,3 +218,88 @@ def test_publication_documentation_preserves_immutable_payload(
         assert manifest(source) == original
     finally:
         platform.close()
+
+
+def test_mcp_compact_context_and_filtered_catalogs(tmp_path):
+    async def exercise():
+        app = create_app(Settings(tmp_path, tmp_path, tmp_path / "state"), serve_frontend=False)
+        p = app.state.platform
+        store = p.work.store
+        work = store.create(
+            "work_item", {"status": "ACTIVE", "ready": True}, "compact-owner", "test"
+        )
+        plan = store.create(
+            "plan",
+            {
+                "work_item_id": work["id"],
+                "status": "READY",
+                "recipe": {"name": "r", "version": "v1"},
+                "prepared": {"files": {"heavy-source": "hash"}},
+                "request": {"large": "payload"},
+            },
+            "compact-plan",
+            "test",
+        )
+        env = store.create(
+            "environment",
+            {"name": "preludio2 ready", "ready": True, "latest_revision_id": "published"},
+            "compact-env",
+            "test",
+        )
+        store.create("environment", {"name": "other draft", "ready": False}, "draft-env", "test")
+        store.create(
+            "environment_revision",
+            {"environment_id": env["id"], "status": "PUBLISHED", "files": {"heavy-source": "hash"}},
+            "compact-rev",
+            "test",
+        )
+        store.create(
+            "asset",
+            {
+                "name": "AVA model",
+                "kind": "model",
+                "path": str(tmp_path),
+                "files": {"config.json": "hash"},
+                "repo_id": "owner/vad",
+            },
+            "compact-asset",
+            "test",
+        )
+
+        def factory(**kwargs):
+            return httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app), follow_redirects=True, **kwargs
+            )
+
+        async with app.state.mcp.session_manager.run(), factory() as client:
+            async with streamable_http_client("http://localhost/mcp/", http_client=client) as (
+                r,
+                w,
+                _,
+            ):
+                async with ClientSession(r, w) as s:
+                    await s.initialize()
+                    result = await s.call_tool(
+                        "list_environments", {"query": "preludio2", "published_only": True}
+                    )
+                    assert not result.isError
+                    items = result.structuredContent["items"]
+                    assert len(items) == 1
+                    assert items[0]["id"] == env["id"] and "files" not in items[0]["revisions"][0]
+                    result = await s.call_tool(
+                        "list_asset_revisions", {"kind": "model", "query": "AVA"}
+                    )
+                    asset = result.structuredContent["items"][0]
+                    assert asset["file_count"] == 1 and "files" not in asset
+                    result = await s.call_tool("get_work_context", {"work_item_id": work["id"]})
+                    assert result.structuredContent["plans"][0]["id"] == plan["id"]
+                    assert "prepared" not in result.structuredContent["plans"][0]
+                    full = await s.call_tool(
+                        "get_work_context", {"work_item_id": work["id"], "compact": False}
+                    )
+                    assert full.structuredContent["plans"][0]["prepared"]["files"] == {
+                        "heavy-source": "hash"
+                    }
+        p.close()
+
+    asyncio.run(exercise())

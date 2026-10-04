@@ -337,3 +337,138 @@ def test_source_disable_keeps_existing_download_available(platform, tmp_path):
         == "DOWNLOADED"
     )
     assert p.work.assets.resolve(asset["id"])[0] == "model"
+
+
+def test_start_run_retries_and_rejects_changed_recipe(platform):
+    p, client = platform
+    work = p.work.store.create(
+        "work_item", {"status": "ACTIVE", "ready": True}, "start-owner", "test"
+    )
+    body = {
+        "request_id": "start",
+        "work_item_id": work["id"],
+        "task": "vad",
+        "recipe": {"name": "scratch", "version": "v1"},
+    }
+    first = client.post("/api/v2/runs/start", json=body)
+    assert first.status_code == 202
+    p.work.store.put("work_item", {**work, "status": "COMPLETED"})
+    assert client.post("/api/v2/runs/start", json=body).json()["id"] == first.json()["id"]
+    assert client.post("/api/v2/runs/start", json={**body, "task": "changed"}).status_code == 409
+    assert client.post("/api/v2/runs/start", json={**body, "request_id": "new"}).status_code == 400
+    assert len(p.work.store.list("job")) == 1
+
+
+def test_start_run_failed_check_creates_no_run(platform, monkeypatch):
+    p, client = platform
+    work = p.work.store.create(
+        "work_item", {"status": "ACTIVE", "ready": True}, "fail-owner", "test"
+    )
+
+    def reject(job):
+        raise ValueError("Dataset lacks seconds field")
+
+    monkeypatch.setattr(p.work, "check_plan", reject)
+    job = client.post(
+        "/api/v2/runs/start",
+        json={
+            "request_id": "fail-check",
+            "work_item_id": work["id"],
+            "task": "vad",
+            "recipe": {"name": "scratch", "version": "v1"},
+        },
+    ).json()
+    p.work.tick()
+    result = p.work.store.get("job", job["id"])
+    assert result["status"] == "FAILED"
+    assert "seconds" in result["error"]
+    assert p.repo.list("runs") == []
+    assert p.work.store.list("plan")[0]["status"] == "BLOCKED"
+
+
+def test_start_run_checks_workspace_after_sealing(platform, monkeypatch):
+    p, client = platform
+    work = p.work.store.create(
+        "work_item",
+        {"status": "ACTIVE", "ready": True, "workspace_generation": 3},
+        "drift-owner",
+        "test",
+    )
+
+    def drift(job):
+        plan = p.work.store.get("plan", job["payload"]["plan_id"])
+        p.work.store.put("work_item", {**work, "workspace_generation": 4})
+        return p.work.store.put(
+            "plan", {**plan, "status": "READY", "prepared": {"workspace_version": 3}}
+        )
+
+    monkeypatch.setattr(p.work, "check_plan", drift)
+    job = client.post(
+        "/api/v2/runs/start",
+        json={
+            "request_id": "drift",
+            "work_item_id": work["id"],
+            "task": "vad",
+            "recipe": {"name": "scratch", "version": "v1"},
+        },
+    ).json()
+    p.work.tick()
+    assert p.work.store.get("job", job["id"])["status"] == "FAILED"
+    assert p.repo.list("runs") == []
+
+
+def test_upload_cli_retry_returns_same_asset_and_rejects_changed_files(
+    platform, tmp_path, monkeypatch
+):
+    import json
+    import httpx
+    from typer.testing import CliRunner
+    from ninna.commands.app import app
+
+    _, client = platform
+    raw = tmp_path / "client-config"
+    raw.mkdir()
+    (raw / "config.json").write_text('{"model_type":"attention_vad"}')
+
+    class LocalClient:
+        def __init__(self, **kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def post(self, *args, **kwargs):
+            return client.post(*args, **kwargs)
+
+        def get(self, *args, **kwargs):
+            return client.get(*args, **kwargs)
+
+        def put(self, *args, **kwargs):
+            content = kwargs.pop("content")
+            return client.put(*args, content=b"".join(content), **kwargs)
+
+    monkeypatch.setattr(httpx, "Client", LocalClient)
+    args = [
+        "upload",
+        "--path",
+        str(raw),
+        "--kind",
+        "model",
+        "--name",
+        "config",
+        "--request-id",
+        "cli-config",
+    ]
+    runner = CliRunner()
+    first = runner.invoke(app, args)
+    assert first.exit_code == 0, first.output
+    replay = runner.invoke(app, args)
+    assert replay.exit_code == 0, replay.output
+    assert json.loads(first.stdout) == json.loads(replay.stdout)
+    (raw / "config.json").write_text('{"model_type":"changed"}')
+    changed = runner.invoke(app, args)
+    assert changed.exit_code != 0
+    assert "request-id" in changed.output

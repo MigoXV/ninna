@@ -68,7 +68,7 @@ def upload(
     """流式上传本地文件至 Ninna，无需共享文件系统。"""
     from pathlib import Path
     import httpx
-    from ninna.services.assets import checksum
+    from ninna.services.assets import checksum, manifest
 
     source = Path(path).resolve()
     if kind not in {"model", "dataset"} or not source.exists():
@@ -83,7 +83,13 @@ def upload(
         response.raise_for_status()
         value = response.json()
         if value.get("asset_id"):
-            typer.echo(json.dumps(value, ensure_ascii=False))
+            response = client.get("/api/v2/assets/" + value["asset_id"])
+            response.raise_for_status()
+            asset = response.json()
+            expected = manifest(source) if source.is_dir() else {source.name: checksum(source)}
+            if asset["files"] != expected:
+                raise typer.BadParameter("已封存上传的文件与当前内容不同，请使用新 request-id。")
+            typer.echo(json.dumps(asset, ensure_ascii=False))
             return
         key = value["id"]
         for item in files:

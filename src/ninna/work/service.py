@@ -39,6 +39,7 @@ class WorkService:
                 "commands",
                 "environment_revisions",
                 "run_plans",
+                "start_run",
                 "idempotent_jobs",
                 "event_wait",
             ],
@@ -331,15 +332,45 @@ class WorkService:
             },
         )
 
-    def submit(self, request):
-        if self.store.has_request(request.request_id):
-            plan = self.store.get("plan", request.plan_id)
-            return self.job(
-                "run",
-                {"plan_id": plan["id"], "work_item_id": plan["work_item_id"]},
-                request.request_id,
-            )
-        plan = self.store.get("plan", request.plan_id)
+    def start_run(self, request):
+        """Queue checking and execution together, retaining the ordinary sealed plan."""
+        payload = request.model_dump(exclude={"request_id"})
+        with self.lock:
+            if not self.store.has_request(request.request_id):
+                work = self.store.get("work_item", request.work_item_id)
+                if not work.get("ready") or work["status"] in {"COMPLETED", "ARCHIVED"}:
+                    raise ValueError("工作任务尚未就绪或已结束。")
+                if self.environments.busy(work["id"]):
+                    raise Conflict("工作区正在改变，请等待命令结束。")
+            return self.job("start_run", payload, request.request_id)
+
+    def start_plan(self, job):
+        return self.store.create(
+            "plan",
+            {**job["payload"], "status": "CHECKING"},
+            "start-plan:" + job["id"],
+            "start_plan",
+        )
+
+    def execute_start(self, job):
+        plan = self.start_plan(job)
+        execution_job = {
+            **job,
+            "payload": {"plan_id": plan["id"], "work_item_id": plan["work_item_id"]},
+        }
+        run_id = "run-" + job["id"].removeprefix("job-")
+        try:
+            self.platform.repo.get("runs", run_id)
+        except KeyError:
+            work = self.store.get("work_item", plan["work_item_id"])
+            if not work.get("ready") or work["status"] in {"COMPLETED", "ARCHIVED"}:
+                raise Conflict("工作任务尚未就绪或已结束。")
+            if plan["status"] != "READY":
+                plan = self.check_plan(execution_job)
+            self.check_submission(plan)
+        return {**self.execute_run(execution_job), "plan_id": plan["id"]}
+
+    def check_submission(self, plan):
         if plan["status"] != "READY":
             raise ValueError("运行方案尚未就绪，请检查准备任务和阻断原因。")
         work = self.store.get("work_item", plan["work_item_id"])
@@ -352,6 +383,17 @@ class WorkService:
             != plan["prepared"]["workspace_version"]
         ):
             raise Conflict("工作区在检查后已改变，请重新检查方案。")
+
+    def submit(self, request):
+        if self.store.has_request(request.request_id):
+            plan = self.store.get("plan", request.plan_id)
+            return self.job(
+                "run",
+                {"plan_id": plan["id"], "work_item_id": plan["work_item_id"]},
+                request.request_id,
+            )
+        plan = self.store.get("plan", request.plan_id)
+        self.check_submission(plan)
         return self.job(
             "run", {"plan_id": plan["id"], "work_item_id": plan["work_item_id"]}, request.request_id
         )
@@ -402,6 +444,11 @@ class WorkService:
             if job["operation"] in {"command", "run"}:
                 if job["operation"] == "run":
                     self.store.put("job", {**job, "status": "QUEUED"})
+            elif job["operation"] == "start_run" and any(
+                r["id"] == "run-" + job["id"].removeprefix("job-")
+                for r in self.platform.repo.list("runs")
+            ):
+                self.store.put("job", {**job, "status": "QUEUED"})
             else:
                 self.store.put(
                     "job",
@@ -455,6 +502,7 @@ class WorkService:
             "command": self.environments.start_command,
             "check_plan": self.check_plan,
             "run": self.execute_run,
+            "start_run": self.execute_start,
         }
         try:
             result = (
@@ -490,6 +538,10 @@ class WorkService:
             if job["operation"] == "check_plan":
                 plan = self.store.get("plan", job["payload"]["plan_id"])
                 self.store.put("plan", {**plan, "status": "BLOCKED", "error": error[:2000]})
+            elif job["operation"] == "start_run":
+                plan = self.start_plan(job)
+                if plan["status"] == "CHECKING":
+                    self.store.put("plan", {**plan, "status": "BLOCKED", "error": error[:2000]})
 
     def command(self, owner_id, request):
         with self.lock:

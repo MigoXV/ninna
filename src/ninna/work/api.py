@@ -328,6 +328,10 @@ def router(service):
     def run(request: SubmitRun):
         return service.submit(request)
 
+    @api.post("/runs/start", status_code=202)
+    def start_run(request: PlanInput):
+        return service.start_run(request)
+
     @api.get("/events")
     async def events(
         after: int = Query(0, ge=0),

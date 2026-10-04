@@ -37,11 +37,13 @@ codex mcp add ninna -- poetry --directory /安装路径/ninna run ninna mcp --ur
 | 环境 | list_environments、create_environment、prepare_environment、publish_environment |
 | 工作上下文 | list_work_items、create_work_item、get_work_context、update_work_item |
 | 工作区 | read_task_files、edit_task_file、execute_task_command、set_workspace_state |
-| 执行 | prepare_run_plan、read_run_plan、submit_run、get_run、cancel_run |
+| 执行 | start_run（固定配方一次检查并提交）、prepare_run_plan、read_run_plan、submit_run、get_run、cancel_run |
 | 后台操作 | list_jobs、get_job、read_job_logs、cancel_job、wait_for_events |
 | 证据与成果 | get_run_metrics、get_run_diagnostic_context、list_run_artifacts、promote_model、promote_dataset、publish_asset_revision |
 
 镜像、框架与配方的精确声明仍通过 list_assets / describe_asset / register_asset 管理。普通用户无需逐次手工组合 Image、Runtime 和 Workspace。
+
+已有固定配方和就绪 WorkItem 时，最短执行序列是 `start_run` → `get_job` 获得 run_id → `get_run` 等待终态并核对证据。start_run 保留与手动方案完全相同的快照、输入校验和不可变 Run，检查失败不会提交训练；同请求重试返回同一个 Job。下载、成果发布仍为显式操作。
 
 ## 不共享文件系统
 
@@ -85,3 +87,7 @@ NINNA_INTEGRATION=1 poetry run python scripts/validate-work-v2.py
 真实验收脚本使用独立运行平台，默认 `http://127.0.0.1:8021`。它通过官方 MCP 客户端准备环境、修改远端文件、执行真实 CPU 训练、验证重复提交和工作区停止恢复，并通过新 MCP 会话读取同一上下文。只有实际产生的容器、指标和产物才作为训练证据。
 
 本次实际验收、历史测试的运行方式与验证边界见 [工作任务 v2 验收记录](work-v2-verification.md)。
+
+MCP 列表支持按 query 筛选资产和环境；选择环境建议 `list_environments(query="preludio2", published_only=true)`。列表省略文件哈希，详情通过 inspect_asset_revision 查询。get_work_context 默认省略执行快照源码清单和 Run 的大块 metadata；需要原始详情时传 compact=false，或按保存的 Run/Plan/Job ID 精确查询。网页和 HTTP API 保留完整信息。
+
+客户端 `ninna upload` 的首次成功与重试都返回同一 Asset 结构；已封存上传与当前本地文件不一致时拒绝复用 request-id，避免 Agent 将旧数据误当新数据。

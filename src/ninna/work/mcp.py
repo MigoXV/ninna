@@ -76,9 +76,27 @@ def add_tools(server, call):
     @server.tool(annotations=READ)
     async def list_asset_revisions(
         kind: Literal["model", "dataset"] | None = None,
+        query: str = "",
     ) -> dict[str, Any]:
-        """List local asset identities and availability. Downloaded does not mean training-compatible."""
-        return {"items": await call("GET", "/api/v2/assets", params={"kind": kind} if kind else {})}
+        """List compact local asset identities and availability. File manifests are returned by
+        inspect_asset_revision; downloading does not prove training compatibility.
+        """
+        items = await call("GET", "/api/v2/assets", params={"kind": kind} if kind else {})
+        if query:
+            items = [
+                a
+                for a in items
+                if query.casefold() in (a["name"] + " " + (a.get("repo_id") or "")).casefold()
+            ]
+        return {
+            "items": [
+                {
+                    **{k: v for k, v in a.items() if k != "files"},
+                    "file_count": len(a.get("files", {})),
+                }
+                for a in items
+            ]
+        }
 
     @server.tool(annotations=READ)
     async def inspect_asset_revision(asset_id: str, verify: bool = False) -> dict[str, Any]:
@@ -112,9 +130,32 @@ def add_tools(server, call):
         )
 
     @server.tool(annotations=READ)
-    async def list_environments() -> dict[str, Any]:
-        """List environment drafts and immutable published revisions usable by work items."""
-        return {"items": await call("GET", "/api/v2/environments")}
+    async def list_environments(query: str = "", published_only: bool = False) -> dict[str, Any]:
+        """List environments and published revision identities, without source-file manifests.
+        Select latest_revision_id or an explicit revisions[].id for a work item.
+        """
+        items = await call("GET", "/api/v2/environments")
+        if query:
+            items = [
+                e
+                for e in items
+                if query.casefold()
+                in (e["name"] + " " + (e.get("workspace_name") or "")).casefold()
+            ]
+        if published_only:
+            items = [e for e in items if e.get("latest_revision_id")]
+        return {
+            "items": [
+                {
+                    **e,
+                    "revisions": [
+                        {k: v for k, v in r.items() if k not in {"files", "validation"}}
+                        for r in e.get("revisions", [])
+                    ],
+                }
+                for e in items
+            ]
+        }
 
     @server.tool(annotations=WRITE)
     async def create_environment(request: EnvironmentInput) -> dict[str, Any]:
@@ -156,11 +197,29 @@ def add_tools(server, call):
         return await call("POST", "/api/v2/work-items", json=request.model_dump())
 
     @server.tool(annotations=READ)
-    async def get_work_context(work_item_id: str) -> dict[str, Any]:
+    async def get_work_context(work_item_id: str, compact: bool = True) -> dict[str, Any]:
         """Recover goal, constraints, Agent summary, next step, plans, Jobs and actual Runs.
         Agent summaries are not execution evidence; verify platform metrics and artifacts.
         """
-        return await call("GET", "/api/v2/work-items/" + path(work_item_id))
+        context = await call("GET", "/api/v2/work-items/" + path(work_item_id))
+        if compact:
+            context["runs"] = [
+                {k: v for k, v in r.items() if k != "metadata"} for r in context["runs"]
+            ]
+            context["plans"] = [
+                {k: v for k, v in p.items() if k not in {"prepared", "request"}}
+                for p in context["plans"]
+            ]
+            context["jobs"] = [
+                {
+                    **j,
+                    "result": {k: v for k, v in j["result"].items() if k != "files"}
+                    if isinstance(j.get("result"), dict)
+                    else j.get("result"),
+                }
+                for j in context["jobs"]
+            ]
+        return context
 
     @server.tool(annotations=WRITE)
     async def update_work_item(work_item_id: str, request: WorkUpdate) -> dict[str, Any]:
@@ -243,6 +302,15 @@ def add_tools(server, call):
     async def read_run_plan(plan_id: str) -> dict[str, Any]:
         """Read the fixed execution plan or its concrete preparation blocker."""
         return await call("GET", "/api/v2/run-plans/" + path(plan_id))
+
+    @server.tool(annotations=WRITE)
+    async def start_run(request: PlanInput) -> dict[str, Any]:
+        """Check and submit a fixed recipe in one operation. Same inputs as prepare_run_plan.
+        Returns a Job; get_job SUCCESS yields run_id and plan_id. Then follow get_run.
+        A failed check never creates a Run. Retain request_id on retries; no implicit download,
+        recipe guessing or publishing. Use prepare_run_plan/submit_run for manual plan review.
+        """
+        return await call("POST", "/api/v2/runs/start", json=request.model_dump())
 
     @server.tool(annotations=WRITE)
     async def submit_run(request: SubmitRun) -> dict[str, Any]:

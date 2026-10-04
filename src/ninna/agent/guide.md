@@ -8,8 +8,8 @@ Ninna API v2 提供资产、可复用环境、工作区和真实 Docker 执行�
 2. `list_sources` / `search_source_assets` 发现多个托管平台的模型与数据。`list_asset_revisions` 显示平台机器上的本地副本；同名不同来源不是同一资产。
 3. `acquire_asset` 明确指定一个来源：source_id + repo_id + revision、HTTP(S) 文件 URL 或 Ninna 主机上的 local_path。下载不要求 ninna-asset.json。等待 Job 成功后保存 asset_id。Codex 机器上的文件使用 `ninna upload` 流式上传，不要求共享文件系统。
 4. 选择环境并准备工作区，按下面的环境流程修复依赖或代码。资产已经下载不代表能用于当前训练；必要时 `bind_asset` 补充 split 或模型加载信息。
-5. `prepare_run_plan` 指定 work_item_id、框架任务名、操作、inputs（输入名→asset_id）、recipe 精确引用、resources，必要时指定 source_run_id/source_path。等待 `read_run_plan` 返回 READY；BLOCKED 返回具体准备原因。
-6. `submit_run` 返回提交 Job，等待其 result.run_id，再使用 `get_run`、`get_run_metrics`、`read_run_logs`、`list_run_artifacts` 检查真实执行结果。
+5. 固定配方直接用 `start_run`：指定 work_item_id、任务名、操作、inputs（输入名→asset_id）、recipe 精确引用、resources，必要时指定 source_run_id/source_path。平台完成快照、检查与提交，返回 Job；检查失败不创建 Run。需要先审查方案时仍使用 `prepare_run_plan` → READY → `submit_run`。
+6. 等待提交 Job 的 result.run_id，再使用 `get_run`、`get_run_metrics`、`read_run_logs`、`list_run_artifacts` 检查真实执行结果。
 7. 用 `update_work_item` 保存简洁进度摘要、结论和下一步。摘要是 Agent 的解释，实际状态、指标和产物以平台证据为准。
 
 ## 请求重试与长期工作
@@ -68,3 +68,11 @@ Scratch、Full/LoRA 和 checkpoint 恢复遵循框架声明。恢复必须保留
 ## 五分钟 VAD 数据配方
 
 本仓库的 `docs/vad-data-contract.md`、`examples/vad/` 和 `scripts/prepare-vad.py` 固定 AVA 10h/2h 工作流：16 kHz 单声道 PCM16、每条 300 秒、原始录音级 split、能量粗标注，以及独立 AudioFolder/内嵌 WAV Parquet 副本。2h 按 20/2/2 条划分，是 10h 的严格子集。不要自行改变 `seconds.starts/durations` 的秒单位或重排 split。未人工审核标签的指标不代表真实 VAD 质量。真实运行脚本为 `scripts/run-vad.py`；preludio2 的训练与测试阈值列表均固定为 `[0.5]`。Lightning 会从 checkpoint 恢复模型超参数；仅改评估 YAML 不能证明参数已生效，必须核对 resolved 配置。
+
+## 完整人工 AVA 训练闭环
+
+完整人工 AVA 使用 `examples/vad-human/` 与 `scripts/run-vad-training-loop.py`，独立于上述旧能量流程。保留 158 条 900 秒录音和 2 条 300 秒录音及原 11 个字段，prepare 只增加 seconds.starts=onset、seconds.durations=offset-onset。原 train 按固定录音哈希选 16 条 validation，得到 142/16/2，原 test 不变。
+
+Scratch 只读无权重 config，Full/LoRA 只读同一已导出基线；三种 Task 和配方分别固定，全部模型选择完成后才评估 test。检查优化步、trainable/frozen 参数数目、逐参数哈希与 resolved.yaml。LoRA 的 frozen_changed_parameter_tensors 必须为 0；导出后重新加载并推理。发布数据必须显式传 --publish。
+
+大音频的 datasets.map 固定 writer_batch_size=1，Parquet 分片最多 16 条，避免 Arrow binary 的 2 GB 偏移上限。MCP 资产列表只列身份与 file_count，文件哈希用 inspect_asset_revision 查询；环境列表省略历史源码清单，HTTP 与网页详情仍完整。
