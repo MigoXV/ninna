@@ -165,3 +165,7 @@ NINNA_INTEGRATION=1 NINNA_API_URL=http://127.0.0.1:8021 \
 ## 五分钟 VAD 数据与 preludio2 验证
 
 [数据契约与操作说明](docs/vad-data-contract.md)固定了 AVA 来源版本、10h/2h 划分、每条严格 300 秒、能量粗标注及 AudioFolder/Parquet 双格式。通过 `poetry run python scripts/prepare-vad.py build` 生成数据；显式 `NINNA_INTEGRATION=1` 后使用 `scripts/run-vad.py` 在现有 Ninna v2 平台运行真实 preludio2 容器，持久保存运行证据。实际结果见 [VAD 验证记录](docs/vad-verification.md)。
+
+## 完整人工 AVA：Scratch、全量与 LoRA 闭环
+
+[固定配方](examples/vad-human/README.md)保留完整人工标注与录音长度，独立生成可训练 FLAC Parquet 和 142/16/2 划分。`start_run` 将原来的准备方案、检查和提交收敛为一次 MCP 写操作，仍保存封存方案与输入校验。`scripts/run-vad-training-loop.py` 可恢复地执行从零训练、HF 导出、同基线 Full/LoRA、独立评估和重新加载推理；`--publish` 显式发布训练数据。实际优化步、冻结底座哈希、指标、产物与验证边界见 [训练闭环验收](docs/vad-training-loop-verification.md)。
