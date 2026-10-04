@@ -187,3 +187,6 @@ src/web/playwright-report/
 *.sqlite3*
 
 *.tsbuildinfo
+
+# Imported framework workspaces (mutable assets)
+/workspaces/

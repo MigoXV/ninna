@@ -8,7 +8,9 @@ description: 使用 Ninna MCP 发现训练资产、组合真实 Docker Training 
 通过已连接的 `ninna` MCP 工作。先读取 `ninna://guide`；工具 schema 是当前参数契约。
 未连接时，仓库的 `docs/agent-integration.md` 提供 stdio / Streamable HTTP 接入方法。
 
-## 发起训练
+优先发现 Framework 并使用下方「多框架任务」流程；各任务按自身操作契约、指标和证据判断。下面的 `create_run` 流程适用于兼容的 MNIST 训练入口。
+
+## 发起兼容 MNIST 训练
 
 1. `list_projects` 选择项目，必要时 `create_project` 新建；`create_run` 和 `list_runs` 必须传 `project_id`。随后 `platform_health`，然后 `list_assets` / `describe_asset` 选择实际注册的精确版本；不要猜测资产名或把初始 Model 当成已训练模型。
 2. `training_spec` 只包含 Dataset、Model、Recipe；`execution_spec` 包含 Runtime、Workspace snapshot、CPU resources。阅读资产说明确认输入、预处理和配方解释一致。
@@ -43,3 +45,13 @@ description: 使用 Ninna MCP 发现训练资产、组合真实 Docker Training 
 `browse_images()` 返回已登记的站点。依次传 `registry`、`namespace`、`repository` 进入命名空间、镜像和版本；`q` 在当前层级内搜索路径、标签与资产名称。`GET /api/images/catalog` 提供同样的只读目录接口。父级参数必须完整。
 
 目录依据注册时来源派生，不扫描远端仓库，不修改资产。相同仓库引用和 image ID 的重复登记聚合展示；`assets` 保留所有精确 name/version 引用，选择后用 `describe_asset` 查看。按 image ID 登记的内容属于 `local` 站点；标签无法确定唯一仓库时归入未分类。目录统计不证明当前 Docker 可用，执行前仍需读取资产可用性。
+
+## 多框架工作流
+
+1. list_assets(kind="framework") / describe_asset 读取精确版本的 tasks、操作与镜像内 Skill。Framework 声明不是端到端通过证明。
+2. import_framework 从注册 Image 提取说明和 Workspace；Runtime 注册需同时指定 image_ref 和 framework。
+3. Recipe 绑定 framework/task/operation，config 使用原生 LightningCLI 配置。命名 inputs 引用数据和模型；preflight_task 后 create_task。GPU 通过 list_gpus 发现并显式选择单个空闲 UUID。
+4. 查询通用 Run 工具，查看实际任务指标、optimizer_steps、参数 hash、resolved.yaml 与 checkpoint。执行 SUCCESS 与 quality 判定分开报告。
+5. source 指定同项目的封存 checkpoint，export 后 promote_model，再 infer 验证导出重载。prepare 后 promote_dataset。恢复训练不能改模型、数据、优化器、随机种子和输入身份。
+
+多框架任务不使用旧 MNIST 的固定 loss/accuracy 成功门槛。完整协议见 `docs/framework-integration.md`。

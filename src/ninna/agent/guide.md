@@ -1,8 +1,8 @@
 # Ninna Agent 接口
 
-平台使用真实 Docker 执行训练。六类注册资产：Dataset、Model、Recipe、Image、Runtime、Workspace。
+平台使用真实 Docker 执行训练。七类注册资产：Framework、Dataset、Model、Recipe、Image、Runtime、Workspace。
 训练定义是 Dataset × Model × Recipe；执行环境是 Runtime + Workspace snapshot + resources。
-当前支持单机 CPU，device=cpu、gpu_count=0。训练不能在宿主机直接运行。
+旧版 create_run 支持 CPU；多框架 create_task 支持 CPU 或显式 UUID 的单 GPU。平台训练在 Docker 中执行。
 
 ## Project 组织
 
@@ -62,3 +62,13 @@ promote_model 把成功 Run 输出注册为新 Model Asset，供下一次训练�
 `browse_images()` 返回已登记的站点。依次传 `registry`、`namespace`、`repository` 进入命名空间、镜像和版本；`q` 在当前层级内搜索路径、标签与资产名称。`GET /api/images/catalog` 提供同样的只读目录接口。父级参数必须完整。
 
 目录依据注册时来源派生，不扫描远端仓库，不修改资产。相同仓库引用和 image ID 的重复登记聚合展示；`assets` 保留所有精确 name/version 引用，选择后用 `describe_asset` 查看。按 image ID 登记的内容属于 `local` 站点；标签无法确定唯一仓库时归入未分类。目录统计不证明当前 Docker 可用，执行前仍需读取资产可用性。
+
+## 多框架任务
+
+先 list_assets(kind="framework")，describe_asset 查看 tasks、操作、输入、镜像内 Skill 和 AGENTS.md。已注册镜像可用 import_framework 导入源码和说明，再 register_asset(kind="runtime") 指定 image_ref 与 framework。不同框架的 Recipe 不能混用。
+
+用 preflight_task / create_task 提交 protocol_version=1、project_id、framework、task、operation、inputs（命名 kind/ref）、recipe、execution_spec。操作包括 prepare/train/evaluate/export/infer，以声明为准。GPU 先 list_gpus，再显式设置 device=cuda、gpu_count=1、gpu_ids=[UUID]；没有可用空闲设备不能擅用占用设备。
+
+训练查看 metadata.result.evidence 中 optimizer_steps 和参数 hash，同时检查任务自己的指标、配置、checkpoint。SUCCESS 是执行判定；metadata.quality 是独立质量结论，不要求每次短跑 loss 下降。导出与评估填写 source:{run_id,path}，来源必须同项目、同框架任务。恢复保持输入与模型/数据/优化器/seed 一致。
+
+框架数据入口为 datasets.load_dataset；prepare 可将已有 Arrow/Parquet 整理成声明的 split。旧 MNIST create_run 的 DatasetDict 格式继续保留。模型加载 Auto 类因任务而异，不能给语音/文本模型套用图像 Auto 类。导出后 promote_model；数据准备后 promote_dataset；再以新资产版本发起 infer 或训练。接口、挂载与例子见 docs/framework-integration.md。

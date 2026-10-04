@@ -283,15 +283,18 @@ class HubService:
 
     @staticmethod
     def validate_layout(kind, root):
-        required = (
-            ["config.json", "preprocessor_config.json"]
-            if kind == "model"
-            else ["dataset_dict.json"]
-        )
-        if any(not (root / name).is_file() for name in required):
-            raise ValueError("不是支持的 Hugging Face 模型或 DatasetDict 目录")
-        if kind == "model" and not list(root.glob("*.safetensors")):
-            raise ValueError("HF 模型缺少 Safetensors 权重")
+        if kind == "model":
+            if (
+                not (root / "config.json").is_file()
+                and not (root / "adapter_config.json").is_file()
+            ):
+                raise ValueError("Hugging Face 模型缺少 config.json 或 adapter_config.json")
+            if not list(root.glob("*.safetensors")):
+                raise ValueError("Hugging Face 模型缺少 Safetensors 权重")
+        elif not (root / "dataset_dict.json").is_file() and not (
+            list(root.rglob("*.parquet")) or list(root.rglob("metadata.jsonl"))
+        ):
+            raise ValueError("数据资产需要 DatasetDict、Parquet 或 AudioFolder 布局")
 
     def close(self):
         self.pool.shutdown(wait=True, cancel_futures=True)

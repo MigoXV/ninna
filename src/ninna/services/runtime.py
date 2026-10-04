@@ -12,22 +12,33 @@ class HFRuntimeValidator:
         self.cache = {}
         self.lock = threading.Lock()
 
-    def validate(self, asset):
+    def validate(self, asset, framework=None):
         image_id = asset["image_id"]
+        cache_key = (image_id, json.dumps(framework, sort_keys=True))
         with self.lock:
             image = self.docker().images.get(image_id)
-            if image_id in self.cache:
-                return self.cache[image_id]
+            if cache_key in self.cache:
+                return self.cache[cache_key]
+            probe = (
+                "import json,platform,torch,torchvision,transformers,datasets,huggingface_hub,safetensors; "
+                "from transformers import AutoModel,AutoConfig,AutoImageProcessor; "
+                "from datasets import DatasetDict,load_from_disk; "
+                "print(json.dumps(dict(python=platform.python_version(), **{m.__name__:m.__version__ for m in [torch,torchvision,transformers,datasets,huggingface_hub,safetensors]})))"
+            )
+            if framework:
+                probe = (
+                    "import json,platform,importlib,importlib.util,yaml; from pathlib import Path; "
+                    "s=yaml.safe_load(Path('/app/ninna-framework.yaml').read_text()); "
+                    f"assert {{'name':s['name'],'version':s['version']}} == {framework!r}; "
+                    "modules=[importlib.import_module(n) for n in s['imports']]; "
+                    "importlib.import_module('torchcodec') if importlib.util.find_spec('torchcodec') else None; "
+                    "print(json.dumps(dict(python=platform.python_version(), **{m.__name__:getattr(m,'__version__','available') for m in modules})))"
+                )
             container = self.docker().containers.create(
                 image.id,
-                [
-                    "python",
-                    "-c",
-                    "import json,platform,torch,torchvision,transformers,datasets,huggingface_hub,safetensors; "
-                    "from transformers import AutoModel,AutoConfig,AutoImageProcessor; "
-                    "from datasets import DatasetDict,load_from_disk; "
-                    "print(json.dumps(dict(python=platform.python_version(), **{m.__name__:m.__version__ for m in [torch,torchvision,transformers,datasets,huggingface_hub,safetensors]})))",
-                ],
+                ["python", "-c", probe],
+                entrypoint=[],
+                working_dir="/app" if framework else None,
                 network_mode="none",
                 network_disabled=True,
                 mem_limit="2g",
@@ -49,7 +60,7 @@ class HFRuntimeValidator:
                     "versions": versions,
                     "container_id": container.id,
                 }
-                self.cache[image_id] = evidence
+                self.cache[cache_key] = evidence
                 return evidence
             except Exception:
                 container.reload()

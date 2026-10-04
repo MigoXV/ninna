@@ -29,7 +29,21 @@ def manifest_hash(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
-EXCLUDED = {".git", ".env", ".venv", "__pycache__", "node_modules", "outputs", ".pytest_cache"}
+EXCLUDED = {
+    ".git",
+    ".env",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "outputs",
+    ".pytest_cache",
+    "data-bin",
+    "model-bin",
+    "tmp-workspace",
+    ".aim",
+    ".ruff_cache",
+    ".mypy_cache",
+}
 
 
 def snapshot(source: Path, destination: Path):

@@ -125,6 +125,10 @@ class AimTracking:
                         "gradient_accumulation",
                         "freeze",
                         "seed",
+                        "framework",
+                        "task",
+                        "operation",
+                        "config",
                     )
                     if key in recipe
                 }
@@ -135,6 +139,15 @@ class AimTracking:
                     or assets.get("runtime", {}).get("image_id"),
                     "workspace_snapshot": assets.get("workspace", {}).get("snapshot"),
                     "git_commit": assets.get("workspace", {}).get("git_commit"),
+                    "framework": run.get("task_spec", {}).get("framework"),
+                    "inputs": {
+                        name: {
+                            "name": value["name"],
+                            "version": value["version"],
+                            "checksum": value.get("checksum"),
+                        }
+                        for name, value in run.get("inputs", {}).items()
+                    },
                 }
                 tracked["summary"] = {
                     key: value
@@ -142,14 +155,18 @@ class AimTracking:
                     if key not in {"history", "train_loss"}
                 }
                 for event in events:
-                    for name in ("train_loss", "test_loss", "test_accuracy", "lr", "elapsed_time"):
-                        value = event.get(name)
+                    for name in (
+                        event.get("metrics", {})
+                        if run.get("task_spec")
+                        else ("train_loss", "test_loss", "test_accuracy", "lr", "elapsed_time")
+                    ):
+                        value = event.get("metrics", event).get(name)
                         if isinstance(value, (int, float)) and math.isfinite(value):
                             tracked.track(
                                 value,
                                 name=name,
-                                step=int(event["epoch"]),
-                                epoch=int(event["epoch"]),
+                                step=int(event.get("step", event.get("epoch", 0))),
+                                epoch=int(event.get("epoch", 0)),
                             )
             finally:
                 tracked.close()

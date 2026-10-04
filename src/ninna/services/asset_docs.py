@@ -10,7 +10,13 @@ def asset_card(kind: str, asset: dict) -> str:
     identity = f"{asset['name']} / {asset['version']}"
     metadata = asset.get("metadata", {})
     sections = [f"# {identity}", f"Ninna {kind} 资产。使用精确的 name/version 引用。"]
-    if kind == "dataset":
+    if kind == "framework":
+        sections += [
+            "## 框架任务",
+            "镜像 WORKDIR 为 /app，AGENTS.md 与 .agents/skills 位于项目根目录。",
+            asset.get("documentation", {}).get("skill", "详细输入与操作见 tasks 声明。"),
+        ]
+    elif kind == "dataset":
         sections += [
             "## 数据与加载",
             "这是已沉淀的数据资产；训练时由平台只读挂载到 `/dataset`，训练代码不下载数据。",
@@ -29,7 +35,9 @@ def asset_card(kind: str, asset: dict) -> str:
             f"初始化：`{asset.get('initialization')}`；初始权重：`{asset.get('initial_checkpoint')}`。",
             "模型定义不包含优化器、loss 或训练循环；这些由 Recipe 和 Workspace 提供。",
         ]
-        if metadata.get("format") == "huggingface.PreTrainedModel":
+        if metadata.get("format") == "huggingface.PreTrainedModel" and not metadata.get(
+            "framework"
+        ):
             sections += [
                 "```python\nfrom transformers import AutoModelForImageClassification\n"
                 "model = AutoModelForImageClassification.from_pretrained(\n"

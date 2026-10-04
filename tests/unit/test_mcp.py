@@ -121,7 +121,7 @@ def test_invalid_resources_never_reach_api_and_transport_errors_are_actionable()
         request["execution_spec"]["resources"]["device"] = "cuda"
         import pytest
 
-        with pytest.raises(Exception, match="CPU only"):
+        with pytest.raises(Exception, match="GPU UUID"):
             await server.call_tool("create_run", request)
         assert not calls
         with pytest.raises(Exception, match="outcome is unknown") as error:

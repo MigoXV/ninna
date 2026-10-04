@@ -26,6 +26,7 @@ import {
   Terminal,
   X,
 } from "lucide-react";
+import { TaskMetrics } from "./frameworks";
 import { api, useData } from "./api";
 import type { Asset, Run, Project } from "./types";
 import { useRegionScroll, useViewState } from "./workspace";
@@ -598,6 +599,12 @@ export function CreatePage() {
         title="创建训练"
         description="组合训练资产，交给一个独立的 Docker 容器执行。"
       />
+      <Link
+        className="text-link"
+        to={`/tasks/new?project_id=${encodeURIComponent(projectId)}`}
+      >
+        使用图像、文本或语音框架创建任务
+      </Link>
       <details className="training-help">
         <summary>训练定义与执行环境</summary>
         <p>
@@ -980,7 +987,14 @@ export function RunPage() {
                   {run.cancel_requested ? "正在取消…" : "取消训练"}
                 </button>
               ) : (
-                <Link className="button" to={"/runs/new?from=" + id}>
+                <Link
+                  className="button"
+                  to={
+                    run.task_spec
+                      ? `/tasks/new?project_id=${encodeURIComponent(run.project_id)}&framework=${encodeURIComponent(run.task_spec.framework.name + "/" + run.task_spec.framework.version)}&task=${encodeURIComponent(run.task_spec.task)}&parent_run_id=${id}`
+                      : "/runs/new?from=" + id
+                  }
+                >
                   <Copy size={15} />
                   基于此 Run 新建
                 </Link>
@@ -1032,7 +1046,8 @@ export function RunPage() {
           <AssetLink kind="recipe" {...run.training_spec.recipe} />
           <span className="context-divider" />
           <span className="mono">
-            CPU / {run.execution_spec.resources.cpu_threads} threads
+            {run.execution_spec.resources.device.toUpperCase()} /{" "}
+            {run.execution_spec.resources.cpu_threads} threads
           </span>
           <span className="context-duration">
             {duration(run.started_at, run.finished_at)}
@@ -1064,7 +1079,13 @@ export function RunPage() {
         role="region"
         aria-label="运行详情内容"
       >
-        {tab === "training" && (
+        {tab === "training" && run.task_spec && (
+          <>
+            <TaskMetrics run={run} events={events} />
+            <LogViewer id={run.id} />
+          </>
+        )}
+        {tab === "training" && !run.task_spec && (
           <>
             <div className="training-metrics">
               <Metric
@@ -1173,46 +1194,47 @@ export function RunPage() {
                 description="训练完成后，checkpoint 与指标会出现在这里。日志在训练过程中持续保存。"
               />
             )}
-            {run.status === "SUCCESS" && (
-              <section className="promotion">
-                <div>
-                  <h2>让结果成为下一次训练的起点</h2>
-                  <p>将 checkpoint 注册为 Model 新版本，保留完整来源。</p>
-                </div>
-                {promoted ? (
-                  <p role="status">
-                    <Check size={16} />
-                    已注册 {promoted}
-                  </p>
-                ) : (
-                  <div className="inline-form">
-                    <label htmlFor="model-version" className="sr-only">
-                      新模型版本
-                    </label>
-                    <input
-                      id="model-version"
-                      placeholder="新版本，例如 trained-001"
-                      value={version}
-                      onChange={(e) => setVersion(e.target.value)}
-                    />
-                    <button
-                      className="button"
-                      disabled={!version || busy}
-                      onClick={promote}
-                    >
-                      注册 Model <ArrowUpRight size={15} />
-                    </button>
+            {run.status === "SUCCESS" &&
+              (!run.task_spec || run.task_spec.operation === "export") && (
+                <section className="promotion">
+                  <div>
+                    <h2>让结果成为下一次训练的起点</h2>
+                    <p>将 checkpoint 注册为 Model 新版本，保留完整来源。</p>
                   </div>
-                )}
-              </section>
-            )}
+                  {promoted ? (
+                    <p role="status">
+                      <Check size={16} />
+                      已注册 {promoted}
+                    </p>
+                  ) : (
+                    <div className="inline-form">
+                      <label htmlFor="model-version" className="sr-only">
+                        新模型版本
+                      </label>
+                      <input
+                        id="model-version"
+                        placeholder="新版本，例如 trained-001"
+                        value={version}
+                        onChange={(e) => setVersion(e.target.value)}
+                      />
+                      <button
+                        className="button"
+                        disabled={!version || busy}
+                        onClick={promote}
+                      >
+                        注册 Model <ArrowUpRight size={15} />
+                      </button>
+                    </div>
+                  )}
+                </section>
+              )}
           </>
         )}
         {tab === "diagnostics" && (
           <div className="diagnostic-layout">
             <div>
               <SectionHeader title="训练定义" />
-              <Json value={run.training_spec} />
+              <Json value={run.task_spec || run.training_spec} />
               <SectionHeader title="执行环境" />
               <Json value={run.execution_spec} />
               <SectionHeader title="训练证据" />

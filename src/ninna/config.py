@@ -19,7 +19,7 @@ class Settings:
         return cls(
             root,
             host_root,
-            root / "outputs" / "platform",
+            Path(os.environ.get("NINNA_STATE", root / "outputs" / "platform")).resolve(),
             os.environ.get("NINNA_RUNTIME_IMAGE", "ninna/pytorch-runtime:v3"),
         )
 

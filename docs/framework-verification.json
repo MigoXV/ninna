@@ -1,0 +1,5875 @@
+{
+  "preserved_failures": [
+    {
+      "id": "run-d086bbd37817",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-d8a27215fdc5",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-3094d2d42be4",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-4adae2030ec4",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-9c93c2b693e6",
+      "status": "FAILED",
+      "failure_reason": "UnixHTTPConnectionPool(host='localhost', port=None): Read timed out. (read timeout=120)"
+    },
+    {
+      "id": "run-4e93e3051d93",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-d0521a4517fc",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-e11f98e6b78b",
+      "status": "FAILED",
+      "failure_reason": "UnixHTTPConnectionPool(host='localhost', port=None): Read timed out. (read timeout=30)"
+    },
+    {
+      "id": "run-739ec8109059",
+      "status": "FAILED",
+      "failure_reason": "UnixHTTPConnectionPool(host='localhost', port=None): Read timed out. (read timeout=30)"
+    },
+    {
+      "id": "run-f54d570890ee",
+      "status": "FAILED",
+      "failure_reason": "UnixHTTPConnectionPool(host='localhost', port=None): Read timed out. (read timeout=30)"
+    },
+    {
+      "id": "run-2faeb5f28a2e",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    },
+    {
+      "id": "run-07e0624faca2",
+      "status": "FAILED",
+      "failure_reason": "Container exited with code 1"
+    }
+  ],
+  "recorded_at": "2026-10-03T19:37:02.840298+00:00",
+  "validation_api": "http://127.0.0.1:8011/api",
+  "main_api": "http://127.0.0.1:8000/api",
+  "scope": "真实短跑与独立导出推理；不代表生产质量或所有模式均实测",
+  "chains": [
+    {
+      "framework": "demo-mnist",
+      "task": "classification",
+      "mode": "scratch",
+      "train": "run-301d080c1592",
+      "export": "run-2be0ddcfdde3",
+      "infer": "run-a6dd4f52c87f"
+    },
+    {
+      "framework": "arietta",
+      "task": "decision",
+      "mode": "lora",
+      "train": "run-9645b27956e5",
+      "export": "run-9c6663f0f1b7",
+      "infer": "run-12a7d612ef36"
+    },
+    {
+      "framework": "preludio2",
+      "task": "attetion-vad",
+      "mode": "scratch",
+      "train": "run-2ee434c00aff",
+      "export": "run-52df973cd43a",
+      "infer": "run-cbd155f792b1"
+    },
+    {
+      "framework": "preludio2",
+      "task": "firered-vad",
+      "mode": "scratch",
+      "train": "run-80b084fb5887",
+      "export": "run-39aad471bb04",
+      "infer": "run-60cd352c3206"
+    },
+    {
+      "framework": "preludio2",
+      "task": "qwen-vad",
+      "mode": "head",
+      "train": "run-b843d66dd9fd",
+      "export": "run-19c0d7f2c6ec",
+      "infer": "run-413a4f9ac467"
+    },
+    {
+      "framework": "notturno2",
+      "task": "gtcrn",
+      "mode": "scratch",
+      "train": "run-13ce1d80fa77",
+      "export": "run-4632e5b5a171",
+      "infer": "run-2d8c11ef913a"
+    },
+    {
+      "framework": "notturno2",
+      "task": "mossformer",
+      "mode": "scratch",
+      "train": "run-ade5546d2300",
+      "export": "run-f4835cd635d4",
+      "infer": "run-f6f97fc13c88"
+    },
+    {
+      "framework": "notturno2",
+      "task": "mossformer-dns",
+      "mode": "lora",
+      "train": "run-89c10af7cffb",
+      "export": "run-9e3b81b1bc3a",
+      "infer": "run-97e3fab991b8"
+    },
+    {
+      "framework": "richiamo",
+      "task": "qwen3-asr",
+      "mode": "lora",
+      "train": "run-17e33592ab06",
+      "export": "run-8cd73ab56eee",
+      "infer": "run-6fce34342a6a"
+    },
+    {
+      "framework": "serenata",
+      "task": "qwen3-tts",
+      "mode": "lora",
+      "train": "run-d11422e0fd78",
+      "export": "run-fe927d6eda74",
+      "infer": "run-5fc06a571a26"
+    }
+  ],
+  "registered": [
+    {
+      "framework": "demo-mnist",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v3",
+      "image_source": "ninna/demo-mnist:ninna-v3",
+      "image_id": "sha256:928aa8320d625169b1620d56ed68df4a5b81ff1fbb630f2bc9f89a2e34c40843",
+      "build_source": {
+        "org.opencontainers.image.revision": "8b78eb6a90eefb847988da467a9e2dcd6968634e+context.14b89c5d701318db76583ab7d7b968db0e0c17ac98270498ad38799cd0bbc8df",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "demo-mnist-main-v3",
+      "git_head": "f17f2371a86daf6f10c1cd68324b08557e11ac94",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "e7bbc7b7f2de57ff9df6612c5d41f07a6b3b09c2ca536b8be70944c7abfe4a23",
+        "image_id": "sha256:928aa8320d625169b1620d56ed68df4a5b81ff1fbb630f2bc9f89a2e34c40843",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      }
+    },
+    {
+      "framework": "arietta",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v4",
+      "image_source": "ninna/arietta:ninna-v4",
+      "image_id": "sha256:73ccb7294a53a74b41cec1d63b1b0e94044bffc86c249097e62d23bb2ca2188d",
+      "build_source": {
+        "org.opencontainers.image.revision": "e90f1232f4b6f1a58d485f448bfb8b474714bd60+context.eae31a1a5ee5c9a81da60c044d34ed3d930669c19cb196a7904bc59b2aeda80d",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "arietta-main-v4",
+      "git_head": "e90f1232f4b6f1a58d485f448bfb8b474714bd60",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "58b4e2bd2e73f17ddd17c4a2105a1848088bdee982e5e07d8c6df387098cd49f",
+        "image_id": "sha256:73ccb7294a53a74b41cec1d63b1b0e94044bffc86c249097e62d23bb2ca2188d",
+        "versions": {
+          "arietta": "available",
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.18.0"
+        }
+      }
+    },
+    {
+      "framework": "preludio2",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v4",
+      "image_source": "ninna/preludio2:ninna-v4",
+      "image_id": "sha256:6ca5a3e47103c793946579efbee4ab4cb41d19514e099e697fbd58c4693c0a4c",
+      "build_source": {
+        "org.opencontainers.image.revision": "2476a939e1bb613eaf9e69c8731c9f0eaa463ab5+context.69b6d0a9d310cbc3c15933c2d913b5772270c2fd070a5461b8cc1eddc957c25e",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "preludio2-main-v4",
+      "git_head": "373d7a76093ebdb6223f3e34bc7825aee7153017",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "54e0447c83d6f2cd5de559ba13cd99ce2529ef590df586b55e418f39df0fa50c",
+        "image_id": "sha256:6ca5a3e47103c793946579efbee4ab4cb41d19514e099e697fbd58c4693c0a4c",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      }
+    },
+    {
+      "framework": "notturno2",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v4",
+      "image_source": "ninna/notturno2:ninna-v4",
+      "image_id": "sha256:df83eae64e32eb628d3f1790170c7b894fe6b5a442ee30f933ca6a6e28f91e00",
+      "build_source": {
+        "org.opencontainers.image.revision": "61a6b9752502fc6f790edd1a73f2d05acd182e46+context.957f752188db766e31fb1ef10e6837531acc026edea4f65f71d43cbbf670a148",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "notturno2-main-v4",
+      "git_head": "61a6b9752502fc6f790edd1a73f2d05acd182e46",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "9281e6449e63c9ce213173926d544b10f3d128919e234183151718b776a5aae1",
+        "image_id": "sha256:df83eae64e32eb628d3f1790170c7b894fe6b5a442ee30f933ca6a6e28f91e00",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      }
+    },
+    {
+      "framework": "richiamo",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v4",
+      "image_source": "ninna/richiamo:ninna-v4",
+      "image_id": "sha256:30b67f3b11a999e60f00f93db32b539cb5ddfc64dec49692cf7e21aabfca0212",
+      "build_source": {
+        "org.opencontainers.image.revision": "1ada33c3608881072474aafd8831701c3721047a+context.dd59c9473d9eedb72c009b31735867caa95c43b5c4147e2504916af9797acbd9",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "richiamo-main-v4",
+      "git_head": "1ada33c3608881072474aafd8831701c3721047a",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "db342faf0073170b69ec3f531f9f6cc10185de97fd110b908cf70765e982c22e",
+        "image_id": "sha256:30b67f3b11a999e60f00f93db32b539cb5ddfc64dec49692cf7e21aabfca0212",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "richiamo": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      }
+    },
+    {
+      "framework": "serenata",
+      "framework_version": "ninna-v1",
+      "runtime_version": "ninna-v3",
+      "image_source": "ninna/serenata:ninna-v3",
+      "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+      "build_source": {
+        "org.opencontainers.image.revision": "4187e4b19b7bdfdf9e72197eec532af9a3f93f71+context.05abbf7d184b34b1df3d0f58140dd0f6d3c5f8928ed39e500a0d2a8c9fee8290",
+        "org.opencontainers.image.version": "ninna-v1"
+      },
+      "workspace": "serenata-main-v3",
+      "git_head": "4187e4b19b7bdfdf9e72197eec532af9a3f93f71",
+      "branch": "feature/ninna-agent-integration",
+      "runtime_validation": {
+        "container_id": "2576720a33b86104261f8ad2dcb08fe17af47e251a49424d24244eafc1b3d048",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      }
+    }
+  ],
+  "runs": {
+    "run-301d080c1592": {
+      "run_id": "run-301d080c1592",
+      "url": "http://127.0.0.1:8011/runs/run-301d080c1592",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-scratch-train",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v1",
+          "snapshot": "1674289a8078f8010aee35ed761be12101c1626ada8141736583bd8cf136886e"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "332c75a7e45845892cb8fadfcc72c320f97b05a721bbf169ced89aa385890532",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "be921c936034b8c4890a9551755a9634ad900f6ef90fd0b1e2bac7774ea3f8ff",
+        "image_id": "sha256:62bf1a23c6b927ef5bf56c80b0f44457a1a6fa30f353f9087bd3d6bc23958817",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "50bfb1d8c619095d9be5b216a703d9e9013d0c5a3fbb24356be382fda722a5d2",
+      "metrics": {
+        "train_loss": 2.2748870849609375,
+        "train_loss_step": 2.247976303100586,
+        "train_accuracy": 0.21875,
+        "train_accuracy_step": 0.375,
+        "val_loss": 2.3461194038391113,
+        "val_accuracy": 0.25,
+        "train_loss_epoch": 2.2748870849609375,
+        "train_accuracy_epoch": 0.21875,
+        "elapsed_time": 7.309937081299722
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+        "final_trainable_hash": "f9a250bf05e7c8c3b1a37985e6b309f96803e0fa4c2bd2a0c0462a7447926326"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "715aa379e21100035afc4cb5ed2bc4d66ea0e6722c283a06ec41c90dd158f260",
+      "required_outputs": [
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "a1a8d5c356d4ff181eabe1c8a243af3d47981b83b2e254f9cc5406490f49203f"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "d5ac154c666607a4326f1bf61c5fe689ea77b75f93777ddf140c559bd27bde70"
+        },
+        {
+          "path": "training/run/checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "516b81d2549a56c140300116d37847b6784b1fe87043a2dcdda4523703204c34"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "5f10a4abf16b74ecfe6765d70aad55d7e67305d81a87fd99ff80b352f9e3255e"
+        }
+      ]
+    },
+    "run-2be0ddcfdde3": {
+      "run_id": "run-2be0ddcfdde3",
+      "url": "http://127.0.0.1:8011/runs/run-2be0ddcfdde3",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-export",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-301d080c1592",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v1",
+          "snapshot": "1674289a8078f8010aee35ed761be12101c1626ada8141736583bd8cf136886e"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "ee9a96e77344c710c3a424fd44a267db668264b654b2c2f40aad85a88e430a5a",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "be921c936034b8c4890a9551755a9634ad900f6ef90fd0b1e2bac7774ea3f8ff",
+        "image_id": "sha256:62bf1a23c6b927ef5bf56c80b0f44457a1a6fa30f353f9087bd3d6bc23958817",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "c8151d313e5709c97931551580be32460f19012e83a4bd8ce57ecfde0f778f47",
+      "metrics": {
+        "elapsed_time": 5.864988232031465
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-301d080c1592/checkpoints/last.ckpt",
+        "sha256": "a1a8d5c356d4ff181eabe1c8a243af3d47981b83b2e254f9cc5406490f49203f"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "d902e0a8132869ec1487786d6a5f3f6644a4951589ffcacfc9b34f72faf55ac5",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "ee92c7bc6d7f514c0af3edfe56ddd59d253ffff15cc673d3c6e45a3d646a364e"
+        }
+      ]
+    },
+    "run-a6dd4f52c87f": {
+      "run_id": "run-a6dd4f52c87f",
+      "url": "http://127.0.0.1:8011/runs/run-a6dd4f52c87f",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "demo-mnist-classification",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-infer",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v1",
+          "snapshot": "1674289a8078f8010aee35ed761be12101c1626ada8141736583bd8cf136886e"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "3e4d70ac0eab36cbf8a00deaf8e84086e7d53e60986dd2e3a2bfce1f218fea25",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "be921c936034b8c4890a9551755a9634ad900f6ef90fd0b1e2bac7774ea3f8ff",
+        "image_id": "sha256:62bf1a23c6b927ef5bf56c80b0f44457a1a6fa30f353f9087bd3d6bc23958817",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "demo-mnist-classification",
+          "version": "smoke-v1",
+          "checksum": "11e3d9bc0ee97a7a876a3f945430fda485dce72d16191463ab3a9ed8f015141a"
+        }
+      },
+      "recipe_sha256": "e83aa66d121521d1f1b31c575d13062a96f682ac44f57addfed400594f733621",
+      "metrics": {
+        "test_accuracy": 0.375,
+        "samples": 16,
+        "elapsed_time": 5.818725483957678
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "abc9bb7f2c1786d49caef48c5bbb69d8d1a2d92830df82e0d0816db8d9645af6",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "9162da7ba6c6efed553d5f94e605a286c9590f8d3e27fd9ed65bfc8e0444df60"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "c4d4ae6af25edfb558239cf2b750a98844aa08c392f161729372eb7d6ed71da8"
+        }
+      ]
+    },
+    "run-9645b27956e5": {
+      "run_id": "run-9645b27956e5",
+      "url": "http://127.0.0.1:8011/runs/run-9645b27956e5",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "arietta",
+          "version": "ninna-v1"
+        },
+        "task": "decision",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "decision",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "decision-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "arietta-decision-lora-train",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "arietta",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "arietta-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "arietta",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "arietta-ninna-v1",
+          "snapshot": "a6dc12e890c753e159e1992a42a02bed9b930bd20bb47f69362bbd5e1df2f846"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "e6898fac1eca02e232af71b0de63839b29ad0eff0a1cce39403fdfe4b585816e",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "b9015e82ae0ebfc26b1f9b605be4d73dbf1bbaa1d2eaa2436be452c71ac96775",
+        "image_id": "sha256:91ed211437d9974672fb35e610ca8ecbf8e96b5d7645d49c3e84e4e924ad9eb2",
+        "versions": {
+          "arietta": "available",
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.18.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "decision",
+          "version": "smoke-v1",
+          "checksum": "a6491589635121a5786c66f8886b67263122b88c2155f039679799ef276eb5d7"
+        },
+        "model": {
+          "name": "decision-model",
+          "version": "smoke-v1",
+          "checksum": "ca815ab7bb86e3c5e3070b5a954d93ef60a4c860278092cc72ca00c4bfec9391"
+        }
+      },
+      "recipe_sha256": "f85ea714ace89de4309fb160d8b0a994c409834ebadcbce375878339cd2d4c4e",
+      "metrics": {
+        "train_loss": 0.4431804418563843,
+        "val_loss": 0.5023419260978699,
+        "val_deploy_choice_nll": 0.19465938210487366,
+        "val_deploy_choice_brier": 0.09762956947088242,
+        "val_deploy_choice_hard_count": 3.0,
+        "val_deploy_choice_soft_count": 0.0,
+        "val_deploy_choice_accuracy": 1.0,
+        "val_deploy_choice_macro_f1": 1.0,
+        "val_deploy_choice_count": 3.0,
+        "val_deploy_score_nll": 0.8700546622276306,
+        "val_deploy_score_brier": 0.5336765646934509,
+        "val_deploy_score_hard_count": 3.0,
+        "val_deploy_score_soft_count": 0.0,
+        "val_deploy_score_accuracy": 0.6666666865348816,
+        "val_deploy_score_macro_f1": 0.6666666865348816,
+        "val_deploy_score_count": 3.0,
+        "val_deploy_score_mae": 0.5704103708267212,
+        "val_deploy_score_rmse": 0.660231351852417,
+        "val_deploy_noul_nll": 0.4122997522354126,
+        "val_deploy_noul_brier": 0.2585035562515259,
+        "val_deploy_noul_hard_count": 2.0,
+        "val_deploy_noul_soft_count": 0.0,
+        "val_deploy_noul_accuracy": 1.0,
+        "val_deploy_noul_macro_f1": 1.0,
+        "val_deploy_noul_count": 2.0,
+        "val_deploy_loss": 0.4923379421234131,
+        "elapsed_time": 39.037028742954135
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "35be7fc3557dc5aca1b1b02c2dea354c1dddf7d03e0c4877bab1d8942ff9c60c",
+        "final_trainable_hash": "24b5a3d0c835aff8a51d34ee8ff6f66a09716f97af2e5bbb8031369ac8ff2f8f"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 18,
+      "sealed_manifest_sha256": "f5e76da836004ddc4acbbebe4e9d6944ecde71aa94222b8d93ac115fb2852b8d",
+      "required_outputs": [
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "7c06db5d0f252eeeb38518c6dc9385170ac36ab8401837ce6b19c73cd516bf1a"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "5f75457caedd16499b4542183204a6d2bfd2fc7399066718fd54b86d8eae87d9"
+        },
+        {
+          "path": "training/run/checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "0d671333f63a5f979d188296ced7093657541ba6101991cd673f9df02d02d594"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "42ec1c4b43869a1c3fea4cd3303e9d73463608da102f627e65972645e02ecdf4"
+        }
+      ]
+    },
+    "run-9c6663f0f1b7": {
+      "run_id": "run-9c6663f0f1b7",
+      "url": "http://127.0.0.1:8011/runs/run-9c6663f0f1b7",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "arietta",
+          "version": "ninna-v1"
+        },
+        "task": "decision",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "decision-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "arietta-decision-export",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "arietta",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "arietta-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-9645b27956e5",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "arietta",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "arietta-ninna-v1",
+          "snapshot": "6846976dca98be202f02ab95cb3e7505f0cedbca9bb2fee6e9f1a580e89e57db"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "0f454145a376035b868bd2506bccaa5272479296ede628f054e8d97654ebe661",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "b9015e82ae0ebfc26b1f9b605be4d73dbf1bbaa1d2eaa2436be452c71ac96775",
+        "image_id": "sha256:91ed211437d9974672fb35e610ca8ecbf8e96b5d7645d49c3e84e4e924ad9eb2",
+        "versions": {
+          "arietta": "available",
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.18.0"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "decision-model",
+          "version": "smoke-v1",
+          "checksum": "ca815ab7bb86e3c5e3070b5a954d93ef60a4c860278092cc72ca00c4bfec9391"
+        }
+      },
+      "recipe_sha256": "3946b8ecb806157729446f35eab07b35ae94114bcf255f28bd668435eece26f2",
+      "metrics": {
+        "elapsed_time": 36.82299571996555
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-9645b27956e5/checkpoints/last.ckpt",
+        "sha256": "7c06db5d0f252eeeb38518c6dc9385170ac36ab8401837ce6b19c73cd516bf1a"
+      },
+      "sealed_artifact_count": 16,
+      "sealed_manifest_sha256": "7e465e6c463949b0b5a24fb47cb794c80f2d46d1fb2c5987c62cc4b9123b37a5",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "4cf20afa359358ea514381b3f7f505823ffa244bfbf2b0818f2b3cba66c1af0d"
+        }
+      ]
+    },
+    "run-12a7d612ef36": {
+      "run_id": "run-12a7d612ef36",
+      "url": "http://127.0.0.1:8011/runs/run-12a7d612ef36",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "arietta",
+          "version": "ninna-v1"
+        },
+        "task": "decision",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "decision",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "arietta-decision",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "arietta-decision-infer",
+          "version": "ninna-v4"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "arietta",
+            "version": "ninna-v4"
+          },
+          "workspace": {
+            "name": "arietta-ninna-v4",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "arietta",
+          "version": "ninna-v4"
+        },
+        "workspace": {
+          "name": "arietta-ninna-v4",
+          "snapshot": "78fec4fe6517f65e1a4934cc784d925cc41cfc7f54d65bea77c266ae7b8a23d8"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "865fce28ca47b0dc7f5e437c70de94b28596d38ae323251ff856eabe9fad6f2c",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "22f4b6100ebb1951b860babe1f0ee8abc668c96643d3af3e0460aece1ea62e84",
+        "image_id": "sha256:73ccb7294a53a74b41cec1d63b1b0e94044bffc86c249097e62d23bb2ca2188d",
+        "versions": {
+          "arietta": "available",
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.18.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "decision",
+          "version": "smoke-v1",
+          "checksum": "a6491589635121a5786c66f8886b67263122b88c2155f039679799ef276eb5d7"
+        },
+        "model": {
+          "name": "arietta-decision",
+          "version": "smoke-v1",
+          "checksum": "a8931a422b34836c819311bba4f058edbbfe8ee012f39d439ae94c39a7fabe08"
+        }
+      },
+      "recipe_sha256": "c6e7cd05df1e4d2d7feb1e1b2b7be54451e0d75fcf8a164b83628869065a9783",
+      "metrics": {
+        "choice/accuracy": 1.0,
+        "choice/macro_f1": 1.0,
+        "choice/count": 3,
+        "choice/hard_count": 3,
+        "choice/soft_count": 0,
+        "choice/nll": 0.042827098186276225,
+        "choice/brier": 0.0030678550053130933,
+        "noul/accuracy": 0.5,
+        "noul/macro_f1": 0.3333333333333333,
+        "noul/count": 2,
+        "noul/hard_count": 2,
+        "noul/soft_count": 0,
+        "noul/nll": 0.8187120091194193,
+        "noul/brier": 0.6121979129373473,
+        "score/accuracy": 0.6666666666666666,
+        "score/macro_f1": 0.6666666666666666,
+        "score/count": 3,
+        "score/hard_count": 3,
+        "score/soft_count": 0,
+        "score/nll": 0.6854258780503025,
+        "score/brier": 0.45113985063671747,
+        "elapsed_time": 13.927373829763383
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "26e854944a402870475dc0ac6d31d7a52646453d3134b18587cf6b1a0f49ecd9",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "79907355e01b7da862a0b06e615ae82231c283e9307a3c462627d7bbfd8f084f"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "157d23c13175e2c34fbd051a6aef9e6da10178b8a3d9ed1ddb9392ca1e96f5b3"
+        }
+      ]
+    },
+    "run-2ee434c00aff": {
+      "run_id": "run-2ee434c00aff",
+      "url": "http://127.0.0.1:8011/runs/run-2ee434c00aff",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "attetion-vad",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "attetion-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-attetion-vad-scratch-train",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "1f79f941a7330546320874555ea1ad4e9ae3454903fd75abad76a0f1375ec469"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "c08047b476fd9c6707bfaa107be5e3a22a7b631086dbc302b4148be90d2d6f51",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "attetion-config",
+          "version": "smoke-v1",
+          "checksum": "6bf8d645f59f55371fb2c796cfdad99b56dddee9c72e0382ccc37c4cc4cba363"
+        }
+      },
+      "recipe_sha256": "91b5272db84f91318f7f5b1d6cc7417ee5694574207db0bb435883ffe6fd2645",
+      "metrics": {
+        "train_loss": 0.7433401346206665,
+        "val_loss": 0.7269678115844727,
+        "val_accuracy": 0.125,
+        "val_precision": 0.12639999389648438,
+        "val_recall": 0.5140997767448425,
+        "val_f1": 0.20291094481945038,
+        "val_positive_ratio": 0.2166353315114975,
+        "val_predicted_positive_ratio": 0.8811089992523193,
+        "val_best_f1": 0.35612204670906067,
+        "val_best_threshold": 0.10000000149011612,
+        "train_accuracy": 0.2525880038738251,
+        "train_precision": 0.14805521070957184,
+        "train_recall": 0.7329192757606506,
+        "train_f1": 0.246346578001976,
+        "train_positive_ratio": 0.1666666716337204,
+        "train_predicted_positive_ratio": 0.8250517845153809,
+        "train_best_f1": 0.2857142984867096,
+        "train_best_threshold": 0.10000000149011612,
+        "elapsed_time": 10.932224209886044
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "f6d96bb89b376c87630dbe74139919a835f231510e0a5e5a99e5911328ea8fd3",
+        "final_trainable_hash": "f3a2b6fe3d68559a8990cbdc223e3229357f256aebb515a6cf037211a3fcbbca"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "853d324c7e745d96b73153630692f8ab3e74b0649ece532e6d600ea248225319",
+      "required_outputs": [
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "6e157082dc98619662e12aa7f6903eb394cb4711de5c456c6ad2e65f1f62a9f1"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "bbd8f4c546a1160a5cd234d06f057abe34b38b8b6f944139fd1087a9b21e587d"
+        },
+        {
+          "path": "training/run/checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "0b63a838eadc07d074bc79506ef7cc9772a6c24774e1fcfc5f0d2312dde5793c"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "f612460c0f15a9e8efaa1be6e2a86913ae8a916c36c529ac7f71aeac7bb86c56"
+        }
+      ]
+    },
+    "run-52df973cd43a": {
+      "run_id": "run-52df973cd43a",
+      "url": "http://127.0.0.1:8011/runs/run-52df973cd43a",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "attetion-vad",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "attetion-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-attetion-vad-export",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-2ee434c00aff",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "4c149cb8ad645f5d1bbad97477d6d92f671858c96b49d2e5c42279874febe2ba"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "f9e9cae8c3c2a824498f8547a4d79d32a9dfa0169ae82d21122105526fa3c895",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "attetion-config",
+          "version": "smoke-v1",
+          "checksum": "6bf8d645f59f55371fb2c796cfdad99b56dddee9c72e0382ccc37c4cc4cba363"
+        }
+      },
+      "recipe_sha256": "1928524ef2f56057665d26ea15180f2482a3558476175aaaa7917cd0cbb232ef",
+      "metrics": {
+        "elapsed_time": 8.025289830286056
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-2ee434c00aff/checkpoints/last.ckpt",
+        "sha256": "6e157082dc98619662e12aa7f6903eb394cb4711de5c456c6ad2e65f1f62a9f1"
+      },
+      "sealed_artifact_count": 14,
+      "sealed_manifest_sha256": "a8976de854d95a14f477376a42a42f5f295e974e682aafe1fdaca9ecb6828396",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "c2203396254a08026c42abb63b46a81dcfa92fb45271b45d32f998dbb95812ab"
+        }
+      ]
+    },
+    "run-cbd155f792b1": {
+      "run_id": "run-cbd155f792b1",
+      "url": "http://127.0.0.1:8011/runs/run-cbd155f792b1",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "attetion-vad",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "preludio2-attetion-vad",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-attetion-vad-infer",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "702977fbfa3351d4e4e88e6c4e44fe4185b5862b3c97c8c4d6a702f43a2b6382"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "2fbb58283ea61b5033692f055d33013ad5e9009087364e401f2fdf265bc78a2d",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "preludio2-attetion-vad",
+          "version": "smoke-v1",
+          "checksum": "7d364f22cb3c41373d987b0f4278ffd31cc86137b18579d3f144f8e7212dbb90"
+        }
+      },
+      "recipe_sha256": "b70002a128c167c84895355073901d304a38ae9a56e6b7a8359b9cdbfe6d0f7d",
+      "metrics": {
+        "frames": 7,
+        "elapsed_time": 8.25842706579715
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "88c4a3bdacb2c75a0cd1f623f5eabc91b6e15ac6ffa3387ce5fe4350d3bdb70e",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "6ee805a25435f35c29425d574561d3b4b6e4daaf0efc173e8fd0d9927dab29c3"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "35e432601990ad0a8814598e6c1ba6639d06ed6061bf121b0c2346fba8c8c7d7"
+        }
+      ]
+    },
+    "run-80b084fb5887": {
+      "run_id": "run-80b084fb5887",
+      "url": "http://127.0.0.1:8011/runs/run-80b084fb5887",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "firered-vad",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "firered-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-firered-vad-scratch-train",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "1f79f941a7330546320874555ea1ad4e9ae3454903fd75abad76a0f1375ec469"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "2a9d1f4631b00e3bf09c4c5537c2ba22a4d1f74a451ddcc373eb6ed29d8fd419",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "firered-config",
+          "version": "smoke-v1",
+          "checksum": "e694915702d2367f432548742edf83d09eaf95987dffe8c167069c43c9e09e54"
+        }
+      },
+      "recipe_sha256": "bd7062bebe8208954599d62b61ed137d3455464f0f9e399e9dbcf63018e8eaee",
+      "metrics": {
+        "train_loss": 0.6924986839294434,
+        "train_positive_weight": 1.0,
+        "val_loss": 0.7246619462966919,
+        "val_accuracy": 0.7856904864311218,
+        "val_precision": 0.0,
+        "val_recall": 0.0,
+        "val_f1": 0.0,
+        "val_positive_ratio": 0.21430954337120056,
+        "val_predicted_positive_ratio": 0.0,
+        "val_best_f1": 0.35297346115112305,
+        "val_best_threshold": 0.10000000894069672,
+        "val_segment_recall": 0.0,
+        "val_segment_precision": 0.0,
+        "val_segment_f1": 0.0,
+        "train_accuracy": 0.7374311685562134,
+        "train_precision": 0.0,
+        "train_recall": 0.0,
+        "train_f1": 0.0,
+        "train_positive_ratio": 0.26055046916007996,
+        "train_predicted_positive_ratio": 0.0020183485466986895,
+        "train_best_f1": 0.4133915305137634,
+        "train_best_threshold": 0.10000000149011612,
+        "train_segment_recall": 0.0,
+        "train_segment_precision": 0.0,
+        "train_segment_f1": 0.0,
+        "elapsed_time": 11.5550979510881
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "00534f1d700748e7b9a9e5a2667c621cde3812264d9a9a3dccd15ae2edfdac7f",
+        "final_trainable_hash": "0177be18d471637da4613937f6d46140cdaf173674bb0f218f3274bd83f2119e"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "c369df3385dce6f8096b616ea2f500f488ada2ac865ec38230f906766e33708f",
+      "required_outputs": [
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "f611bd1638d5689a262a71c0d2e1c2872968d59fad8f099a84e2a34a47fbf4d7"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "99013e546908472f253ba918c26b7a9d147db0ae01682ef72d6304c1f29a76a9"
+        },
+        {
+          "path": "training/run/checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "07d91f680bc0f79827941db3731deb7ee3e4f59540b7408ccae50fdb2f2244ac"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "897cef8be4c54aee05285055c4d4169ffc451cf3a5c2565acb2f6a6493427d9c"
+        }
+      ]
+    },
+    "run-39aad471bb04": {
+      "run_id": "run-39aad471bb04",
+      "url": "http://127.0.0.1:8011/runs/run-39aad471bb04",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "firered-vad",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "firered-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-firered-vad-export",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-80b084fb5887",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "4c149cb8ad645f5d1bbad97477d6d92f671858c96b49d2e5c42279874febe2ba"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "bf279eaff6fe6336b644b77c1333dbce2bc0dd17a1d21cb16dbdabdaf6148b35",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "firered-config",
+          "version": "smoke-v1",
+          "checksum": "e694915702d2367f432548742edf83d09eaf95987dffe8c167069c43c9e09e54"
+        }
+      },
+      "recipe_sha256": "8c19815e7e22d2da8142cbaf04021d4ae199e2069a0f50def683259004dcbe6e",
+      "metrics": {
+        "elapsed_time": 7.835032232105732
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-80b084fb5887/checkpoints/last.ckpt",
+        "sha256": "f611bd1638d5689a262a71c0d2e1c2872968d59fad8f099a84e2a34a47fbf4d7"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "a3bd17206d74d8ad403b24988584047f63fb4caaa1f12b93869c19b04051a0b1",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "d44fd28d499e9d02e860fb203093f8d6039349c16d78b5fe212e944f8446acb3"
+        }
+      ]
+    },
+    "run-60cd352c3206": {
+      "run_id": "run-60cd352c3206",
+      "url": "http://127.0.0.1:8011/runs/run-60cd352c3206",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "firered-vad",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "preludio2-firered-vad",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-firered-vad-infer",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "702977fbfa3351d4e4e88e6c4e44fe4185b5862b3c97c8c4d6a702f43a2b6382"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "17dd7c9556fdf6c02f7e8b694266d7bbc451e993746ed094b93eeb123bf5ed74",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "preludio2-firered-vad",
+          "version": "smoke-v1",
+          "checksum": "5de8721df7fbe9f1f667bd5b505acabbf065b2a2f0f51f946c4fdd21a76f4fd7"
+        }
+      },
+      "recipe_sha256": "90e54ef7ca7860e9900835e0632196b4b13135d3b856c1def94990ef5c816230",
+      "metrics": {
+        "frames": 2998,
+        "elapsed_time": 9.979104847181588
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "bc5271015e23567c45fb7a9222fe4715047023afd7ac99de6ba91ccee2b0f00a",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "86bfb3f938a5328ad285ef45317936b8f1c3a9d129a0a512e866315eb6880015"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "4126a1c76ccc2a4ee69e678464fea268b2d7c3e6190fa55c966801356b02dce4"
+        }
+      ]
+    },
+    "run-b843d66dd9fd": {
+      "run_id": "run-b843d66dd9fd",
+      "url": "http://127.0.0.1:8011/runs/run-b843d66dd9fd",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "qwen-vad",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "qwen-vad-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-qwen-vad-head-finetune-train",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "1f79f941a7330546320874555ea1ad4e9ae3454903fd75abad76a0f1375ec469"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "4a26bde1ae73954a7300825efa3f4dd65f96f43d710cbc3c90236346e8648fc8",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "qwen-vad-model",
+          "version": "smoke-v1",
+          "checksum": "c8471059247a1f8391a488d5efb815506ea84875c5a1f7c23397f1c74050f632"
+        }
+      },
+      "recipe_sha256": "4dbd15423a6e0ea3a6132f3166060840991f602f97151cab123292aab1f04817",
+      "metrics": {
+        "train_loss": 0.541102945804596,
+        "val_loss": 0.34569743275642395,
+        "val_best_f1": 0.8141592741012573,
+        "val_best_threshold": 0.07000000029802322,
+        "val_accuracy": 0.9160000085830688,
+        "val_precision": 0.7752809524536133,
+        "val_recall": 0.8571429252624512,
+        "val_f1": 0.8141592741012573,
+        "val_positive_ratio": 0.21466666460037231,
+        "val_predicted_positive_ratio": 0.23733332753181458,
+        "val_segment_recall": 0.0,
+        "val_segment_precision": 0.22777777910232544,
+        "val_segment_f1": 0.0,
+        "val_onset_delay_mean_ms": 4720.0,
+        "val_onset_abs_error_p95_ms": 6808.0,
+        "val_offset_delay_mean_ms": -2480.0,
+        "val_offset_abs_error_p95_ms": 3128.0,
+        "val_false_alarm_duration_ratio": 0.06791171431541443,
+        "val_missed_speech_duration_ratio": 0.1428571492433548,
+        "val_matched_segment_count": 2.0,
+        "train_accuracy": 0.5973333120346069,
+        "train_precision": 0.1352459043264389,
+        "train_recall": 0.2661290466785431,
+        "train_f1": 0.17934784293174744,
+        "train_positive_ratio": 0.1653333306312561,
+        "train_predicted_positive_ratio": 0.3253333270549774,
+        "train_segment_recall": 0.0,
+        "train_segment_precision": 0.5,
+        "train_segment_f1": 0.0,
+        "train_onset_delay_mean_ms": 2240.0,
+        "train_onset_abs_error_p95_ms": 3248.0,
+        "train_offset_delay_mean_ms": -2280.0,
+        "train_offset_abs_error_p95_ms": 2748.0,
+        "train_false_alarm_duration_ratio": 0.33706068992614746,
+        "train_missed_speech_duration_ratio": 0.7338709831237793,
+        "train_matched_segment_count": 2.0,
+        "elapsed_time": 27.27259985683486
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "61e82565f0b74f8098c35df8207ff6031aa3a32b3681a6990e5ac7794281e8c2",
+        "final_trainable_hash": "0471e6b65524539a72c42292f9450a891e8a60c7397d3af25133d23be2ec1265"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "beeeae0feea6dd40e2993ee3e82fd44b87064a06c7241098fd9cb8d253fda70e",
+      "required_outputs": [
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "f1695cd26b680190df24220a9318693c28d64e6e61e2d7fb566eb65e9cc7ed91"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "84ee042b62844596c5ff4083469b6a36f1617185cd11852d84a09e37b9ddc014"
+        },
+        {
+          "path": "training/run/checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "f42e15b91417dc3cea62602ae63aa207e4980c0863e0fafce2407bc6ba517f95"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "bab491a3514310c1ec74c2612753eac8a7a2091004e8e370d74b2283f823571c"
+        }
+      ]
+    },
+    "run-19c0d7f2c6ec": {
+      "run_id": "run-19c0d7f2c6ec",
+      "url": "http://127.0.0.1:8011/runs/run-19c0d7f2c6ec",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "qwen-vad",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "qwen-vad-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-qwen-vad-export",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-b843d66dd9fd",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "4c149cb8ad645f5d1bbad97477d6d92f671858c96b49d2e5c42279874febe2ba"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "e7af5be343831c7ecb1858ac7a3cb66f5a0f92461a5728100e707021a5d119ca",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "qwen-vad-model",
+          "version": "smoke-v1",
+          "checksum": "c8471059247a1f8391a488d5efb815506ea84875c5a1f7c23397f1c74050f632"
+        }
+      },
+      "recipe_sha256": "9053a93c8b25f360abec9382763fcc80d1ef286365e7fc0ebf44feaa260cf73c",
+      "metrics": {
+        "elapsed_time": 9.359855189919472
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-b843d66dd9fd/checkpoints/last.ckpt",
+        "sha256": "f1695cd26b680190df24220a9318693c28d64e6e61e2d7fb566eb65e9cc7ed91"
+      },
+      "sealed_artifact_count": 13,
+      "sealed_manifest_sha256": "acdd0889907b584611420c0bdecac6abdef8ca6d224b7491b76d00d06030732b",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "14ae3751f4be38a362eece6b646a168a0bcbed4133e702a14e0a23db68abe8a5"
+        }
+      ]
+    },
+    "run-413a4f9ac467": {
+      "run_id": "run-413a4f9ac467",
+      "url": "http://127.0.0.1:8011/runs/run-413a4f9ac467",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "qwen-vad",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "preludio2-qwen-vad",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-qwen-vad-infer",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "702977fbfa3351d4e4e88e6c4e44fe4185b5862b3c97c8c4d6a702f43a2b6382"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "b756df87bde5e1f897babcc9f31b6f1e848c7817470719d053261e335ceebca5",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "preludio2-qwen-vad",
+          "version": "smoke-v1",
+          "checksum": "852719eae15073eb4290e3f78f7873768524030fc409f93d88cd4b882a78e51d"
+        }
+      },
+      "recipe_sha256": "63d0f6c1aa6c1b38be1831cb84be10f4957fa1633ae3c69e0e0aee0aa5a2c8eb",
+      "metrics": {
+        "frames": 375,
+        "elapsed_time": 24.8760411539115
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "31f6606da8373c25216c6d27a9c4f447e01f4d343bedd5602a6def70541498ad",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "591801e7c4aed3d29d2468650bf19a0d0fd9901e8ce1de287f2742f137e49ff6"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "183d83504d3bdc7c6865ac1c07ea0ba3b51b2ad2931968b6c93327f822fc0883"
+        }
+      ]
+    },
+    "run-13ce1d80fa77": {
+      "run_id": "run-13ce1d80fa77",
+      "url": "http://127.0.0.1:8011/runs/run-13ce1d80fa77",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "gtcrn",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "gtcrn-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-gtcrn-smoke-train",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v2",
+          "snapshot": "45d2d27e4da9d4c4a947b3f1cc988e8d4e278a92dd06ba6734ecd24c2322f65d"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "7db94dc1f54199e0d9bdc64529de4c6e06d9f12b6e3e151b9ff6b22bc7f9e3c7",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "e74ec785e152f68583183597debaf54cd364074003bc92409cf86b7a234e2fa2",
+        "image_id": "sha256:173fbe37dd07510fbbab0fa6def0d5f1f8e707ea6ea15ac613415e8e5a3058c8",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "gtcrn-config",
+          "version": "smoke-v1",
+          "checksum": "751fc8ae56597606df652df1f940e8ba13628343115b71da10f92f5a2a09238f"
+        }
+      },
+      "recipe_sha256": "009c810221adf29f663394db5f12a508147f2aa2c99e927f06671b18a793110e",
+      "metrics": {
+        "train_loss": 0.4145328998565674,
+        "train_loss_step": 0.5437241196632385,
+        "train_complex_loss": 0.4838142395019531,
+        "train_complex_loss_step": 0.620974600315094,
+        "train_magnitude_loss": 0.37038516998291016,
+        "train_magnitude_loss_step": 0.49084654450416565,
+        "train_underestimation_loss": 3.9081405134311353e-07,
+        "train_underestimation_loss_step": 1.2676826699475896e-08,
+        "train_waveform_l1_loss": 0.02584604173898697,
+        "train_waveform_l1_loss_step": 0.033498670905828476,
+        "train_preemphasis_waveform_loss": 0.023633010685443878,
+        "train_preemphasis_waveform_loss_step": 0.037895381450653076,
+        "learning_rate": 0.0010000000474974513,
+        "val_loss": 0.4143787622451782,
+        "val_complex_loss": 0.4683135449886322,
+        "val_magnitude_loss": 0.3789435923099518,
+        "val_underestimation_loss": 0.0,
+        "val_waveform_l1_loss": 0.021310515701770782,
+        "val_preemphasis_waveform_loss": 0.02231045998632908,
+        "val_snr": -46.39301300048828,
+        "val_stoi": 9.999999747378752e-06,
+        "val_stoi_noisy": 9.999999747378752e-06,
+        "val_stoi_improvement": 0.0,
+        "val_si_sdri": 2.2091636657714844,
+        "val_speech_oversuppression_rate": 0.0,
+        "train_loss_epoch": 0.4145328998565674,
+        "train_complex_loss_epoch": 0.4838142395019531,
+        "train_magnitude_loss_epoch": 0.37038516998291016,
+        "train_underestimation_loss_epoch": 3.9081405134311353e-07,
+        "train_waveform_l1_loss_epoch": 0.02584604173898697,
+        "train_preemphasis_waveform_loss_epoch": 0.023633010685443878,
+        "elapsed_time": 24.108516631182283
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "0e4c033ae06187c03c96936b6381e062476a40dc3b10b6c6d1988f9cb9f4dbe2",
+        "final_trainable_hash": "ac98a49e5046b0bf8af22d83a5e0aff1d07b0383f11d0cc6b9587b981a78349c"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "c2f2c7776b246e3be004d1dabcf5ac3a8b89513c97afdb13112f0f13d662aa5b",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "8fc07570953e05520237c5fc08841424751313c5ded90efc74449f8b1aaa091e"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "a129b685766dabd89e3c7e0107595049761776ae838a652c14e04096aa286adb"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "9dfedecfe2837abaafe3941b5e4f93ccb2c64f7e29ab97f4f2bd75b67ebac790"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "670b953eb4e3239db43aba868c55d3ad3a2a0a5e960e9b41c17dca7a524c112c"
+        }
+      ]
+    },
+    "run-4632e5b5a171": {
+      "run_id": "run-4632e5b5a171",
+      "url": "http://127.0.0.1:8011/runs/run-4632e5b5a171",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "gtcrn",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "gtcrn-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-gtcrn-export",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-13ce1d80fa77",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v2",
+          "snapshot": "df31b279a9a1fe3a61afb283cda8ad8c6c8280de38086f1140b1fe3e2ca1b760"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "e0267fafc666dccec43019181d2d430a7ec42415c19f5f39d75cbde77d94bc89",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "e74ec785e152f68583183597debaf54cd364074003bc92409cf86b7a234e2fa2",
+        "image_id": "sha256:173fbe37dd07510fbbab0fa6def0d5f1f8e707ea6ea15ac613415e8e5a3058c8",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "gtcrn-config",
+          "version": "smoke-v1",
+          "checksum": "751fc8ae56597606df652df1f940e8ba13628343115b71da10f92f5a2a09238f"
+        }
+      },
+      "recipe_sha256": "393c21ee56af7701f3885f236f85dc94eeefe44cadb569c6aa4c23573a9d3f95",
+      "metrics": {
+        "elapsed_time": 10.204417502041906
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-13ce1d80fa77/checkpoints/last.ckpt",
+        "sha256": "a129b685766dabd89e3c7e0107595049761776ae838a652c14e04096aa286adb"
+      },
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "1f8a31f53a2a27374224ff808df79b0dd36c461ecf633db02e38c46171a80ecd",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "6e76b110378a8bb28f6f386cb0b18f896af13c0b21b9396172c025c60c3ddde5"
+        }
+      ]
+    },
+    "run-2d8c11ef913a": {
+      "run_id": "run-2d8c11ef913a",
+      "url": "http://127.0.0.1:8011/runs/run-2d8c11ef913a",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "gtcrn",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "notturno2-gtcrn",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-gtcrn-infer",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v2",
+          "snapshot": "670768dd41c4a3d55b6ce7bbf279391a68d9135405be8659b91d0b536bac675f"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "e76c9cd8763658a613db592629fc11b682f4f3bf89ec94bb482b6989c1a1c5f5",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "e74ec785e152f68583183597debaf54cd364074003bc92409cf86b7a234e2fa2",
+        "image_id": "sha256:173fbe37dd07510fbbab0fa6def0d5f1f8e707ea6ea15ac613415e8e5a3058c8",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "notturno2-gtcrn",
+          "version": "smoke-v1",
+          "checksum": "983fd87096b08d3b70553344c62e6960adf4e7f964bc283a70c3ef33ceda7f59"
+        }
+      },
+      "recipe_sha256": "8623c340c436fd6e49d89b1269387d1ed286323b5fe7218483337591279ba16d",
+      "metrics": {
+        "samples": 1,
+        "elapsed_time": 24.36266190186143
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 10,
+      "sealed_manifest_sha256": "9055e5ae2d2197a51bb680a2f4e338e1642ab2acb1acb2e49ccf480b116f891e",
+      "required_outputs": [
+        {
+          "path": "enhanced.wav",
+          "kind": "audio",
+          "sha256": "d081b7f89c2b415b8577d45f99b95acb04293f2a24a3f8637fea3113647a769d"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "27059e4f3503e9ca3e32c8376a5333a332998e6a03618603dfd571b34070bb58"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "23f7f16b0870fd358cf6c8614c301d1263e2436f11c9e2ed4744a4024dcb12fd"
+        }
+      ]
+    },
+    "run-ade5546d2300": {
+      "run_id": "run-ade5546d2300",
+      "url": "http://127.0.0.1:8011/runs/run-ade5546d2300",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mossformer-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-smoke-train",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "f847edb0ae6a4a6d5ba9c62282d5cfdb76088bd039441fa0f9dc2dad60726603"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "62a7c96e80fd45e817126068988638f3fef7fe6fb214b6c9ca3303fdc1eb4b36",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "mossformer-config",
+          "version": "smoke-v1",
+          "checksum": "8b3094ed9ffdf4722bc429f600518e0a144cd24a9e9c66376bc2dc95f005015a"
+        }
+      },
+      "recipe_sha256": "69715ae9ca0d841798c99415fda2349778f9d5cc85b1cf41d9d5d6db78ebe493",
+      "metrics": {
+        "train_loss": 0.02340799570083618,
+        "train_dsnr": 26.348125457763672,
+        "val_loss": 0.024586711078882217,
+        "val_dsnr": 30.351402282714844,
+        "elapsed_time": 24.28967642225325
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "a7dcafc620e888621468b6177ffd6274f11e3fb90281e759a763bc90746c21de",
+        "final_trainable_hash": "a8737041913cdc9935a96fcc6c50d4514a36a9effe250c7903c0fe1bfd729973"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "5b3c16ec704063e30dc46181343519ba1b897cd2bf8c405e3a798e0de30bed3c",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "505a40bbbbd9ca9359daa5045a795a4f05a8b9cdd1e42d23e054fd86249bd5b2"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "9648b7e1387d9800fb5291818438b7daa18042991c43bd1cce3caa854a62227e"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "ef57a6413f0b28291f9b4f72bb05e509f93d02850901521f56323f79febfecd4"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "d5500df38a8d26a78d326101351652ea009611e2c3a578384ef7a8d262b6625f"
+        }
+      ]
+    },
+    "run-f4835cd635d4": {
+      "run_id": "run-f4835cd635d4",
+      "url": "http://127.0.0.1:8011/runs/run-f4835cd635d4",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mossformer-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-export",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-ade5546d2300",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "237039fffb476c2f38a29b42fc60e2d7dce3d4b9768749fa4ed0a9d4433eb88d",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "mossformer-config",
+          "version": "smoke-v1",
+          "checksum": "8b3094ed9ffdf4722bc429f600518e0a144cd24a9e9c66376bc2dc95f005015a"
+        }
+      },
+      "recipe_sha256": "af03750e49771a30efe92af71aeaa3e6ce5d91b17bbd18f1188fe3705785614b",
+      "metrics": {
+        "elapsed_time": 8.241755669005215
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-ade5546d2300/checkpoints/last.ckpt",
+        "sha256": "9648b7e1387d9800fb5291818438b7daa18042991c43bd1cce3caa854a62227e"
+      },
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "1e7b327711bf6d91414ef9409ccfd5f473e1afcd01c0ba9a1c485cbf0dcba93c",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "c7d7b79c9486126badbbea9814f34d0ff93d5eabcab2fd25701eea70d91f3789"
+        }
+      ]
+    },
+    "run-f6f97fc13c88": {
+      "run_id": "run-f6f97fc13c88",
+      "url": "http://127.0.0.1:8011/runs/run-f6f97fc13c88",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "notturno2-mossformer",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-infer",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "73d7f2d1b3bac814c3090244418be7d2b74bf199612f630f52bfcbe3ffb72d09",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "notturno2-mossformer",
+          "version": "smoke-v1",
+          "checksum": "d634ab84c84f6baac435874640b359837eaa584d56e80b85fd616b3735d5453a"
+        }
+      },
+      "recipe_sha256": "fce65b0d368061a6a3b0aedc3ac424214c023a017f665b49b5601c1360495514",
+      "metrics": {
+        "samples": 1,
+        "elapsed_time": 23.387218562420458
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "967a7dbb824595072c9c98fe51698d0bb5238355c6d671ffcb7a57a37866ae56",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "27059e4f3503e9ca3e32c8376a5333a332998e6a03618603dfd571b34070bb58"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "0870583c88390c6d46603cfc0d9593fb460b13868381eafc7b281f7f60c43a7a"
+        }
+      ]
+    },
+    "run-89c10af7cffb": {
+      "run_id": "run-89c10af7cffb",
+      "url": "http://127.0.0.1:8011/runs/run-89c10af7cffb",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer-dns",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "dns-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-dns-smoke-lora-train",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "a693ac5103436cfd497d831a57788ca1ae7c232e6b2521226055ff20d88c9b09",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "dns-model",
+          "version": "smoke-v1",
+          "checksum": "4ae29dc3150e03ffa9afee8488b068ae020d2bbd6744b26b005d71189d919979"
+        }
+      },
+      "recipe_sha256": "61d81065af2e7809b8f9ebb2a635f4c280c53e9ce9ea26aad5e34538e9e876c9",
+      "metrics": {
+        "train_loss": 0.04070714861154556,
+        "train_loss_step": 0.08050458133220673,
+        "learning_rate": 9.999999747378752e-05,
+        "val_loss": 0.0013161441311240196,
+        "val_si_sdri": 21.41944122314453,
+        "val_snri": 45.472652435302734,
+        "train_loss_epoch": 0.04070714861154556,
+        "elapsed_time": 15.948900667019188
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "f5c564a634b69e1664a0e1eb146bca90451fed76dbda9fc4523ab2ce482bc4c3",
+        "final_trainable_hash": "8b2e76c3861ca3f80e3b5e0a0dcab3b1692970d970e0a9deba35c2f33b1d4c99"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "532b99f5a63891a02e3104e100d99074e6c8e88f2bb3ab3b4540a78eabcf2738",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "ce32ff68f52dfc12c2a8adabbec8886da4f43026db75c6aec6a9566f049d5549"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "686e5defaf48227311dbf11f98d59db695d5369649279a9794e2c41341f925f4"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "ec0e8f38ffc0d8d48101b0831f6bb0487d7bf29e3342cb2ae6604341b4d28ac1"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "4b1a164e916e71e15a4f3af5eb5dafbc4bb226709848eb13f03f4e3bfdce2fea"
+        }
+      ]
+    },
+    "run-9e3b81b1bc3a": {
+      "run_id": "run-9e3b81b1bc3a",
+      "url": "http://127.0.0.1:8011/runs/run-9e3b81b1bc3a",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer-dns",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "dns-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-dns-export",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": {
+          "run_id": "run-89c10af7cffb",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "0a4dc427e4305323ad563c688601b299a0018b550c56fc0116268059f434e9f4",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "dns-model",
+          "version": "smoke-v1",
+          "checksum": "4ae29dc3150e03ffa9afee8488b068ae020d2bbd6744b26b005d71189d919979"
+        }
+      },
+      "recipe_sha256": "2a488446c8af2da6b6f5d54ffd4101e0b835fced48fa30612fbddd0f3f10e267",
+      "metrics": {
+        "elapsed_time": 10.569404354784638
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-89c10af7cffb/checkpoints/last.ckpt",
+        "sha256": "686e5defaf48227311dbf11f98d59db695d5369649279a9794e2c41341f925f4"
+      },
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "801e70627b51788e73f572ab1c243804c67204578fe7edcd4c791c9ee6c05ecd",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "7b256435c15c2df61a23a4b0f3e925597d8a086f0be8369237feac70b1de6779"
+        }
+      ]
+    },
+    "run-97e3fab991b8": {
+      "run_id": "run-97e3fab991b8",
+      "url": "http://127.0.0.1:8011/runs/run-97e3fab991b8",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer-dns",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "notturno2-mossformer-dns",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-dns-infer",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "65c7e95fb3a8d37fb05e3baa15ca3a17f09a9db84c57b981b4a549b16641951a",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "notturno2-mossformer-dns",
+          "version": "smoke-v1",
+          "checksum": "7426df9024c4e4855a640df58391af64e90195f37bb989506212d738f83c7df2"
+        }
+      },
+      "recipe_sha256": "beee261157923a10f1bc802626a76826e3e68159a1ecdadca282b4260a7afade",
+      "metrics": {
+        "samples": 1,
+        "elapsed_time": 9.606032697949558
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "725d643f9a13d5735637165d6712584ecb025d0f03fdfdfd96d92bd3b483be8a",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "27059e4f3503e9ca3e32c8376a5333a332998e6a03618603dfd571b34070bb58"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "5c4166920c1a0a62f3319557691f3f3f45bf80192a3e6c53971b53b7474d7d60"
+        }
+      ]
+    },
+    "run-17e33592ab06": {
+      "run_id": "run-17e33592ab06",
+      "url": "http://127.0.0.1:8011/runs/run-17e33592ab06",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "richiamo",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-asr",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "asr",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "asr-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "richiamo-qwen3-asr-lora-train",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "richiamo",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "richiamo-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "richiamo",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "richiamo-ninna-v2",
+          "snapshot": "c5efbd4d0b923abd69d9736d47d27e040e29c66e50dc85dd89404cd45a28e8d6"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "7e6789199a4680ac8afe45d717fa39168fce9737198ed0e21bee8b7bb2ebde92",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "fcee5fe99df74b3685384846780acb81fce0161dd408877a764b701842e6c4c4",
+        "image_id": "sha256:aa8c9aeb2ead80bea42d052fc4049635e06e171eb680d74e2d393d3fdaa9bc14",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "richiamo": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "asr",
+          "version": "smoke-v1",
+          "checksum": "959e4b7d35da149e351be5c2a7e5155812ab1f6f895f05704a79d44d09d0ee1f"
+        },
+        "model": {
+          "name": "asr-model",
+          "version": "smoke-v1",
+          "checksum": "d09676e54ccab0d4f26ac398f3f501b469da55afb74708970def4d13d0f4b1ad"
+        }
+      },
+      "recipe_sha256": "9ec8992bfe5feacfcd72fcc152af7c3bf992302bc5762b0a8c6e66be1a7fcaa6",
+      "metrics": {
+        "train_loss": 2.5488333702087402,
+        "train_loss_step": 2.1467995643615723,
+        "val_loss": 3.075784206390381,
+        "val_wer": 1.0,
+        "val_cer": 0.5068492889404297,
+        "train_loss_epoch": 2.5488333702087402,
+        "elapsed_time": 30.899746486917138
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "2325b887e79a5e020e27d380e3e7919abf68aa192ae073ac46201a01f5a00e50",
+        "final_trainable_hash": "d95b4357e7fd15b98764971347e929552988a6b74dcf1f9558310083b50e602a"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "1d4b440a51644b212caa5a110e87681bc0d3e48cdf0787b145c3eab2319f7605",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "b00ce6169643155fb6646db4a4d354d834aeb6b5a124e7f0922a569646f4bb4f"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "810d8cb344fb2ad4893968d3c8c6758db86b0aaf97e25de347da61a34ada89b2"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "2993f2f9784f12050b7853e1785557b0c8beb1892f544b1dbcd78f3914ecaaf5"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "2b11ff9181e84ef93f952e07cc1b5b59f0668ef9ce552a0d8e827bba42f47fce"
+        }
+      ]
+    },
+    "run-8cd73ab56eee": {
+      "run_id": "run-8cd73ab56eee",
+      "url": "http://127.0.0.1:8011/runs/run-8cd73ab56eee",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "richiamo",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-asr",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "asr-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "richiamo-qwen3-asr-export",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "richiamo",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "richiamo-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": {
+          "run_id": "run-17e33592ab06",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "richiamo",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "richiamo-ninna-v2",
+          "snapshot": "c5efbd4d0b923abd69d9736d47d27e040e29c66e50dc85dd89404cd45a28e8d6"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "18876ae500f8f22639eefe60b4e752c926e82c2b3c5ad76fe79d6999e20fc864",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "fcee5fe99df74b3685384846780acb81fce0161dd408877a764b701842e6c4c4",
+        "image_id": "sha256:aa8c9aeb2ead80bea42d052fc4049635e06e171eb680d74e2d393d3fdaa9bc14",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "richiamo": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "asr-model",
+          "version": "smoke-v1",
+          "checksum": "d09676e54ccab0d4f26ac398f3f501b469da55afb74708970def4d13d0f4b1ad"
+        }
+      },
+      "recipe_sha256": "6984c47bbc9898b9640c89ecb8207849d8584f9271004e8d1d2160e13adebd4e",
+      "metrics": {
+        "elapsed_time": 15.802316817920655
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-17e33592ab06/checkpoints/last.ckpt",
+        "sha256": "810d8cb344fb2ad4893968d3c8c6758db86b0aaf97e25de347da61a34ada89b2"
+      },
+      "sealed_artifact_count": 18,
+      "sealed_manifest_sha256": "a180a2de4808c1e8df59b2d5cabf0b263f23214a2fd5234dbef128567cc7d79e",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "e91dfc7b837cc626c8697320341a9c708144b1a13fda8e3a1a39dff41c552ac1"
+        }
+      ]
+    },
+    "run-6fce34342a6a": {
+      "run_id": "run-6fce34342a6a",
+      "url": "http://127.0.0.1:8011/runs/run-6fce34342a6a",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "richiamo",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-asr",
+        "operation": "infer",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "asr",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "richiamo-qwen3-asr",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "richiamo-qwen3-asr-infer",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "richiamo",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "richiamo-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "richiamo",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "richiamo-ninna-v3",
+          "snapshot": "d981a9006fb063b5df803bb9bea7b8252c6e16dcf7106469c171b1c72ad128e3"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "d2453fbb5d2d80e3832fedf5a3d9d74618a238893a1745850b1b892c557a7eab",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "b1a931b9b789986089f439b206fa767bc55bf9843500449381c9e45d88b6c7f6",
+        "image_id": "sha256:2e08ab9ec908f90dee0bba4d2b76695c5bff3180e0cba935c111496cbedb1876",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "richiamo": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "asr",
+          "version": "smoke-v1",
+          "checksum": "959e4b7d35da149e351be5c2a7e5155812ab1f6f895f05704a79d44d09d0ee1f"
+        },
+        "model": {
+          "name": "richiamo-qwen3-asr",
+          "version": "smoke-v1",
+          "checksum": "8b9bd775ae55cea42f9ec72cdf1dea726f388e98b33da53a9606e9043c60920c"
+        }
+      },
+      "recipe_sha256": "c4f8852cb9f4c560b8812ac7c79d06c87fc8ac781b77c5d40d84d2d667fd252f",
+      "metrics": {
+        "samples": 1,
+        "elapsed_time": 12.564386269077659
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 9,
+      "sealed_manifest_sha256": "afc8bb39ee0c3ffb42222455afdcd75928345d2a02c89f40485b83fb397428a3",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "27059e4f3503e9ca3e32c8376a5333a332998e6a03618603dfd571b34070bb58"
+        },
+        {
+          "path": "predictions.json",
+          "kind": "report",
+          "sha256": "db63b49551169f87dcae494e8434f846ad89af8a4c55ba896391b949d9c1fe30"
+        }
+      ]
+    },
+    "run-d11422e0fd78": {
+      "run_id": "run-d11422e0fd78",
+      "url": "http://127.0.0.1:8011/runs/run-d11422e0fd78",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "tts",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "tts-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-lora-train",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "4ee84f1627a09ba3bad840e661d7e52da5270a0a9322200c2623853e1f474dcf",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "tts",
+          "version": "smoke-v1",
+          "checksum": "0b7103cd8d973ee21a2bf7b099dc1f2358f9369d64400233aed622dc22122643"
+        },
+        "model": {
+          "name": "tts-model",
+          "version": "smoke-v1",
+          "checksum": "750130f6ff681312ba12190daf66e7df95ca367c4298f0e1957214da7e6bcf09"
+        }
+      },
+      "recipe_sha256": "b8f58fdac0149b6679f73637f3bcb81780f1cdc4408c6c737ca638e2b4a5f6d7",
+      "metrics": {
+        "train_loss": 2.830324411392212,
+        "train_loss_step": 2.882072687149048,
+        "train_main_loss": 1.01088547706604,
+        "train_main_loss_step": 1.0087823867797852,
+        "train_sub_loss": 6.064796447753906,
+        "train_sub_loss_step": 6.244300842285156,
+        "grad_norm": 4.635044097900391,
+        "lr": 9.999999747378752e-05,
+        "val_loss": 2.9112401008605957,
+        "val_main_loss": 1.089752197265625,
+        "val_sub_loss": 6.071626663208008,
+        "train_loss_epoch": 2.830324411392212,
+        "train_main_loss_epoch": 1.01088547706604,
+        "train_sub_loss_epoch": 6.064796447753906,
+        "elapsed_time": 31.04728407226503
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "e0337b6cc8407061643564393a6aac8fd93302cc6a3b3cd6003a7554d490c4fd",
+        "final_trainable_hash": "ff9c34bd5134ba5b8eec678ffb4e618d036722f758772cc0196386f9c7887c88"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "ed2a1fdfbff7797fb5513917295b89968b1bd66b126e9db219fb2481867d6806",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "709991b7f98cc4f468d4f47e0b5c9239811d9f334d140d6441d1c2d625b67610"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "090cb8cd30b427e08d27e077e6ebb0103e968030876d46cee276baaf5f92f1ff"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "63cb9e8e6ae472ad17f00e08a1a787e0239e8089dd2fee05cc5bead6a47dc416"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "54688d9e149906e82780f0b4c127f9f1553ac7be6451bef6438a5be8319001fd"
+        }
+      ]
+    },
+    "run-fe927d6eda74": {
+      "run_id": "run-fe927d6eda74",
+      "url": "http://127.0.0.1:8011/runs/run-fe927d6eda74",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "export",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "tts-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-export",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": {
+          "run_id": "run-d11422e0fd78",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "c4accffac09ab956baed3a6b666b13f724d65ef309be3cd67a7b1ac0e3e9fe47",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "tts-model",
+          "version": "smoke-v1",
+          "checksum": "750130f6ff681312ba12190daf66e7df95ca367c4298f0e1957214da7e6bcf09"
+        }
+      },
+      "recipe_sha256": "409a94d518e9c68f72c689a43463cb92b4a06cfcf81d7e5740260dbafbca712c",
+      "metrics": {
+        "elapsed_time": 24.159900119993836
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-d11422e0fd78/checkpoints/last.ckpt",
+        "sha256": "090cb8cd30b427e08d27e077e6ebb0103e968030876d46cee276baaf5f92f1ff"
+      },
+      "sealed_artifact_count": 21,
+      "sealed_manifest_sha256": "06fbb18d6515bea49e18584737b484777bda66d17237d5f8ecff2a44dba2b76d",
+      "required_outputs": [
+        {
+          "path": "model/model.safetensors",
+          "kind": "model",
+          "sha256": "f9cb7b48131f743f6b7867121dd137438e81b39c355d61d66089b08b629e4670"
+        },
+        {
+          "path": "model/speech_tokenizer/model.safetensors",
+          "kind": "model",
+          "sha256": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258"
+        }
+      ]
+    },
+    "run-5fc06a571a26": {
+      "run_id": "run-5fc06a571a26",
+      "url": "http://127.0.0.1:8011/runs/run-5fc06a571a26",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "infer",
+        "inputs": {
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "serenata-qwen3-tts",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-infer",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "8df32fe626dd7de850bd0b0500ccc7fd34344c82dd8804e59ce791375d44113c",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "model": {
+          "name": "serenata-qwen3-tts",
+          "version": "smoke-v1",
+          "checksum": "25bccfc66616b9a9883e328e10db058f72580f8a3710a5d3cbb08f63f60a506d"
+        }
+      },
+      "recipe_sha256": "1548cc6fa1f4510debdccb6b167145f1ec275547de14b42a60c4a57875410e2a",
+      "metrics": {
+        "audio_seconds": 2.48,
+        "sample_rate": 24000,
+        "elapsed_time": 14.284916847012937
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 10,
+      "sealed_manifest_sha256": "bc310c6547d9a08475d3cae30b558bd6456508f334e5069ae917d48a9baadd30",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "23a608b7a9b6997e6a1c5a7e59b4cfa4e3a645b02ca221c04021935e47738e25"
+        },
+        {
+          "path": "speech.wav",
+          "kind": "audio",
+          "sha256": "079d18a8328d6b2b8649667e5b8abea79265acb4f71d21fe40fb5b699b939eec"
+        }
+      ]
+    },
+    "run-91af94be371d": {
+      "run_id": "run-91af94be371d",
+      "url": "http://127.0.0.1:8011/runs/run-91af94be371d",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-scratch-train",
+          "version": "ninna-v1"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v1",
+          "snapshot": "666bfd70faef2aa42c6245df83b1f71883370eb54629edb025a398f5625d3877"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "2ce7a88fca602c8eb7ce51eb08c688e6b77cf329789ec94d8a69e34cca230fed",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "be921c936034b8c4890a9551755a9634ad900f6ef90fd0b1e2bac7774ea3f8ff",
+        "image_id": "sha256:62bf1a23c6b927ef5bf56c80b0f44457a1a6fa30f353f9087bd3d6bc23958817",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "50bfb1d8c619095d9be5b216a703d9e9013d0c5a3fbb24356be382fda722a5d2",
+      "metrics": {
+        "train_loss": 2.2748870849609375,
+        "train_loss_step": 2.247976303100586,
+        "train_accuracy": 0.21875,
+        "train_accuracy_step": 0.375,
+        "val_loss": 2.3461194038391113,
+        "val_accuracy": 0.25,
+        "train_loss_epoch": 2.2748870849609375,
+        "train_accuracy_epoch": 0.21875,
+        "elapsed_time": 6.466831645928323
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+        "final_trainable_hash": "f9a250bf05e7c8c3b1a37985e6b309f96803e0fa4c2bd2a0c0462a7447926326"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "eba98cadd5dece20a0046763b90f1c6acf5c6d81e6ac6516fe9a95b29449aad7",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "9cca0e68f7cd3596cc40f65161bbd83e4adeaeb8f8928cc41f43d3f7b0abbcd8"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "706af95dbd628de21ba955808dfa2a152ec4fdc4cfc6aab491e7392dbdadf08a"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "d5ac154c666607a4326f1bf61c5fe689ea77b75f93777ddf140c559bd27bde70"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "5788265896a2083aa125d8b54c4f139659fa977842d4223107d7d73d5577edcf"
+        }
+      ]
+    },
+    "run-11daf6ef94e1": {
+      "run_id": "run-11daf6ef94e1",
+      "url": "http://127.0.0.1:8011/runs/run-11daf6ef94e1",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-scratch-train",
+          "version": "resume-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v1"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v1",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-91af94be371d",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v1",
+          "snapshot": "666bfd70faef2aa42c6245df83b1f71883370eb54629edb025a398f5625d3877"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "791d4854450ff94548abca5fed9353aef9d1c03949b4f708f8325855e0f07084",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "be921c936034b8c4890a9551755a9634ad900f6ef90fd0b1e2bac7774ea3f8ff",
+        "image_id": "sha256:62bf1a23c6b927ef5bf56c80b0f44457a1a6fa30f353f9087bd3d6bc23958817",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "61ccf09f087348077e4c96253287fee6b1a10db74b945d4de3b3133d4cd02b45",
+      "metrics": {
+        "train_loss": 2.133849620819092,
+        "train_loss_step": 2.1743688583374023,
+        "train_accuracy": 0.4375,
+        "train_accuracy_step": 0.375,
+        "val_loss": 2.435131788253784,
+        "val_accuracy": 0.125,
+        "train_loss_epoch": 2.133849620819092,
+        "train_accuracy_epoch": 0.4375,
+        "elapsed_time": 6.511801099870354
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 4,
+        "initial_trainable_hash": "f9a250bf05e7c8c3b1a37985e6b309f96803e0fa4c2bd2a0c0462a7447926326",
+        "final_trainable_hash": "7160852a767b07317fe93e171e7bf5c356a44fd4cd8da6eaaca6565f3d54fa91"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-91af94be371d/checkpoints/last.ckpt",
+        "sha256": "706af95dbd628de21ba955808dfa2a152ec4fdc4cfc6aab491e7392dbdadf08a"
+      },
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "860074164cb70d07f438a7b119ca96ec3bfda17878e9ec1b994d0dc341dc5c26",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=1-step=4.ckpt",
+          "kind": "checkpoint",
+          "sha256": "3d001c0ea5474a83de04c02afe570bcfe4fed83113f2b8cf106f316ec5c49180"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "3d001c0ea5474a83de04c02afe570bcfe4fed83113f2b8cf106f316ec5c49180"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "0904a580b3b61661702ece945cf7fa5dd62239ca2e8b090651648f1169826d83"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "3bca19a934e73130c61d5521054d2f2a08cf60911a9300c25f059702c0c7d36b"
+        }
+      ]
+    },
+    "run-fc26f2d6350f": {
+      "run_id": "run-fc26f2d6350f",
+      "url": "http://127.0.0.1:8011/runs/run-fc26f2d6350f",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "prepare",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-prepare",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v3",
+          "snapshot": "f798316a4b031b35d120bc79714b4ebca19df46577be647d8b53648f03284f65"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "9a5830ee704b6cd42005bc4887912eec8d98b16a0020a1efe28aeab4d50c3aac",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "33f3b5d3918ce7a52f5efe94533a33adb6562f7d2d114580d23b57ac1205d582",
+        "image_id": "sha256:928aa8320d625169b1620d56ed68df4a5b81ff1fbb630f2bc9f89a2e34c40843",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        }
+      },
+      "recipe_sha256": "e4028f1f3f9b10243ed3890b87c082e5c0ac4c85a63685eb1de5334f0562f20d",
+      "metrics": {
+        "test_samples": 8,
+        "train_samples": 8,
+        "validation_samples": 8,
+        "elapsed_time": 1.5509753171354532
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 11,
+      "sealed_manifest_sha256": "9645ce1734309a38ac7e8f64bef8e78593251ce7714323677df4eb18ec2a9ecf",
+      "required_outputs": [
+        {
+          "path": "dataset/test.parquet",
+          "kind": "dataset",
+          "sha256": "e442ca2cc6bb932391fc3f83589d8c94a7f190d262334a9803478b4450c49685"
+        },
+        {
+          "path": "dataset/train.parquet",
+          "kind": "dataset",
+          "sha256": "538763989895a103ed9f93c6eec6aa603ed5bb024aef3c46581a24caa28e2a6e"
+        },
+        {
+          "path": "dataset/validation.parquet",
+          "kind": "dataset",
+          "sha256": "dc1e44aa56a15f99de3d9286be3da66c8e7b6e2b125b3e8ae1ad833026e4b094"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "66e0677be376245b62c3bbe1821a644ac46b7dfa63fad9836b9167d2c5b744ca"
+        }
+      ]
+    },
+    "run-ec24329a88d1": {
+      "run_id": "run-ec24329a88d1",
+      "url": "http://127.0.0.1:8011/runs/run-ec24329a88d1",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "evaluate",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-scratch-evaluate",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "demo-mnist-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-91af94be371d",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "demo-mnist-ninna-v3",
+          "snapshot": "f798316a4b031b35d120bc79714b4ebca19df46577be647d8b53648f03284f65"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "d93915f23cf4157cb2503b433447eae59a77c0248735be113369ea1437cb7160",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "33f3b5d3918ce7a52f5efe94533a33adb6562f7d2d114580d23b57ac1205d582",
+        "image_id": "sha256:928aa8320d625169b1620d56ed68df4a5b81ff1fbb630f2bc9f89a2e34c40843",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "426dae6bd47ff53e83ef1c1d144c4ef92d93b025954f0bca5e67626e07ac63a7",
+      "metrics": {
+        "val_loss": 2.3461194038391113,
+        "val_accuracy": 0.25,
+        "elapsed_time": 6.223732927814126
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-91af94be371d/checkpoints/last.ckpt",
+        "sha256": "706af95dbd628de21ba955808dfa2a152ec4fdc4cfc6aab491e7392dbdadf08a"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "86b037b23b1b1bfd094590d2104ac44fbb81b7dd10637bc55989b48791eb67cd",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "b31b8924f0f3b0dbe95bf5ab27e8b8971087889286bf9826c44b33a65713d2fe"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "742c177f8cae182691e41c7c7c4c7d7327ec4ded154257cb5c3a3b198e010556"
+        }
+      ]
+    },
+    "run-305a0d5e42c5": {
+      "run_id": "run-305a0d5e42c5",
+      "url": "http://127.0.0.1:8011/runs/run-305a0d5e42c5",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "prepare",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "tts-raw",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "tts-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-prepare",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "4a78d73676e9d628e51c1bf2896a441fa8531606c8679aae1767789b75e916fe",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "tts-raw",
+          "version": "smoke-v1",
+          "checksum": "d3db4fb342b9015fad75d6e5d3bf668bbd87a15fee21ca1677014e0950fe4ad0"
+        },
+        "model": {
+          "name": "tts-model",
+          "version": "smoke-v1",
+          "checksum": "750130f6ff681312ba12190daf66e7df95ca367c4298f0e1957214da7e6bcf09"
+        }
+      },
+      "recipe_sha256": "7032c174b09c846d39f55e85827b98b38f7400aa4d081f4eb0a22c948751afa4",
+      "metrics": {
+        "train_samples": 16,
+        "validation_samples": 4,
+        "test_samples": 4,
+        "elapsed_time": 20.35571847902611
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 37,
+      "sealed_manifest_sha256": "7cab321bcce9b4d3ea0904bb08582c145f1893b96dc6e8a2f53fb375793c7695",
+      "required_outputs": [
+        {
+          "path": "dataset/audio/test/000000.wav",
+          "kind": "audio",
+          "sha256": "c42936d7750c6743742648937d9c6a25bf23da949d52f57ed907e96e750d847e"
+        },
+        {
+          "path": "dataset/audio/test/000001.wav",
+          "kind": "audio",
+          "sha256": "266dacba388448945b90e69e6705723688a1e7d399b90d71d68dd5664914e362"
+        },
+        {
+          "path": "dataset/audio/test/000002.wav",
+          "kind": "audio",
+          "sha256": "d86dd9b4744048de200ae7636cf60fcb85d2d8171496591c1aa7a6b0ba190e81"
+        },
+        {
+          "path": "dataset/audio/test/000003.wav",
+          "kind": "audio",
+          "sha256": "ba1185834610335507bb7927588ce1fc6847b36bc456cc5fbe7cf702b0d26806"
+        },
+        {
+          "path": "dataset/audio/train/000000.wav",
+          "kind": "audio",
+          "sha256": "576ea51f1cb2ad86c93294973eeeac41d57b4d86c7ce92caafef5d39199377e6"
+        },
+        {
+          "path": "dataset/audio/train/000001.wav",
+          "kind": "audio",
+          "sha256": "2c65071e17b60cb8bda9992532cd67fec0e176272623b3230e8c26140a4174fa"
+        },
+        {
+          "path": "dataset/audio/train/000002.wav",
+          "kind": "audio",
+          "sha256": "5bd02dec31bf2abefc490da6396815c8b342563e23cc583b5d23c9516b822173"
+        },
+        {
+          "path": "dataset/audio/train/000003.wav",
+          "kind": "audio",
+          "sha256": "6bd18566fabdf396216768723bbe120e6745201ed86e10cf1c41490cd4e6efd6"
+        },
+        {
+          "path": "dataset/audio/train/000004.wav",
+          "kind": "audio",
+          "sha256": "759e26606f13033af3c998005542bed3c05170000232f4aa74bdc6cc6ef997a7"
+        },
+        {
+          "path": "dataset/audio/train/000005.wav",
+          "kind": "audio",
+          "sha256": "7b5d01ae8ca5a072c9b46111f5d7377459711917ec3e926953ce19981f297702"
+        },
+        {
+          "path": "dataset/audio/train/000006.wav",
+          "kind": "audio",
+          "sha256": "9911524ac64489b28b3909f932e9d34e0b6a31471fb1aeb054ab54ad34d046c2"
+        },
+        {
+          "path": "dataset/audio/train/000007.wav",
+          "kind": "audio",
+          "sha256": "f986bdd0d308192a59990bdac1bc95e457613e567392493b1c2a9322799084b9"
+        },
+        {
+          "path": "dataset/audio/train/000008.wav",
+          "kind": "audio",
+          "sha256": "6609e7020cacde5b2a2cc1b9067fb6579729a87e919ac0478137ae230db3910c"
+        },
+        {
+          "path": "dataset/audio/train/000009.wav",
+          "kind": "audio",
+          "sha256": "de6bbb4e8c535f55f4e4ea5b98578f80663a7b24cb34e8488761a9b73a44fd0e"
+        },
+        {
+          "path": "dataset/audio/train/000010.wav",
+          "kind": "audio",
+          "sha256": "9a70da6577b81968a618587d2985c8d3383e6807385a76cb80017bf9a7fc4d74"
+        },
+        {
+          "path": "dataset/audio/train/000011.wav",
+          "kind": "audio",
+          "sha256": "9028d4798bbe02dd3856172ec6bbb54836724523d370bfcbf5eaf917900bfb3c"
+        },
+        {
+          "path": "dataset/audio/train/000012.wav",
+          "kind": "audio",
+          "sha256": "5b41c01d0cccc9a4456099429836b10188d08f0a3b148c6bca1b3ca26283485e"
+        },
+        {
+          "path": "dataset/audio/train/000013.wav",
+          "kind": "audio",
+          "sha256": "173df31582ab8cbba464edbdda3a850dca5335b49b261ec2040b19ba4a99fcaf"
+        },
+        {
+          "path": "dataset/audio/train/000014.wav",
+          "kind": "audio",
+          "sha256": "f1352fa4f7ac4df518322763b9b5b53a4d20c8d63c55c026b616ebeb7ac0d2c5"
+        },
+        {
+          "path": "dataset/audio/train/000015.wav",
+          "kind": "audio",
+          "sha256": "326fe523620cbe62d51822b5fc663918cccf3adab9f790227b53566453bf1a30"
+        },
+        {
+          "path": "dataset/audio/validation/000000.wav",
+          "kind": "audio",
+          "sha256": "c6d91f71b9a9bc98478a318cae9f665135ab6a3136a50ed2c312af65cf45547b"
+        },
+        {
+          "path": "dataset/audio/validation/000001.wav",
+          "kind": "audio",
+          "sha256": "ea63d3cc734ad1c860fee2fb50d264c52314f51cc74c86dffff7a2a3518084bd"
+        },
+        {
+          "path": "dataset/audio/validation/000002.wav",
+          "kind": "audio",
+          "sha256": "2dd394b8e0653984ca99f4ccabbf4800514fff3c89b9de871b3feaa1e47419eb"
+        },
+        {
+          "path": "dataset/audio/validation/000003.wav",
+          "kind": "audio",
+          "sha256": "6016cc2fd64edf1ceeaf973c26dc982876a74cfde8de2df8eb33d6478388d4c7"
+        },
+        {
+          "path": "dataset/reference.wav",
+          "kind": "audio",
+          "sha256": "10873deeee3b37357c4c085598acf4b50dc091f0a3b630c974558ddf2f100639"
+        },
+        {
+          "path": "dataset/test.parquet",
+          "kind": "dataset",
+          "sha256": "ca2d1fa2a7812d870d37da8d43b698fc7ac2048036b00f379dfc973826a7cbf7"
+        },
+        {
+          "path": "dataset/train.parquet",
+          "kind": "dataset",
+          "sha256": "e682e5cab4e8333da0c8fb9bd1f229c5849b2e4b35bc77a25575f74919a41a83"
+        },
+        {
+          "path": "dataset/validation.parquet",
+          "kind": "dataset",
+          "sha256": "639da2c52c7d6a4ac4295ca9a01530a43a25828e8b21a0f0f9cc53d25b485466"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "146f05f6bcc2912621a087f3af6dabfc5aef81b560297a340abf4ba62988d4a3"
+        }
+      ]
+    },
+    "run-43c3b3903eb2": {
+      "run_id": "run-43c3b3903eb2",
+      "url": "http://127.0.0.1:8011/runs/run-43c3b3903eb2",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "serenata-qwen3-tts",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "tts-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-lora-train",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "9c76b10f693e81faa10d69468a6323d15cc65aafee4bd2c17ce0c6abb5729b78",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "serenata-qwen3-tts",
+          "version": "smoke-v1",
+          "checksum": "8a8aa117f6797a6304f24d414291ff66ab8c67dd39fa9af9a7affbf33505f5cb"
+        },
+        "model": {
+          "name": "tts-model",
+          "version": "smoke-v1",
+          "checksum": "750130f6ff681312ba12190daf66e7df95ca367c4298f0e1957214da7e6bcf09"
+        }
+      },
+      "recipe_sha256": "b8f58fdac0149b6679f73637f3bcb81780f1cdc4408c6c737ca638e2b4a5f6d7",
+      "metrics": {
+        "train_loss": 2.830324411392212,
+        "train_loss_step": 2.882072687149048,
+        "train_main_loss": 1.01088547706604,
+        "train_main_loss_step": 1.0087823867797852,
+        "train_sub_loss": 6.064796447753906,
+        "train_sub_loss_step": 6.244300842285156,
+        "grad_norm": 4.635044097900391,
+        "lr": 9.999999747378752e-05,
+        "val_loss": 2.9112401008605957,
+        "val_main_loss": 1.089752197265625,
+        "val_sub_loss": 6.071626663208008,
+        "train_loss_epoch": 2.830324411392212,
+        "train_main_loss_epoch": 1.01088547706604,
+        "train_sub_loss_epoch": 6.064796447753906,
+        "elapsed_time": 29.203508712351322
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "e0337b6cc8407061643564393a6aac8fd93302cc6a3b3cd6003a7554d490c4fd",
+        "final_trainable_hash": "ff9c34bd5134ba5b8eec678ffb4e618d036722f758772cc0196386f9c7887c88"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "1d090b0e21955662a8f8b39538f6c9eee7fa18997bf0584f909585b71ae1b5b9",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "e430a429e45d307355982113af1f4cf94018ea9614722ff632de2109838f66fc"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "f3b83eb01f65b3aa304d8e27f67b96f6c867642bcdaa30753d3289c4d73dd559"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "63cb9e8e6ae472ad17f00e08a1a787e0239e8089dd2fee05cc5bead6a47dc416"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "54688d9e149906e82780f0b4c127f9f1553ac7be6451bef6438a5be8319001fd"
+        }
+      ]
+    },
+    "run-fe0132953f6b": {
+      "run_id": "run-fe0132953f6b",
+      "url": "http://127.0.0.1:8011/runs/run-fe0132953f6b",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "richiamo",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-asr",
+        "operation": "evaluate",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "asr",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "asr-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "richiamo-qwen3-asr-lora-evaluate",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "richiamo",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "richiamo-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": {
+          "run_id": "run-17e33592ab06",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "richiamo",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "richiamo-ninna-v2",
+          "snapshot": "c5efbd4d0b923abd69d9736d47d27e040e29c66e50dc85dd89404cd45a28e8d6"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "d2c66c1955206765927849b9ba707571f89f573ea9c8a9cf095f9937b6477d7c",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "fcee5fe99df74b3685384846780acb81fce0161dd408877a764b701842e6c4c4",
+        "image_id": "sha256:aa8c9aeb2ead80bea42d052fc4049635e06e171eb680d74e2d393d3fdaa9bc14",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "richiamo": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "asr",
+          "version": "smoke-v1",
+          "checksum": "959e4b7d35da149e351be5c2a7e5155812ab1f6f895f05704a79d44d09d0ee1f"
+        },
+        "model": {
+          "name": "asr-model",
+          "version": "smoke-v1",
+          "checksum": "d09676e54ccab0d4f26ac398f3f501b469da55afb74708970def4d13d0f4b1ad"
+        }
+      },
+      "recipe_sha256": "8cfaeb45287f6de4076a7f4d95eb917a3f60f7785d11da171e5fcb8a74406e3d",
+      "metrics": {
+        "val_loss": 3.075784206390381,
+        "val_wer": 1.0,
+        "val_cer": 0.5068492889404297,
+        "elapsed_time": 18.436533293686807
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-17e33592ab06/checkpoints/last.ckpt",
+        "sha256": "810d8cb344fb2ad4893968d3c8c6758db86b0aaf97e25de347da61a34ada89b2"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "4ce5c9fb5230c65c5adf3466ccb41cfb60c68251394e3442b292a63a92b7bb0b",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "1ca7630007feffa4116a85cbc9667dc77d041974aca41c6c1e8ecf2060c5b17d"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "58d6b3fda4425fca84972e51b395320e51677091b1c2d2e37638bd8832770f25"
+        }
+      ]
+    },
+    "run-c768cd0e53d9": {
+      "run_id": "run-c768cd0e53d9",
+      "url": "http://127.0.0.1:8011/runs/run-c768cd0e53d9",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "serenata",
+          "version": "ninna-v1"
+        },
+        "task": "qwen3-tts",
+        "operation": "evaluate",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "tts",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "tts-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "serenata-qwen3-tts-lora-evaluate",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "serenata",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "serenata-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 65536
+          }
+        },
+        "source": {
+          "run_id": "run-d11422e0fd78",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "serenata",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "serenata-ninna-v3",
+          "snapshot": "ccad8dbc17be8e58f59452cecb8bf6d789c0f5cfbe6538bd0c893017e07f5030"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 65536
+        }
+      },
+      "container_id": "8cf8bf347edd87ce927725e0aaab8ef77f7ea81fe3ad0617cb1885dd2e17f17c",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "90b62f8df3333d29cc81aca69feac9370732284e4c81870566d48583ac8aa4a7",
+        "image_id": "sha256:b7ab1b3b9b184274626519b7a8aa6d63b7f683d167a2af08ac0c193a5f692f6f",
+        "versions": {
+          "datasets": "5.0.0",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "serenata": "available",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.3"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "tts",
+          "version": "smoke-v1",
+          "checksum": "0b7103cd8d973ee21a2bf7b099dc1f2358f9369d64400233aed622dc22122643"
+        },
+        "model": {
+          "name": "tts-model",
+          "version": "smoke-v1",
+          "checksum": "750130f6ff681312ba12190daf66e7df95ca367c4298f0e1957214da7e6bcf09"
+        }
+      },
+      "recipe_sha256": "96629b722341bb956f9d4077397beac3463f0acdcded81a158c28dfd4fcca50c",
+      "metrics": {
+        "val_loss": 2.9112401008605957,
+        "val_main_loss": 1.089752197265625,
+        "val_sub_loss": 6.071626663208008,
+        "elapsed_time": 18.778343015816063
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-d11422e0fd78/checkpoints/last.ckpt",
+        "sha256": "090cb8cd30b427e08d27e077e6ebb0103e968030876d46cee276baaf5f92f1ff"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "7573d1134780164ea8a724c0e4c11173d621579950c03563a0508f9b429de06b",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "d86c138bb6526a3258220f711b04fbc82f4c2bf6649f9d1e9d78821ba1de3d27"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "4b69c1991a286015febd22b4d759e51599b253d4c620b3bb6a4237e5de7e68ed"
+        }
+      ]
+    },
+    "run-7d8ae8ee38d8": {
+      "run_id": "run-7d8ae8ee38d8",
+      "url": "http://127.0.0.1:8011/runs/run-7d8ae8ee38d8",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "notturno2",
+          "version": "ninna-v1"
+        },
+        "task": "mossformer-dns",
+        "operation": "evaluate",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "denoise",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "dns-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "notturno2-mossformer-dns-smoke-lora-evaluate",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "notturno2",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "notturno2-ninna-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-89c10af7cffb",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "notturno2",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "notturno2-ninna-v3",
+          "snapshot": "ec28fba6cd7d6b68603575b01eb0f797951052c4275197c0dc78005949dda98c"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "094b437fb12ac40fe3a455a1c40eff4d03aa3a4b3a065967732f3d06d0b2e497",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "f56d4a497025d6a4aa1d0b78a668ba588bee400b08b03c2169e840bf454d57b1",
+        "image_id": "sha256:e2676dd1940070af8b9f74fecd04a0438e0e85d872159237d1bc0a6ad8f13109",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "notturno2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.6"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "denoise",
+          "version": "smoke-v1",
+          "checksum": "8e2d4d6cde837c91bafbfb61efea484dee95c51e4967291eedc059b50e8d1584"
+        },
+        "model": {
+          "name": "dns-model",
+          "version": "smoke-v1",
+          "checksum": "4ae29dc3150e03ffa9afee8488b068ae020d2bbd6744b26b005d71189d919979"
+        }
+      },
+      "recipe_sha256": "e060e620be4dc1ea183cf7962edfeaefc56460fb1683dbb2e8620c7c43574288",
+      "metrics": {
+        "val_loss": 0.0013161441311240196,
+        "val_si_sdri": 21.41944122314453,
+        "val_snri": 45.472652435302734,
+        "elapsed_time": 12.703605704940856
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-89c10af7cffb/checkpoints/last.ckpt",
+        "sha256": "686e5defaf48227311dbf11f98d59db695d5369649279a9794e2c41341f925f4"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "c8d904b8296e7c9087c9a1a83726dc099722c7eee3109ff47f9c765adacd005a",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "416e4c538ccc4cc3fda187f90539c2ff1030a32bb952864bf788c14e163c4173"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "69c6345c3f7de401bb2c0a34c61d66f34e1f633266e321022b67aac0fcc7576c"
+        }
+      ]
+    },
+    "run-ac96283c30d1": {
+      "run_id": "run-ac96283c30d1",
+      "url": "http://127.0.0.1:8011/runs/run-ac96283c30d1",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "preludio2",
+          "version": "ninna-v1"
+        },
+        "task": "qwen-vad",
+        "operation": "evaluate",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "vad",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "qwen-vad-model",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "preludio2-qwen-vad-head-finetune-evaluate",
+          "version": "ninna-v2"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "preludio2",
+            "version": "ninna-v2"
+          },
+          "workspace": {
+            "name": "preludio2-ninna-v2",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cuda",
+            "gpu_count": 1,
+            "gpu_ids": [
+              "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+            ],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": {
+          "run_id": "run-b843d66dd9fd",
+          "path": "checkpoints/last.ckpt"
+        },
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "preludio2",
+          "version": "ninna-v2"
+        },
+        "workspace": {
+          "name": "preludio2-ninna-v2",
+          "snapshot": "702977fbfa3351d4e4e88e6c4e44fe4185b5862b3c97c8c4d6a702f43a2b6382"
+        },
+        "resources": {
+          "device": "cuda",
+          "gpu_count": 1,
+          "gpu_ids": [
+            "GPU-3985457f-7e5a-7488-e714-7320a54a9b98"
+          ],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "e64a7e47fe63572fca78173d039db5e947383b15d724e988a10344b2ff625748",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "a1adfeba97388da1d6a5181392a30f251bd4bb30bcc0b77d3d459ee8d7699133",
+        "image_id": "sha256:a89ab610633d1817f71c0a5dba566d3e9de85199f77d7e960aa74dfd598f7e1d",
+        "versions": {
+          "datasets": "4.8.4",
+          "lightning": "2.6.5",
+          "preludio2": "available",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.4.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "vad",
+          "version": "smoke-v1",
+          "checksum": "f39e9a871d6940a2db6caafa14423652c71fb91a94225e2423f581610c44d555"
+        },
+        "model": {
+          "name": "qwen-vad-model",
+          "version": "smoke-v1",
+          "checksum": "c8471059247a1f8391a488d5efb815506ea84875c5a1f7c23397f1c74050f632"
+        }
+      },
+      "recipe_sha256": "05ca5e6bab3a2d54927420f269e77178f6e34a41d9a7619204720c82bc6e0764",
+      "metrics": {
+        "val_loss": 0.34569743275642395,
+        "val_best_f1": 0.8141592741012573,
+        "val_best_threshold": 0.07000000029802322,
+        "val_accuracy": 0.9160000085830688,
+        "val_precision": 0.7752809524536133,
+        "val_recall": 0.8571429252624512,
+        "val_f1": 0.8141592741012573,
+        "val_positive_ratio": 0.21466666460037231,
+        "val_predicted_positive_ratio": 0.23733332753181458,
+        "val_segment_recall": 0.0,
+        "val_segment_precision": 0.22777777910232544,
+        "val_segment_f1": 0.0,
+        "val_onset_delay_mean_ms": 4720.0,
+        "val_onset_abs_error_p95_ms": 6808.0,
+        "val_offset_delay_mean_ms": -2480.0,
+        "val_offset_abs_error_p95_ms": 3128.0,
+        "val_false_alarm_duration_ratio": 0.06791171431541443,
+        "val_missed_speech_duration_ratio": 0.1428571492433548,
+        "val_matched_segment_count": 2.0,
+        "elapsed_time": 27.266056133899838
+      },
+      "evidence": {},
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": {
+        "path": "/workspace/apps/ninna/outputs/framework-integration/platform/runs/run-b843d66dd9fd/checkpoints/last.ckpt",
+        "sha256": "f1695cd26b680190df24220a9318693c28d64e6e61e2d7fb566eb65e9cc7ed91"
+      },
+      "sealed_artifact_count": 12,
+      "sealed_manifest_sha256": "573ae48f6a9004deba5e5501e031220b1bffd75d7870de6b0e1c23cb6dcae0ae",
+      "required_outputs": [
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "99e0a642fd32e5153e2301029a8afa2e9b088f4b4c0370649320950319a3960c"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "84735546da95c1e73d2825e82d9357cb2a00747c92ee485f6c7f2c6d11ca6d65"
+        }
+      ]
+    },
+    "run-3b86c64904dd": {
+      "run_id": "run-3b86c64904dd",
+      "url": "http://127.0.0.1:8000/runs/run-3b86c64904dd",
+      "status": "SUCCESS",
+      "project_id": "framework-integration",
+      "task_spec": {
+        "protocol_version": 1,
+        "project_id": "framework-integration",
+        "framework": {
+          "name": "demo-mnist",
+          "version": "ninna-v1"
+        },
+        "task": "classification",
+        "operation": "train",
+        "inputs": {
+          "dataset": {
+            "kind": "dataset",
+            "ref": {
+              "name": "mnist",
+              "version": "smoke-v1"
+            }
+          },
+          "model": {
+            "kind": "model",
+            "ref": {
+              "name": "mnist-config",
+              "version": "smoke-v1"
+            }
+          }
+        },
+        "recipe": {
+          "name": "demo-mnist-classification-scratch-train",
+          "version": "ninna-v3"
+        },
+        "execution_spec": {
+          "runtime": {
+            "name": "demo-mnist",
+            "version": "ninna-v3"
+          },
+          "workspace": {
+            "name": "demo-mnist-main-v3",
+            "snapshot": "current"
+          },
+          "resources": {
+            "device": "cpu",
+            "gpu_count": 0,
+            "gpu_ids": [],
+            "cpu_threads": 4,
+            "memory_mb": 16384
+          }
+        },
+        "source": null,
+        "parent_run_id": null
+      },
+      "execution_spec": {
+        "runtime": {
+          "name": "demo-mnist",
+          "version": "ninna-v3"
+        },
+        "workspace": {
+          "name": "demo-mnist-main-v3",
+          "snapshot": "f798316a4b031b35d120bc79714b4ebca19df46577be647d8b53648f03284f65"
+        },
+        "resources": {
+          "device": "cpu",
+          "gpu_count": 0,
+          "gpu_ids": [],
+          "cpu_threads": 4,
+          "memory_mb": 16384
+        }
+      },
+      "container_id": "d929a76ad19cc24af5ee33ed25b7f2c3478fbf879b3c33b3ea57d30be9ec9ddd",
+      "exit_code": 0,
+      "runtime_validation": {
+        "container_id": "e7bbc7b7f2de57ff9df6612c5d41f07a6b3b09c2ca536b8be70944c7abfe4a23",
+        "image_id": "sha256:928aa8320d625169b1620d56ed68df4a5b81ff1fbb630f2bc9f89a2e34c40843",
+        "versions": {
+          "datasets": "4.8.4",
+          "demo_mnist": "available",
+          "lightning": "2.6.5",
+          "python": "3.10.18",
+          "torch": "2.8.0+cu128",
+          "transformers": "5.3.0"
+        }
+      },
+      "inputs": {
+        "dataset": {
+          "name": "mnist",
+          "version": "smoke-v1",
+          "checksum": "ce077afa89f87fe01a1ac9a665a57ae7e72cad2c9dbe6c0f796c14ffe28a828b"
+        },
+        "model": {
+          "name": "mnist-config",
+          "version": "smoke-v1",
+          "checksum": "52f42ff111901a759eaa44a8da2969d1cdb426932d2b69a3e7781da32beae63c"
+        }
+      },
+      "recipe_sha256": "3607394b54aab955e9da1fedb2783e1ff96673ce8a715937df661954d02f3736",
+      "metrics": {
+        "train_loss": 2.2748870849609375,
+        "train_loss_step": 2.247976303100586,
+        "train_accuracy": 0.21875,
+        "train_accuracy_step": 0.375,
+        "val_loss": 2.3461194038391113,
+        "val_accuracy": 0.25,
+        "train_loss_epoch": 2.2748870849609375,
+        "train_accuracy_epoch": 0.21875,
+        "elapsed_time": 6.379249513614923
+      },
+      "evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+        "final_trainable_hash": "f9a250bf05e7c8c3b1a37985e6b309f96803e0fa4c2bd2a0c0462a7447926326"
+      },
+      "quality": {
+        "status": "not_evaluated"
+      },
+      "source_artifact": null,
+      "sealed_artifact_count": 15,
+      "sealed_manifest_sha256": "f04142c17f5b15c4af399c368bbff10a77bb17a2c6873a01cbd1b3c4e89cbb2b",
+      "required_outputs": [
+        {
+          "path": "checkpoints/epoch=0-step=2.ckpt",
+          "kind": "checkpoint",
+          "sha256": "9cca0e68f7cd3596cc40f65161bbd83e4adeaeb8f8928cc41f43d3f7b0abbcd8"
+        },
+        {
+          "path": "checkpoints/last.ckpt",
+          "kind": "checkpoint",
+          "sha256": "706af95dbd628de21ba955808dfa2a152ec4fdc4cfc6aab491e7392dbdadf08a"
+        },
+        {
+          "path": "metrics.json",
+          "kind": "report",
+          "sha256": "d5ac154c666607a4326f1bf61c5fe689ea77b75f93777ddf140c559bd27bde70"
+        },
+        {
+          "path": "training/run/resolved.yaml",
+          "kind": "config",
+          "sha256": "81f9615457f2a6a4bd0f38be542bdd64e5b23e39f1e8201a121f7132498aeeb8"
+        }
+      ]
+    }
+  }
+}

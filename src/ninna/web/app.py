@@ -10,13 +10,16 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from ninna.config import Settings
-from ninna.domain.schemas import CreateRun, CreateProject, ImageRequest, RuntimeRequest
+from ninna.domain.frameworks import ImportFramework
+from ninna.domain.schemas import CreateRun, CreateProject, ImageRequest, RuntimeRequest, CreateTask
 from ninna.domain.integrations import IntegrationUpdate, HubPublish, HubImport
 from ninna.services.platform import Platform
 from ninna.agent.server import create_server
 
 
 class PromoteRequest(BaseModel):
+    artifact_path: str = "model"
+    kind: Literal["model", "dataset"] = "model"
     version: str = Field(pattern=r"^[a-zA-Z0-9_.-]+$")
 
 
@@ -108,12 +111,15 @@ def create_app(settings=None, serve_frontend=True):
         return platform.initialize()
 
     @app.get("/api/assets/{kind}")
-    def assets(kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"]):
+    def assets(
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image", "framework"],
+    ):
         return platform.repo.assets(kind)
 
     @app.post("/api/assets/{kind}", status_code=201)
     def register(
-        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"], asset: dict
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image", "framework"],
+        asset: dict,
     ):
         from ninna.domain.schemas import Ref
 
@@ -122,6 +128,23 @@ def create_app(settings=None, serve_frontend=True):
         if kind == "runtime":
             return platform.images.register_runtime(RuntimeRequest.model_validate(asset))
         Ref.model_validate({key: asset.get(key) for key in ["name", "version"]})
+        if kind == "framework":
+            from ninna.domain.frameworks import FrameworkManifest
+
+            return platform.repo.register(
+                kind, FrameworkManifest.model_validate(asset).model_dump()
+            )
+        if kind == "recipe" and asset.get("framework"):
+            if not isinstance(asset.get("config"), dict) or not asset.get("task"):
+                raise ValueError("Framework Recipe requires task and native config")
+            framework = platform.repo.asset(
+                "framework", Ref.model_validate(asset["framework"]).model_dump()
+            )
+            task = framework["tasks"].get(asset["task"])
+            operation = asset.get("operation", "train")
+            if not task or operation not in task["operations"]:
+                raise ValueError("Recipe task/operation is not declared by framework")
+            return platform.repo.register(kind, asset)
         required = {
             "dataset": ["path", "files", "checksum", "train_split", "test_split"],
             "model": ["path", "files", "architecture", "initialization", "parameter_count"],
@@ -147,7 +170,7 @@ def create_app(settings=None, serve_frontend=True):
 
     @app.get("/api/assets/{kind}/{name}/{version}")
     def asset_detail(
-        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image"],
+        kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image", "framework"],
         name: str,
         version: str,
     ):
@@ -261,6 +284,29 @@ def create_app(settings=None, serve_frontend=True):
     def project_runs(project_id: str):
         return [{**run, "project_id": project_id} for run in platform.repo.project_runs(project_id)]
 
+    @app.get("/api/resources/gpus")
+    def gpus():
+        return platform.frameworks.gpus()
+
+    @app.post("/api/frameworks/import", status_code=201)
+    def import_framework(request: ImportFramework):
+        return platform.frameworks.import_image(request)
+
+    @app.post("/api/tasks/preflight")
+    def preflight_task(request: CreateTask):
+        resolved = platform.frameworks.preflight(request)
+        return {
+            "valid": True,
+            "framework": request.framework.model_dump(),
+            "task": request.task,
+            "operation": request.operation,
+            "image_id": resolved["image"]["image_id"],
+        }
+
+    @app.post("/api/tasks", status_code=201)
+    def create_task(request: CreateTask):
+        return platform.frameworks.create(request)
+
     @app.post("/api/runs", status_code=201)
     def create_run(request: CreateRun):
         return platform.create_run(request)
@@ -303,7 +349,7 @@ def create_app(settings=None, serve_frontend=True):
     def diagnostic(run_id: str):
         return platform.get_run_diagnostic_context(run_id)
 
-    @app.get("/api/runs/{run_id}/artifacts/{filename}")
+    @app.get("/api/runs/{run_id}/artifacts/{filename:path}")
     def artifact(run_id: str, filename: str):
         run = platform.repo.get("runs", run_id)
         allowed = {item["name"] for item in run["artifacts"]} | {
@@ -311,15 +357,21 @@ def create_app(settings=None, serve_frontend=True):
             "stdout.log",
             "stderr.log",
         }
-        if filename not in allowed or Path(filename).name != filename:
+        if filename not in allowed:
             raise HTTPException(404, "Artifact not found")
-        path = platform.output(run_id) / filename
+        from ninna.services.frameworks import relative_file
+
+        path = relative_file(platform.output(run_id), filename)
         if not path.is_file():
             raise HTTPException(404, "Artifact not found")
         return FileResponse(path, filename=filename)
 
     @app.post("/api/runs/{run_id}/promote", status_code=201)
     def promote(run_id: str, request: PromoteRequest):
+        if platform.repo.get("runs", run_id).get("task_spec"):
+            return platform.frameworks.promote(
+                run_id, request.version, request.artifact_path, request.kind
+            )
         return platform.promote(run_id, request.version)
 
     @app.api_route("/api/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)

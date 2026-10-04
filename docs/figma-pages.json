@@ -284,6 +284,33 @@
       "page": "145:1479",
       "frame": "145:1480",
       "name": "14i · Image · 拉取任务"
+    },
+    {
+      "name": "训练框架资产",
+      "source": "framework-catalog",
+      "path": "/assets/framework",
+      "width": 1440,
+      "height": 1600,
+      "page": "179:56",
+      "frame": "179:57"
+    },
+    {
+      "name": "创建框架任务",
+      "source": "framework-create",
+      "path": "/tasks/new?project_id=framework-integration&framework=demo-mnist/ninna-v1&task=classification",
+      "width": 1440,
+      "height": 1200,
+      "page": "179:338",
+      "frame": "179:339"
+    },
+    {
+      "name": "框架运行详情",
+      "source": "framework-run",
+      "path": "/runs/run-91af94be371d",
+      "width": 1440,
+      "height": 1200,
+      "page": "179:573",
+      "frame": "179:574"
     }
   ],
   "themes": [

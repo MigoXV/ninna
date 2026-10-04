@@ -8,6 +8,10 @@ Ninna 是一个单机 Docker 训练平台。以 Project 组织真实训练运行
 
 Agent 接口：[MCP 接入与 Skill](docs/agent-integration.md)。平台启动后执行 `codex mcp add ninna --url http://127.0.0.1:8000/mcp/`，使用仓库内的 `$ninna` 操作训练、诊断和模型资产。
 
+多框架接入：[训练资产协议、构建与注册](docs/framework-integration.md)。支持将图像、文本、VAD、降噪、ASR 和 TTS 框架注册为独立 Framework，通过「训练框架」选择任务及准备数据、训练、评估、导出、推理操作。CPU 与显式指定 GPU 的运行均由平台创建 Docker 容器执行。各框架的 `AGENTS.md` 和 `.agents/skills/` 同时位于仓库根目录与镜像默认工作目录 `/app`。
+
+当前接入状态见 [六框架、十类任务的真实验收记录](docs/framework-verification.md)，包含最终镜像、真实 Run、回归结果及能力边界。示例配方为短跑验证配置，不代表生产质量已经达标。
+
 ```text
 训练定义：Dataset × Model × Recipe
 执行环境：Runtime + Workspace snapshot + CPU resources

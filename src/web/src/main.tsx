@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useData } from "./api";
 import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
+import { FrameworksPage, CreateTaskPage } from "./frameworks";
 import { ImagesPage } from "./images";
 import { AssetsPage } from "./pages";
 import { ProjectsPage } from "./projects";
@@ -48,6 +49,7 @@ const nav = [
   { label: "中心存储", path: "/hub", icon: HardDrive },
 ];
 const definitions = [
+  { label: "训练框架", code: "Framework", kind: "framework", icon: Layers },
   { label: "数据集", code: "Dataset", kind: "dataset", icon: Database },
   { label: "模型", code: "Model", kind: "model", icon: Box },
   {
@@ -329,6 +331,8 @@ function Shell() {
               element={<ExperimentsPage />}
             />
             <Route path="/runs" element={<Navigate to="/projects" replace />} />
+            <Route path="/tasks/new" element={<CreateTaskPage />} />
+            <Route path="/assets/framework" element={<FrameworksPage />} />
             <Route path="/runs/new" element={<CreatePage />} />
             <Route path="/runs/:id" element={<RunPage />} />
             <Route path="/assets/image" element={<ImagesPage />} />

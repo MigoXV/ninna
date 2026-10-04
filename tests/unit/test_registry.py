@@ -76,7 +76,7 @@ def test_create_run_schema_rejects_gpu_and_unknown_fields():
     request = default_request()
     assert CreateRun.model_validate(request).execution_spec.resources.device == "cpu"
     request["execution_spec"]["resources"]["gpu_count"] = 1
-    with pytest.raises(ValueError, match="CPU only"):
+    with pytest.raises(ValueError, match="CPU resources"):
         CreateRun.model_validate(request)
     request = default_request()
     request["training_spec"]["docker"] = "wrong-boundary"

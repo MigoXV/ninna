@@ -13,6 +13,7 @@ from pathlib import Path
 
 import docker
 from docker.types import Mount
+from requests.exceptions import ConnectionError as DockerConnectionError, Timeout as DockerTimeout
 
 from ninna.config import Settings
 from ninna.domain.schemas import CreateRun, TERMINAL
@@ -50,11 +51,14 @@ class Platform:
         from ninna.services.images import ImageService
 
         self.images = ImageService(self)
+        from ninna.services.frameworks import FrameworkService
+
+        self.frameworks = FrameworkService(self)
 
     @property
     def docker(self):
         if self._docker is None:
-            self._docker = docker.from_env(timeout=30)
+            self._docker = docker.from_env(timeout=120)
         return self._docker
 
     def start(self):
@@ -149,18 +153,34 @@ class Platform:
             info = {**asset, "snapshot": key, "snapshot_path": str(path), "files": files}
             try:
                 commit = subprocess.run(
-                    ["git", "-C", str(self.settings.root), "rev-parse", "HEAD"],
+                    ["git", "-C", str(asset["path"]), "rev-parse", "HEAD"],
                     capture_output=True,
                     text=True,
                     check=True,
                 ).stdout.strip()
                 info["git_commit"] = commit
             except (subprocess.SubprocessError, FileNotFoundError):
-                info["git_commit"] = None
+                info["git_commit"] = asset.get("metadata", {}).get("git_commit")
             write_json(self.settings.state / "snapshots" / (key + ".json"), info)
             return info
 
+    def resolve_workspace(self, workspace_ref):
+        if workspace_ref["snapshot"] == "current":
+            return self.workspace_snapshot(workspace_ref["name"])
+        key = workspace_ref["snapshot"]
+        if len(key) != 64 or any(c not in "0123456789abcdef" for c in key):
+            raise ValueError("Invalid workspace snapshot ID")
+        info = self.settings.state / "snapshots" / (key + ".json")
+        if not info.exists():
+            raise ValueError("Workspace snapshot is unavailable")
+        workspace = json.loads(info.read_text())
+        if workspace["name"] != workspace_ref["name"]:
+            raise ValueError("Snapshot does not belong to requested workspace")
+        return workspace
+
     def create_run(self, request: CreateRun):
+        if request.execution_spec.resources.device != "cpu":
+            raise ValueError("Use the framework task API for GPU training")
         with self.operation_lock:
             self.repo.get("projects", request.project_id)
             if request.parent_run_id:
@@ -173,19 +193,7 @@ class Platform:
             assets["runtime"] = self.repo.asset("runtime", execution["runtime"])
             assets["image"] = self.images.resolve_runtime(assets["runtime"])
             runtime_evidence = self.runtime_validator.validate(assets["image"])
-            workspace_ref = execution["workspace"]
-            if workspace_ref["snapshot"] == "current":
-                workspace = self.workspace_snapshot(workspace_ref["name"])
-            else:
-                key = workspace_ref["snapshot"]
-                if len(key) != 64 or any(c not in "0123456789abcdef" for c in key):
-                    raise ValueError("Invalid workspace snapshot ID")
-                info = self.settings.state / "snapshots" / (key + ".json")
-                if not info.exists():
-                    raise ValueError("Workspace snapshot is unavailable")
-                workspace = json.loads(info.read_text())
-                if workspace["name"] != workspace_ref["name"]:
-                    raise ValueError("Snapshot does not belong to requested workspace")
+            workspace = self.resolve_workspace(execution["workspace"])
             assets["workspace"] = workspace
             execution["workspace"]["snapshot"] = workspace["snapshot"]
             if request.parent_run_id:
@@ -240,6 +248,8 @@ class Platform:
         ]
 
     def _prepare(self, run):
+        if run.get("task_spec"):
+            return self.frameworks.prepare(run)
         key = run["id"]
         if run["status"] == "CREATED":
             run = self.repo.update_run(key, status="PREPARING")
@@ -310,6 +320,8 @@ class Platform:
             if run["status"] in TERMINAL:
                 return
             exit_code = inspect["State"]["ExitCode"]
+            if run.get("task_spec"):
+                return self.frameworks.finish(run, changes, exit_code)
             metrics = None
             reason = None
             status = "SUCCESS"
@@ -402,7 +414,7 @@ class Platform:
                         self._fail(run["id"], f"Docker request rejected: {exc}")
                     else:
                         self.repo.update_run(run["id"], monitor_error=str(exc))
-                except docker.errors.DockerException as exc:
+                except (docker.errors.DockerException, DockerConnectionError, DockerTimeout) as exc:
                     try:
                         self.repo.update_run(run["id"], monitor_error=str(exc))
                     except ValueError:

@@ -16,6 +16,12 @@ export type Asset = {
   [key: string]: any;
 };
 export type Run = {
+  task_spec?: {
+    framework: Ref;
+    task: string;
+    operation: string;
+    inputs: Record<string, unknown>;
+  };
   project_id: string;
   id: string;
   status: string;
@@ -34,6 +40,7 @@ export type Run = {
     resources: {
       device: string;
       gpu_count: number;
+      gpu_ids?: string[];
       cpu_threads: number;
       memory_mb: number;
     };

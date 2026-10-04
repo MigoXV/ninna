@@ -173,15 +173,20 @@ class ImageService:
             if state["status"] != "AVAILABLE":
                 raise ValueError(state["error"])
             try:
-                evidence = self.platform.runtime_validator.validate(image)
+                evidence = self.platform.runtime_validator.validate(
+                    image, request.framework.model_dump() if request.framework else None
+                )
             except ValueError:
                 raise
             except Exception as exc:
                 raise ValueError(failure(exc)) from exc
             value = {
                 **request.model_dump(),
-                "profile": "hf-training-cpu",
-                "metadata": {**evidence["versions"], "device": "cpu"},
+                "profile": "framework-v1" if request.framework else "hf-training-cpu",
+                "metadata": {
+                    **evidence["versions"],
+                    "devices": ["cpu", "cuda"] if request.framework else ["cpu"],
+                },
                 "validation": evidence,
             }
             return self.repo.register("runtime", value)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -27,13 +28,22 @@ class WorkspaceRef(StrictModel):
 class Resources(StrictModel):
     device: str = "cpu"
     gpu_count: int = 0
+    gpu_ids: list[str] = Field(default_factory=list, max_length=1)
     cpu_threads: int = Field(default=4, ge=1, le=32)
-    memory_mb: int = Field(default=4096, ge=512, le=65536)
+    memory_mb: int = Field(default=4096, ge=512, le=262144)
 
     @model_validator(mode="after")
-    def cpu_only(self):
-        if self.device != "cpu" or self.gpu_count != 0:
-            raise ValueError("MVP supports CPU only; use device=cpu and gpu_count=0")
+    def validate_device(self):
+        if self.device == "cpu":
+            if self.gpu_count or self.gpu_ids:
+                raise ValueError("CPU resources cannot select GPUs")
+        elif self.device == "cuda":
+            if self.gpu_count != 1 or len(self.gpu_ids) != 1:
+                raise ValueError("Select exactly one GPU UUID for CUDA training")
+            if not self.gpu_ids[0].startswith("GPU-"):
+                raise ValueError("GPU must be identified by its UUID")
+        else:
+            raise ValueError("device must be cpu or cuda")
         return self
 
 
@@ -52,6 +62,29 @@ class CreateRun(StrictModel):
     project_id: str = Field(min_length=1, max_length=80)
     training_spec: TrainingSpec
     execution_spec: ExecutionSpec
+    parent_run_id: str | None = None
+
+
+class TaskInput(StrictModel):
+    kind: Literal["dataset", "model"]
+    ref: Ref
+
+
+class RunArtifactRef(StrictModel):
+    run_id: str
+    path: str
+
+
+class CreateTask(StrictModel):
+    protocol_version: Literal[1] = 1
+    project_id: str = Field(min_length=1, max_length=80)
+    framework: Ref
+    task: str
+    operation: Literal["prepare", "train", "evaluate", "export", "infer"] = "train"
+    inputs: dict[str, TaskInput] = Field(default_factory=dict)
+    recipe: Ref
+    execution_spec: ExecutionSpec
+    source: RunArtifactRef | None = None
     parent_run_id: str | None = None
 
 
@@ -89,4 +122,5 @@ class ImageRequest(Ref):
 
 class RuntimeRequest(Ref):
     image_ref: Ref
+    framework: Ref | None = None
     description: str = Field(default="", max_length=1000)
