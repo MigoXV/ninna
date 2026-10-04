@@ -1,0 +1,162 @@
+{
+  "source_repo": "nccratliri/vad-human-ava-speech",
+  "source_revision": "fefdf18c196e4b3de0c2cf84652e3983efb8530d",
+  "sample_rate": 16000,
+  "samples_per_audio": 4800000,
+  "seconds_per_audio": 300,
+  "datasets": {
+    "10h": {
+      "train": {
+        "clips": 96,
+        "seconds": 28800.0,
+        "active_seconds": 18385.93,
+        "active_fraction": 0.6384
+      },
+      "validation": {
+        "clips": 12,
+        "seconds": 3600.0,
+        "active_seconds": 1844.67,
+        "active_fraction": 0.5124
+      },
+      "test": {
+        "clips": 12,
+        "seconds": 3600.0,
+        "active_seconds": 2505.9,
+        "active_fraction": 0.6961
+      }
+    },
+    "2h": {
+      "train": {
+        "clips": 20,
+        "seconds": 6000.0,
+        "active_seconds": 3806.33,
+        "active_fraction": 0.6344
+      },
+      "validation": {
+        "clips": 2,
+        "seconds": 600.0,
+        "active_seconds": 372.2,
+        "active_fraction": 0.6203
+      },
+      "test": {
+        "clips": 2,
+        "seconds": 600.0,
+        "active_seconds": 428.97,
+        "active_fraction": 0.715
+      }
+    }
+  },
+  "work_item_id": "work_item-cf5b00b2477449b0",
+  "environment_revision_id": "environment_revision-d89629e735d9421d",
+  "runs": [
+    {
+      "label": "audiofolder-train-locked",
+      "run_id": "run-b391c5a4a1244429",
+      "container_id": "57f558f75b44df790f994eda96e9d3fed93aae0fc14aa08b691e2ffe71be3004",
+      "exit_code": 0,
+      "status": "SUCCESS",
+      "metrics": {
+        "train_loss": 0.9062455892562866,
+        "val_loss": 0.6457233428955078,
+        "val_accuracy": 0.6213078498840332,
+        "val_precision": 0.6213078498840332,
+        "val_recall": 1.0,
+        "val_f1": 0.7664280533790588,
+        "val_positive_ratio": 0.6213078498840332,
+        "val_predicted_positive_ratio": 1.0,
+        "val_best_f1": 0.7664280533790588,
+        "val_best_threshold": 0.5,
+        "train_accuracy": 0.6223687529563904,
+        "train_precision": 0.6271620392799377,
+        "train_recall": 0.9860996603965759,
+        "train_f1": 0.7667005658149719,
+        "train_positive_ratio": 0.6292585730552673,
+        "train_predicted_positive_ratio": 0.9893959760665894,
+        "train_best_f1": 0.7667005658149719,
+        "train_best_threshold": 0.5,
+        "elapsed_time": 34.045008200686425
+      },
+      "evidence": {
+        "optimizer_steps": 20,
+        "global_step": 20,
+        "initial_trainable_hash": "f6d96bb89b376c87630dbe74139919a835f231510e0a5e5a99e5911328ea8fd3",
+        "final_trainable_hash": "125195921c90ced2b7096d9003cb73f61ccd470f807047c3f0b767be7032b92a"
+      },
+      "resolved_threshold": 0.5,
+      "resolved_threshold_sweep": [
+        0.5
+      ]
+    },
+    {
+      "label": "parquet-train-locked",
+      "run_id": "run-cee5eb4d3118447c",
+      "container_id": "c7f5f974f02c29030a0c2fdf2ff5f9082a0a8da57bba778162c898b78e850f93",
+      "exit_code": 0,
+      "status": "SUCCESS",
+      "metrics": {
+        "train_loss": 0.9062455892562866,
+        "val_loss": 0.6457233428955078,
+        "val_accuracy": 0.6213078498840332,
+        "val_precision": 0.6213078498840332,
+        "val_recall": 1.0,
+        "val_f1": 0.7664280533790588,
+        "val_positive_ratio": 0.6213078498840332,
+        "val_predicted_positive_ratio": 1.0,
+        "val_best_f1": 0.7664280533790588,
+        "val_best_threshold": 0.5,
+        "train_accuracy": 0.6223687529563904,
+        "train_precision": 0.6271620392799377,
+        "train_recall": 0.9860996603965759,
+        "train_f1": 0.7667005658149719,
+        "train_positive_ratio": 0.6292585730552673,
+        "train_predicted_positive_ratio": 0.9893959760665894,
+        "train_best_f1": 0.7667005658149719,
+        "train_best_threshold": 0.5,
+        "elapsed_time": 34.587221258785576
+      },
+      "evidence": {
+        "optimizer_steps": 20,
+        "global_step": 20,
+        "initial_trainable_hash": "f6d96bb89b376c87630dbe74139919a835f231510e0a5e5a99e5911328ea8fd3",
+        "final_trainable_hash": "125195921c90ced2b7096d9003cb73f61ccd470f807047c3f0b767be7032b92a"
+      },
+      "resolved_threshold": 0.5,
+      "resolved_threshold_sweep": [
+        0.5
+      ]
+    },
+    {
+      "label": "test-evaluate-final",
+      "run_id": "run-efef5bd0628d4c8e",
+      "container_id": "cc96d4e7a7186d9e0cbcdf0a942148c8f5d0f164d952397b7307c11a46c49455",
+      "exit_code": 0,
+      "status": "SUCCESS",
+      "metrics": {
+        "val_loss": 0.5497429370880127,
+        "val_accuracy": 0.7154932022094727,
+        "val_precision": 0.7154932022094727,
+        "val_recall": 1.0,
+        "val_f1": 0.8341545462608337,
+        "val_positive_ratio": 0.7154932022094727,
+        "val_predicted_positive_ratio": 1.0,
+        "val_best_f1": 0.8341545462608337,
+        "val_best_threshold": 0.5,
+        "elapsed_time": 11.407730799168348
+      },
+      "evidence": {},
+      "resolved_threshold": 0.5,
+      "resolved_threshold_sweep": [
+        0.5
+      ]
+    }
+  ],
+  "annotation_status": "energy-unreviewed",
+  "quality_status": "not_accepted",
+  "tests": "6 passed; Ruff passed",
+  "diagnostic_runs": [
+    "run-bf26b59dff8c421c",
+    "run-fffd776266b24da5",
+    "run-bcb8b5cd0c2049f8",
+    "run-2be73ef240854deb"
+  ]
+}

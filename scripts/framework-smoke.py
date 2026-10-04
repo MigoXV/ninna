@@ -17,6 +17,8 @@ def main():
     parser.add_argument("recipe")
     parser.add_argument("--dataset")
     parser.add_argument("--model")
+    parser.add_argument("--model-version", default="smoke-v1")
+    parser.add_argument("--dataset-version", default="smoke-v1")
     parser.add_argument("--operation", default="train")
     parser.add_argument("--source-run")
     parser.add_argument("--source-path", default="checkpoints/last.ckpt")
@@ -52,8 +54,8 @@ def main():
         for kind, name in (("dataset", args.dataset), ("model", args.model)):
             if not name:
                 continue
-            identity = {"name": name, "version": "smoke-v1"}
-            existing = client.get(f"/assets/{kind}/{name}/smoke-v1")
+            identity = {"name": name, "version": getattr(args, kind + "_version")}
+            existing = client.get(f"/assets/{kind}/{name}/{identity['version']}")
             if existing.status_code != 200:
                 path = (args.input_root / name).resolve()
                 files = manifest(path)
@@ -76,32 +78,105 @@ def main():
                     )
                 call(f"/assets/{kind}", value)
             inputs[kind] = {"kind": kind, "ref": identity}
-        request = {
-            "protocol_version": 1,
-            "project_id": project["id"],
-            "framework": {"name": args.framework, "version": "ninna-v1"},
-            "task": args.task,
-            "operation": args.operation,
-            "inputs": inputs,
-            "recipe": {"name": args.recipe, "version": args.recipe_version},
-            "execution_spec": {
-                "runtime": {"name": args.framework, "version": args.runtime_version},
-                "workspace": {
-                    "name": args.workspace_name or args.framework + "-" + args.runtime_version
-                },
-                "resources": {
+        import uuid
+
+        invocation = uuid.uuid4().hex
+
+        def mutation(label, **body):
+            return {"request_id": invocation + ":" + label, **body}
+
+        def wait_job(job):
+            deadline = time.monotonic() + args.timeout
+            while time.monotonic() < deadline:
+                job = call("/v2/jobs/" + job["id"])
+                if job["status"] in {"SUCCESS", "FAILED", "CANCELLED"}:
+                    if job["status"] != "SUCCESS":
+                        raise ValueError(job)
+                    return job["result"]
+                time.sleep(1)
+            raise TimeoutError(job["id"])
+
+        runtime = call(f"/assets/runtime/{args.framework}/{args.runtime_version}")["asset"]
+        workspace = args.workspace_name or args.framework + "-" + args.runtime_version
+        env = next(
+            (
+                e
+                for e in call("/v2/environments")
+                if e.get("workspace_name") == workspace
+                and e.get("image_ref") == runtime["image_ref"]
+            ),
+            None,
+        )
+        if env is None:
+            env = call(
+                "/v2/environments",
+                mutation(
+                    "environment",
+                    name=args.framework + " verification",
+                    image_ref=runtime["image_ref"],
+                    workspace_name=workspace,
+                    framework=runtime["framework"],
+                ),
+            )
+        if not env.get("latest_revision_id"):
+            wait_job(call(f"/v2/environments/{env['id']}/prepare", mutation("prepare")))
+            revision = wait_job(call(f"/v2/environments/{env['id']}/publish", mutation("publish")))
+        else:
+            revision = call("/v2/environment-revisions/" + env["latest_revision_id"])
+        work = call(
+            "/v2/work-items",
+            mutation(
+                "work",
+                project_id=project["id"],
+                title=args.framework + " · " + args.task + " · " + args.operation,
+                goal="真实容器框架回归验证",
+                environment_revision_id=revision["id"],
+            ),
+        )
+        for _ in range(180):
+            if call("/v2/work-items/" + work["id"])["work_item"]["ready"]:
+                break
+            time.sleep(1)
+        # Existing immutable definitions are indexed without rewriting their records.
+        call("/v2/migration", mutation("migration"))
+        catalog = call("/v2/assets")
+        resolved = {
+            name: next(
+                a["id"]
+                for a in catalog
+                if a["kind"] == value["kind"] and a.get("legacy_ref") == value["ref"]
+            )
+            for name, value in inputs.items()
+        }
+        plan = call(
+            "/v2/run-plans",
+            mutation(
+                "plan",
+                work_item_id=work["id"],
+                task=args.task,
+                operation=args.operation,
+                inputs=resolved,
+                recipe={"name": args.recipe, "version": args.recipe_version},
+                resources={
                     "device": "cuda" if args.gpu else "cpu",
                     "gpu_count": 1 if args.gpu else 0,
                     "gpu_ids": [args.gpu] if args.gpu else [],
                     "cpu_threads": 4,
                     "memory_mb": args.memory,
                 },
-            },
-        }
-        if args.source_run:
-            request["source"] = {"run_id": args.source_run, "path": args.source_path}
-        call("/tasks/preflight", request)
-        run = call("/tasks", request)
+                source_run_id=args.source_run,
+                source_path=args.source_path if args.source_run else None,
+            ),
+        )
+        for _ in range(180):
+            plan = call("/v2/run-plans/" + plan["id"])
+            if plan["status"] in {"READY", "BLOCKED"}:
+                break
+            time.sleep(1)
+        if plan["status"] != "READY":
+            raise ValueError(plan)
+        submitted = wait_job(call("/v2/runs", mutation("submit", plan_id=plan["id"])))
+        run = call("/runs/" + submitted["run_id"])
         print(json.dumps({"run_id": run["id"], "operation": args.operation}), flush=True)
         deadline = time.monotonic() + args.timeout
         previous = None

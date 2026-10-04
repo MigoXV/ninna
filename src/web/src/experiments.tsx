@@ -214,7 +214,12 @@ export function ExperimentsPage() {
                 <option value="CANCELLED">已取消</option>
               </select>
             </div>
-            <div className="experiment-list">
+            <div
+              className="experiment-list"
+              tabIndex={0}
+              role="region"
+              aria-label="实验记录"
+            >
               {shown.map((run) => (
                 <label
                   className={

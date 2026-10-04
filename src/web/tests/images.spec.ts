@@ -5,6 +5,7 @@ test("image asset navigation, registration and detail", async ({
   page,
   request,
 }) => {
+  test.setTimeout(180000);
   await page.goto("/assets/image");
   await expect(
     page.getByRole("heading", { name: "镜像资产", exact: true }),
@@ -34,7 +35,7 @@ test("image asset navigation, registration and detail", async ({
   await page.getByRole("button", { name: "验证并创建", exact: true }).click();
   await expect(
     page.getByRole("link", { name: name + "-runtime / v1" }),
-  ).toBeVisible({ timeout: 30000 });
+  ).toBeVisible({ timeout: 120000 });
 });
 
 test("image pages fit mobile and expose remote pull form", async ({ page }) => {

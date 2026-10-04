@@ -12,10 +12,8 @@ import {
 import {
   ListTodo,
   ArrowUpRight,
-  Box,
   HardDrive,
   Container,
-  Layers,
   Server,
   ChevronRight,
   Database,
@@ -24,18 +22,27 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
-  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { useData } from "./api";
-import { RunsPage, CreatePage, RunPage, ComparePage } from "./runs";
-import { FrameworksPage, CreateTaskPage } from "./frameworks";
+import { RunsPage, RunPage, ComparePage } from "./runs";
+import { FrameworksPage } from "./frameworks";
 import { ImagesPage } from "./images";
 import { AssetsPage } from "./pages";
 import { ProjectsPage } from "./projects";
-import { HubPage } from "./integrations";
+import {
+  SourcesPage,
+  AssetLibrary,
+  AssetRevisionPage,
+  EnvironmentsPage,
+  EnvironmentPage,
+  WorkItemsPage,
+  NewWorkPage,
+  WorkPage,
+  AgentSettingsPage,
+} from "./work";
 import { ExperimentsPage } from "./experiments";
-import { ThemeSwitch } from "./theme";
+import { AppearanceSettingsPage } from "./settings";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-sc";
 import "@fontsource/ibm-plex-mono/400.css";
@@ -44,26 +51,21 @@ import "./tokens.css";
 import "./style.css";
 import "./workspace.css";
 import "./design-system.css";
+import "./scrollbars.css";
 const nav = [
   { label: "项目", path: "/projects", icon: ListTodo },
-  { label: "中心存储", path: "/hub", icon: HardDrive },
+  { label: "模型与数据", path: "/library", icon: Database },
+  { label: "训练环境", path: "/environments", icon: Container },
+  { label: "托管平台", path: "/settings/sources", icon: HardDrive },
+  { label: "Codex 接入", path: "/settings/agent", icon: FolderCode },
 ];
-const definitions = [
-  { label: "训练框架", code: "Framework", kind: "framework", icon: Layers },
-  { label: "数据集", code: "Dataset", kind: "dataset", icon: Database },
-  { label: "模型", code: "Model", kind: "model", icon: Box },
-  {
-    label: "训练配方",
-    code: "Recipe",
-    kind: "recipe",
-    icon: SlidersHorizontal,
-  },
-];
-const environments = [
-  { label: "镜像资产", code: "Image", kind: "image", icon: Layers },
-  { label: "运行环境", code: "Runtime", kind: "runtime", icon: Container },
-  { label: "代码空间", code: "Workspace", kind: "workspace", icon: FolderCode },
-];
+const definitions: {
+  label: string;
+  code: string;
+  kind: string;
+  icon: typeof Database;
+}[] = [];
+const environments: typeof definitions = [];
 function Shell() {
   const [open, setOpen] = useState(false);
   const [tooltipsDismissed, setTooltipsDismissed] = useState(false);
@@ -161,7 +163,6 @@ function Shell() {
         <Link to="/projects" className="brand">
           ninna<span className="brand-period">.</span>
         </Link>
-        <ThemeSwitch />
       </header>
       {open && <div className="nav-backdrop" onClick={() => setOpen(false)} />}
       <aside
@@ -225,31 +226,51 @@ function Shell() {
           {[
             { title: "训练定义", items: definitions },
             { title: "执行环境", items: environments },
-          ].map((group) => (
-            <div className="nav-group" key={group.title}>
-              <p className="nav-label">{group.title}</p>
-              {group.items.map((n) => (
-                <NavLink
-                  key={n.kind}
-                  to={"/assets/" + n.kind}
-                  aria-label={n.label}
-                  onPointerEnter={() => setTooltipsDismissed(false)}
-                  onFocus={() => setTooltipsDismissed(false)}
-                  className={({ isActive }) =>
-                    "nav-item " + (isActive ? "active" : "")
-                  }
-                >
-                  <n.icon size={18} strokeWidth={1.5} aria-hidden="true" />
-                  <span className="nav-text">{n.label}</span>
-                  <span className="nav-tooltip" aria-hidden="true">
-                    {n.label}
-                  </span>
-                </NavLink>
-              ))}
-            </div>
-          ))}
+          ]
+            .filter((group) => group.items.length > 0)
+            .map((group) => (
+              <div className="nav-group" key={group.title}>
+                <p className="nav-label">{group.title}</p>
+                {group.items.map((n) => (
+                  <NavLink
+                    key={n.kind}
+                    to={"/assets/" + n.kind}
+                    aria-label={n.label}
+                    onPointerEnter={() => setTooltipsDismissed(false)}
+                    onFocus={() => setTooltipsDismissed(false)}
+                    className={({ isActive }) =>
+                      "nav-item " + (isActive ? "active" : "")
+                    }
+                  >
+                    <n.icon size={18} strokeWidth={1.5} aria-hidden="true" />
+                    <span className="nav-text">{n.label}</span>
+                    <span className="nav-tooltip" aria-hidden="true">
+                      {n.label}
+                    </span>
+                  </NavLink>
+                ))}
+              </div>
+            ))}
         </nav>
         <div className="sidebar-bottom">
+          <div className="sidebar-settings">
+            <NavLink
+              to="/settings/appearance"
+              state={{ from: location.pathname + location.search }}
+              aria-label="设置"
+              onPointerEnter={() => setTooltipsDismissed(false)}
+              onFocus={() => setTooltipsDismissed(false)}
+              className={({ isActive }) =>
+                "nav-item " + (isActive ? "active" : "")
+              }
+            >
+              <span className="settings-icon" aria-hidden="true" />
+              <span className="nav-text">设置</span>
+              <span className="nav-tooltip" aria-hidden="true">
+                设置
+              </span>
+            </NavLink>
+          </div>
           <div
             className="daemon-health"
             role="status"
@@ -303,8 +324,6 @@ function Shell() {
           <div className="topbar-right">
             <span className="local-marker" />
             本地执行 <span className="topbar-separator" /> Docker Engine
-            <span className="topbar-separator" />
-            <ThemeSwitch />
           </div>
         </div>
         <main
@@ -312,7 +331,7 @@ function Shell() {
           id="main"
           className={
             location.pathname === "/" ||
-            /^\/projects\/[^/]+$/.test(location.pathname) ||
+            /^\/projects\/[^/]+\/runs$/.test(location.pathname) ||
             /^\/runs\/run-/.test(location.pathname)
               ? "task-main"
               : "document-main"
@@ -321,7 +340,8 @@ function Shell() {
           <Routes key={location.pathname}>
             <Route path="/" element={<Navigate to="/projects" replace />} />
             <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/projects/:projectId" element={<RunsPage />} />
+            <Route path="/projects/:projectId" element={<WorkItemsPage />} />
+            <Route path="/projects/:projectId/runs" element={<RunsPage />} />
             <Route
               path="/projects/:projectId/compare"
               element={<ComparePage />}
@@ -331,13 +351,31 @@ function Shell() {
               element={<ExperimentsPage />}
             />
             <Route path="/runs" element={<Navigate to="/projects" replace />} />
-            <Route path="/tasks/new" element={<CreateTaskPage />} />
+            <Route path="/tasks/new" element={<NewWorkPage />} />
             <Route path="/assets/framework" element={<FrameworksPage />} />
-            <Route path="/runs/new" element={<CreatePage />} />
+            <Route path="/runs/new" element={<NewWorkPage />} />
             <Route path="/runs/:id" element={<RunPage />} />
             <Route path="/assets/image" element={<ImagesPage />} />
             <Route path="/assets/:kind" element={<AssetsPage />} />
-            <Route path="/hub" element={<HubPage />} />
+            <Route
+              path="/hub"
+              element={<Navigate to="/settings/sources" replace />}
+            />
+            <Route path="/library" element={<AssetLibrary />} />
+            <Route path="/library/:assetId" element={<AssetRevisionPage />} />
+            <Route path="/settings/sources" element={<SourcesPage />} />
+            <Route path="/settings/agent" element={<AgentSettingsPage />} />
+            <Route
+              path="/settings/appearance"
+              element={<AppearanceSettingsPage />}
+            />
+            <Route path="/environments" element={<EnvironmentsPage />} />
+            <Route
+              path="/environments/:environmentId"
+              element={<EnvironmentPage />}
+            />
+            <Route path="/work/new" element={<NewWorkPage />} />
+            <Route path="/work/:workId" element={<WorkPage />} />
             <Route
               path="*"
               element={

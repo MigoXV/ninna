@@ -1,0 +1,528 @@
+{
+  "recorded_at": "2026-10-04",
+  "api_version": 2,
+  "state_directory": "outputs/work-v2-validation/platform",
+  "tests": {
+    "python_unit": 69,
+    "python_default_integration_skipped": 26,
+    "real_mcp_http_stdio": 1,
+    "browser": 29,
+    "private_registry_browser_skipped": 2
+  },
+  "framework_training": [
+    {
+      "framework": "demo-mnist",
+      "task": "classification",
+      "id": "run-b73f297efdb342fa",
+      "status": "SUCCESS",
+      "container_id": "fb17515eb46fc4e64156d863d50ea6a8be9e9fd107302165172a5e4e315f628b",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-ef2407abf33d44bc",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 2.2748870849609375,
+        "train_loss_step": 2.247976303100586,
+        "train_accuracy": 0.21875,
+        "train_accuracy_step": 0.375,
+        "val_loss": 2.3461194038391113,
+        "val_accuracy": 0.25,
+        "train_loss_epoch": 2.2748870849609375,
+        "train_accuracy_epoch": 0.21875,
+        "elapsed_time": 6.345463801175356
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+        "final_trainable_hash": "f9a250bf05e7c8c3b1a37985e6b309f96803e0fa4c2bd2a0c0462a7447926326"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "arietta",
+      "task": "decision",
+      "id": "run-7fbb235bd066405f",
+      "status": "SUCCESS",
+      "container_id": "bcd8d2b6884fdac2a94732521c5de44cbe45f040bf5233ef9feaeadf3ddb0f58",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-a8747cac10814d36",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.4431804418563843,
+        "val_loss": 0.5023419260978699,
+        "val_deploy_choice_nll": 0.19465938210487366,
+        "val_deploy_choice_brier": 0.09762956947088242,
+        "val_deploy_choice_hard_count": 3.0,
+        "val_deploy_choice_soft_count": 0.0,
+        "val_deploy_choice_accuracy": 1.0,
+        "val_deploy_choice_macro_f1": 1.0,
+        "val_deploy_choice_count": 3.0,
+        "val_deploy_score_nll": 0.8700546622276306,
+        "val_deploy_score_brier": 0.5336765646934509,
+        "val_deploy_score_hard_count": 3.0,
+        "val_deploy_score_soft_count": 0.0,
+        "val_deploy_score_accuracy": 0.6666666865348816,
+        "val_deploy_score_macro_f1": 0.6666666865348816,
+        "val_deploy_score_count": 3.0,
+        "val_deploy_score_mae": 0.5704103708267212,
+        "val_deploy_score_rmse": 0.660231351852417,
+        "val_deploy_noul_nll": 0.4122997522354126,
+        "val_deploy_noul_brier": 0.2585035562515259,
+        "val_deploy_noul_hard_count": 2.0,
+        "val_deploy_noul_soft_count": 0.0,
+        "val_deploy_noul_accuracy": 1.0,
+        "val_deploy_noul_macro_f1": 1.0,
+        "val_deploy_noul_count": 2.0,
+        "val_deploy_loss": 0.4923379421234131,
+        "elapsed_time": 25.309440495911986
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "35be7fc3557dc5aca1b1b02c2dea354c1dddf7d03e0c4877bab1d8942ff9c60c",
+        "final_trainable_hash": "24b5a3d0c835aff8a51d34ee8ff6f66a09716f97af2e5bbb8031369ac8ff2f8f"
+      },
+      "artifact_count": 18
+    },
+    {
+      "framework": "preludio2",
+      "task": "attetion-vad",
+      "id": "run-2f86f3988f854bd3",
+      "status": "SUCCESS",
+      "container_id": "ddd2af1d83894d129d9ceb2724af683f60b988ba6b10657298bb48508eac65d8",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-a2b11e45f1374aa9",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.7433401346206665,
+        "val_loss": 0.7269678115844727,
+        "val_accuracy": 0.125,
+        "val_precision": 0.12639999389648438,
+        "val_recall": 0.5140997767448425,
+        "val_f1": 0.20291094481945038,
+        "val_positive_ratio": 0.2166353315114975,
+        "val_predicted_positive_ratio": 0.8811089992523193,
+        "val_best_f1": 0.35612204670906067,
+        "val_best_threshold": 0.10000000149011612,
+        "train_accuracy": 0.2525880038738251,
+        "train_precision": 0.14805521070957184,
+        "train_recall": 0.7329192757606506,
+        "train_f1": 0.246346578001976,
+        "train_positive_ratio": 0.1666666716337204,
+        "train_predicted_positive_ratio": 0.8250517845153809,
+        "train_best_f1": 0.2857142984867096,
+        "train_best_threshold": 0.10000000149011612,
+        "elapsed_time": 12.709766336716712
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "f6d96bb89b376c87630dbe74139919a835f231510e0a5e5a99e5911328ea8fd3",
+        "final_trainable_hash": "f3a2b6fe3d68559a8990cbdc223e3229357f256aebb515a6cf037211a3fcbbca"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "preludio2",
+      "task": "firered-vad",
+      "id": "run-c4d7f393dcdb4496",
+      "status": "SUCCESS",
+      "container_id": "eefbc195b4523b5b7eda556c2ff28fab748358cf7b6478e7672d63bb5bdd14eb",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-ec03af35bb274f27",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.6924986839294434,
+        "train_positive_weight": 1.0,
+        "val_loss": 0.7246619462966919,
+        "val_accuracy": 0.7856904864311218,
+        "val_precision": 0.0,
+        "val_recall": 0.0,
+        "val_f1": 0.0,
+        "val_positive_ratio": 0.21430954337120056,
+        "val_predicted_positive_ratio": 0.0,
+        "val_best_f1": 0.35297346115112305,
+        "val_best_threshold": 0.10000000894069672,
+        "val_segment_recall": 0.0,
+        "val_segment_precision": 0.0,
+        "val_segment_f1": 0.0,
+        "train_accuracy": 0.7374311685562134,
+        "train_precision": 0.0,
+        "train_recall": 0.0,
+        "train_f1": 0.0,
+        "train_positive_ratio": 0.26055046916007996,
+        "train_predicted_positive_ratio": 0.0020183485466986895,
+        "train_best_f1": 0.4133915305137634,
+        "train_best_threshold": 0.10000000149011612,
+        "train_segment_recall": 0.0,
+        "train_segment_precision": 0.0,
+        "train_segment_f1": 0.0,
+        "elapsed_time": 11.403996963053942
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "00534f1d700748e7b9a9e5a2667c621cde3812264d9a9a3dccd15ae2edfdac7f",
+        "final_trainable_hash": "0177be18d471637da4613937f6d46140cdaf173674bb0f218f3274bd83f2119e"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "preludio2",
+      "task": "qwen-vad",
+      "id": "run-45de4a1d950f4fe4",
+      "status": "SUCCESS",
+      "container_id": "21192a99750e61def68e367029d81925a5f4b486ef07e1b4a433562de26edf9e",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-3765466e3a8646b4",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.541102945804596,
+        "val_loss": 0.34569743275642395,
+        "val_best_f1": 0.8141592741012573,
+        "val_best_threshold": 0.07000000029802322,
+        "val_accuracy": 0.9160000085830688,
+        "val_precision": 0.7752809524536133,
+        "val_recall": 0.8571429252624512,
+        "val_f1": 0.8141592741012573,
+        "val_positive_ratio": 0.21466666460037231,
+        "val_predicted_positive_ratio": 0.23733332753181458,
+        "val_segment_recall": 0.0,
+        "val_segment_precision": 0.22777777910232544,
+        "val_segment_f1": 0.0,
+        "val_onset_delay_mean_ms": 4720.0,
+        "val_onset_abs_error_p95_ms": 6808.0,
+        "val_offset_delay_mean_ms": -2480.0,
+        "val_offset_abs_error_p95_ms": 3128.0,
+        "val_false_alarm_duration_ratio": 0.06791171431541443,
+        "val_missed_speech_duration_ratio": 0.1428571492433548,
+        "val_matched_segment_count": 2.0,
+        "train_accuracy": 0.5973333120346069,
+        "train_precision": 0.1352459043264389,
+        "train_recall": 0.2661290466785431,
+        "train_f1": 0.17934784293174744,
+        "train_positive_ratio": 0.1653333306312561,
+        "train_predicted_positive_ratio": 0.3253333270549774,
+        "train_segment_recall": 0.0,
+        "train_segment_precision": 0.5,
+        "train_segment_f1": 0.0,
+        "train_onset_delay_mean_ms": 2240.0,
+        "train_onset_abs_error_p95_ms": 3248.0,
+        "train_offset_delay_mean_ms": -2280.0,
+        "train_offset_abs_error_p95_ms": 2748.0,
+        "train_false_alarm_duration_ratio": 0.33706068992614746,
+        "train_missed_speech_duration_ratio": 0.7338709831237793,
+        "train_matched_segment_count": 2.0,
+        "elapsed_time": 27.532799744978547
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "61e82565f0b74f8098c35df8207ff6031aa3a32b3681a6990e5ac7794281e8c2",
+        "final_trainable_hash": "0471e6b65524539a72c42292f9450a891e8a60c7397d3af25133d23be2ec1265"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "notturno2",
+      "task": "gtcrn",
+      "id": "run-1594a41a55514aa7",
+      "status": "SUCCESS",
+      "container_id": "7a1cb362ab0cef403265eb14eecac42f013166600b3cfff83c37970d5eeb2494",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-71151a3f4cc34bad",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.4145328998565674,
+        "train_loss_step": 0.5437241196632385,
+        "train_complex_loss": 0.4838142395019531,
+        "train_complex_loss_step": 0.620974600315094,
+        "train_magnitude_loss": 0.37038516998291016,
+        "train_magnitude_loss_step": 0.49084654450416565,
+        "train_underestimation_loss": 3.9081405134311353e-07,
+        "train_underestimation_loss_step": 1.2676826699475896e-08,
+        "train_waveform_l1_loss": 0.02584604173898697,
+        "train_waveform_l1_loss_step": 0.033498670905828476,
+        "train_preemphasis_waveform_loss": 0.023633010685443878,
+        "train_preemphasis_waveform_loss_step": 0.037895381450653076,
+        "learning_rate": 0.0010000000474974513,
+        "val_loss": 0.4143787622451782,
+        "val_complex_loss": 0.4683135449886322,
+        "val_magnitude_loss": 0.3789435923099518,
+        "val_underestimation_loss": 0.0,
+        "val_waveform_l1_loss": 0.021310515701770782,
+        "val_preemphasis_waveform_loss": 0.02231045998632908,
+        "val_snr": -46.39301300048828,
+        "val_stoi": 9.999999747378752e-06,
+        "val_stoi_noisy": 9.999999747378752e-06,
+        "val_stoi_improvement": 0.0,
+        "val_si_sdri": 2.2091636657714844,
+        "val_speech_oversuppression_rate": 0.0,
+        "train_loss_epoch": 0.4145328998565674,
+        "train_complex_loss_epoch": 0.4838142395019531,
+        "train_magnitude_loss_epoch": 0.37038516998291016,
+        "train_underestimation_loss_epoch": 3.9081405134311353e-07,
+        "train_waveform_l1_loss_epoch": 0.02584604173898697,
+        "train_preemphasis_waveform_loss_epoch": 0.023633010685443878,
+        "elapsed_time": 24.806317450944334
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "0e4c033ae06187c03c96936b6381e062476a40dc3b10b6c6d1988f9cb9f4dbe2",
+        "final_trainable_hash": "ac98a49e5046b0bf8af22d83a5e0aff1d07b0383f11d0cc6b9587b981a78349c"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "notturno2",
+      "task": "mossformer",
+      "id": "run-439ee60af5c14085",
+      "status": "SUCCESS",
+      "container_id": "7ac597b7a20313f93075d0dbc124917ab59d371de36fa51d05e29ff84aacf677",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-fca2c70329c44e52",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.02340799570083618,
+        "train_dsnr": 26.348125457763672,
+        "val_loss": 0.024586711078882217,
+        "val_dsnr": 30.351402282714844,
+        "elapsed_time": 24.080332699231803
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "a7dcafc620e888621468b6177ffd6274f11e3fb90281e759a763bc90746c21de",
+        "final_trainable_hash": "a8737041913cdc9935a96fcc6c50d4514a36a9effe250c7903c0fe1bfd729973"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "notturno2",
+      "task": "mossformer-dns",
+      "id": "run-74e1d510078b41a1",
+      "status": "SUCCESS",
+      "container_id": "27ddbae0ad3fc573be0dfb2e65dc6adf36ca3e3ab3256fcea6845317b9ef917b",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-a71971639f6f474d",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 0.04070714861154556,
+        "train_loss_step": 0.08050458133220673,
+        "learning_rate": 9.999999747378752e-05,
+        "val_loss": 0.0013161441311240196,
+        "val_si_sdri": 21.41944122314453,
+        "val_snri": 45.472652435302734,
+        "train_loss_epoch": 0.04070714861154556,
+        "elapsed_time": 14.1207588147372
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "f5c564a634b69e1664a0e1eb146bca90451fed76dbda9fc4523ab2ce482bc4c3",
+        "final_trainable_hash": "8b2e76c3861ca3f80e3b5e0a0dcab3b1692970d970e0a9deba35c2f33b1d4c99"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "richiamo",
+      "task": "qwen3-asr",
+      "id": "run-c99b4d6c017e42b4",
+      "status": "SUCCESS",
+      "container_id": "2f696195d83298d5ab569726ad7c202310b7543d7e343b1cd0ea45f6ec185669",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-aa710667cbf44e8d",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 2.5488333702087402,
+        "train_loss_step": 2.1467995643615723,
+        "val_loss": 3.075784206390381,
+        "val_wer": 1.0,
+        "val_cer": 0.5068492889404297,
+        "train_loss_epoch": 2.5488333702087402,
+        "elapsed_time": 28.092087062075734
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "2325b887e79a5e020e27d380e3e7919abf68aa192ae073ac46201a01f5a00e50",
+        "final_trainable_hash": "d95b4357e7fd15b98764971347e929552988a6b74dcf1f9558310083b50e602a"
+      },
+      "artifact_count": 15
+    },
+    {
+      "framework": "serenata",
+      "task": "qwen3-tts",
+      "id": "run-882294c2128b44f2",
+      "status": "SUCCESS",
+      "container_id": "6871d9b022b9184a458e815d241e401a1a6b81fee7bac8494db98155c8ce512e",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-5c6bf363b7d84227",
+      "parent_run_id": null,
+      "metrics": {
+        "train_loss": 2.830324411392212,
+        "train_loss_step": 2.882072687149048,
+        "train_main_loss": 1.01088547706604,
+        "train_main_loss_step": 1.0087823867797852,
+        "train_sub_loss": 6.064796447753906,
+        "train_sub_loss_step": 6.244300842285156,
+        "grad_norm": 4.635044097900391,
+        "lr": 9.999999747378752e-05,
+        "val_loss": 2.9112401008605957,
+        "val_main_loss": 1.089752197265625,
+        "val_sub_loss": 6.071626663208008,
+        "train_loss_epoch": 2.830324411392212,
+        "train_main_loss_epoch": 1.01088547706604,
+        "train_sub_loss_epoch": 6.064796447753906,
+        "elapsed_time": 31.44653940293938
+      },
+      "parameter_evidence": {
+        "optimizer_steps": 2,
+        "global_step": 2,
+        "initial_trainable_hash": "e0337b6cc8407061643564393a6aac8fd93302cc6a3b3cd6003a7554d490c4fd",
+        "final_trainable_hash": "ff9c34bd5134ba5b8eec678ffb4e618d036722f758772cc0196386f9c7887c88"
+      },
+      "artifact_count": 15
+    }
+  ],
+  "mcp_workflow": {
+    "work_item_id": "work_item-9a7daeac17e346f6",
+    "runs": [
+      {
+        "id": "run-5a5321b9814a45b4",
+        "status": "SUCCESS",
+        "container_id": "1491fcc938951d6199824bb06304b7025b7d7ff2c9b0dedf973b6abe7213abc5",
+        "exit_code": 0,
+        "project_id": "work-v2-acceptance",
+        "work_item_id": "work_item-9a7daeac17e346f6",
+        "parent_run_id": null,
+        "metrics": {
+          "train_loss": 2.2748873233795166,
+          "train_loss_step": 2.247976303100586,
+          "train_accuracy": 0.21875,
+          "train_accuracy_step": 0.375,
+          "val_loss": 2.3461191654205322,
+          "val_accuracy": 0.25,
+          "train_loss_epoch": 2.2748873233795166,
+          "train_accuracy_epoch": 0.21875,
+          "elapsed_time": 6.493888468947262
+        },
+        "parameter_evidence": {
+          "optimizer_steps": 2,
+          "global_step": 2,
+          "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+          "final_trainable_hash": "92110c4325346743dcdad523c95f5116a42e02501dc0dcf2632aab8c6c4a4e1d"
+        },
+        "artifact_count": 15
+      },
+      {
+        "id": "run-0b4661bb0f324609",
+        "status": "FAILED",
+        "container_id": "de290fce0d336d89fffb6255d194b7863e8907ab5aff1452ad980a695da159ed",
+        "exit_code": 1,
+        "project_id": "work-v2-acceptance",
+        "work_item_id": "work_item-9a7daeac17e346f6",
+        "parent_run_id": null,
+        "metrics": {},
+        "parameter_evidence": {},
+        "artifact_count": 4
+      },
+      {
+        "id": "run-0e229e52590c44b9",
+        "status": "SUCCESS",
+        "container_id": "188b980cb86176756aed5da72b34b1f7ce6981dd43891631d8bb8c5d9eba6b9f",
+        "exit_code": 0,
+        "project_id": "work-v2-acceptance",
+        "work_item_id": "work_item-9a7daeac17e346f6",
+        "parent_run_id": "run-0b4661bb0f324609",
+        "metrics": {
+          "train_loss": 2.2748873233795166,
+          "train_loss_step": 2.247976303100586,
+          "train_accuracy": 0.21875,
+          "train_accuracy_step": 0.375,
+          "val_loss": 2.3461191654205322,
+          "val_accuracy": 0.25,
+          "train_loss_epoch": 2.2748873233795166,
+          "train_accuracy_epoch": 0.21875,
+          "elapsed_time": 6.530246118083596
+        },
+        "parameter_evidence": {
+          "optimizer_steps": 2,
+          "global_step": 2,
+          "initial_trainable_hash": "1be1f5f653809c27cf97b8c2b14e9312b021c6417da08b1f6685f4a97360d296",
+          "final_trainable_hash": "92110c4325346743dcdad523c95f5116a42e02501dc0dcf2632aab8c6c4a4e1d"
+        },
+        "artifact_count": 15
+      }
+    ],
+    "command_failure": {
+      "exit_code": 1
+    },
+    "command_timeout": {
+      "exit_code": 124
+    },
+    "command_cancel": {
+      "exit_code": -9
+    },
+    "isolated_work_item": "work_item-9146eb46e56f43dc",
+    "reconnected": true
+  },
+  "public_source": {
+    "repo_id": "hf-internal-testing/tiny-random-bert",
+    "revision": "f171d7baecaf37b5da5a3616d8833b9969753535",
+    "asset_id": "asset-f72e4c7283ac48d7",
+    "file_count": 10
+  },
+  "model_delivery": {
+    "export": {
+      "id": "run-d79108eda37f4941",
+      "status": "SUCCESS",
+      "container_id": "4a430d4f5629060cad8db90888f6bad66cd68e55e9dac681185f23f2f101fdf5",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-adcead87d02a490a",
+      "parent_run_id": "run-b73f297efdb342fa",
+      "metrics": {
+        "elapsed_time": 5.750314669217914
+      },
+      "parameter_evidence": {},
+      "artifact_count": 12
+    },
+    "asset_id": "asset-32544b5589084e67",
+    "inference": {
+      "id": "run-9ffe1e48c5264c7f",
+      "status": "SUCCESS",
+      "container_id": "1f86dd224690506fdd47bdbd75c978673cbb4488fe31708720305742e852e5e1",
+      "exit_code": 0,
+      "project_id": "framework-integration",
+      "work_item_id": "work_item-8b69b93693bc4111",
+      "parent_run_id": null,
+      "metrics": {
+        "test_accuracy": 0.375,
+        "samples": 16,
+        "elapsed_time": 5.665928190108389
+      },
+      "parameter_evidence": {},
+      "artifact_count": 9
+    }
+  },
+  "design": {
+    "file_key": "ab3EG1a9aEHNyNZRJCzmD4",
+    "pages": 9,
+    "components_added": 23,
+    "component_mapping": "docs/figma-work-v2-components.json",
+    "png_per_theme": 9,
+    "pdf_pages_per_theme": 19
+  }
+}

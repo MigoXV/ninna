@@ -12,7 +12,7 @@ import pytest
 
 from tests.support.training import default_request
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, pytest.mark.legacy_api]
 
 
 @pytest.fixture(scope="module")

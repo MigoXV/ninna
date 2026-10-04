@@ -11,6 +11,7 @@ from tests.support.training import default_request
 
 pytestmark = [
     pytest.mark.integration,
+    pytest.mark.legacy_api,
     pytest.mark.skipif(
         os.environ.get("NINNA_HUB_INTEGRATION") != "1", reason="Requires configured real KohakuHub"
     ),

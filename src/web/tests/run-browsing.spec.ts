@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("paginate real runs, compare across pages and recover an empty search", async ({
   page,
 }) => {
-  await page.goto("/projects/legacy");
+  await page.goto("/projects/framework-integration/runs");
   const rows = page.locator(".runs-table tbody tr");
   await expect(rows).toHaveCount(10);
   const first = rows.first().locator('input[type="checkbox"]');
@@ -19,11 +19,11 @@ test("paginate real runs, compare across pages and recover an empty search", asy
   await expect(page.getByRole("checkbox", { name: firstLabel! })).toBeChecked();
   await page.getByRole("button", { name: "清空选择", exact: true }).click();
   await expect(page.getByLabel("比较选择")).toHaveCount(0);
-  await page.getByRole("button", { name: "已取消", exact: true }).click();
+  await page.getByRole("button", { name: "已完成", exact: true }).click();
   await expect(
-    page.getByRole("button", { name: "已取消", exact: true }),
+    page.getByRole("button", { name: "已完成", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
-  await expect(rows.first().locator(".status")).toHaveText("已取消");
+  await expect(rows.first().locator(".status")).toHaveText("已完成");
   await page
     .getByRole("textbox", { name: "搜索训练运行" })
     .fill("no-such-training-run");

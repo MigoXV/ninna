@@ -36,19 +36,11 @@ test("registered frameworks, task-specific metrics and task forms are accessible
       page.getByText("完整测试集 · 10,000 样本", { exact: true }),
     ).toHaveCount(0);
     await page.getByRole("link", { name: "基于此 Run 新建" }).click();
-    await expect(page).toHaveURL(/tasks\/new/);
-    await expect(page.getByLabel("所属项目")).toHaveValue(
-      "framework-integration",
-    );
-    await expect(
-      page.getByRole("combobox", { name: "训练框架", exact: true }),
-    ).toHaveValue("demo-mnist/ninna-v1");
-    await expect(page.getByLabel("任务", { exact: true })).toHaveValue(
-      "classification",
-    );
-    await page.getByLabel("操作", { exact: true }).selectOption("prepare");
-    await expect(page.getByLabel("model · 模型")).toHaveCount(0);
-    await expect(page.getByLabel("dataset · 数据集")).toBeVisible();
+    await expect(page).toHaveURL(/work\/work_item-/);
+    await page.getByLabel("任务类型").selectOption("classification");
+    await page.getByRole("combobox", { name: "操作", exact: true }).selectOption("prepare");
+    await expect(page.getByLabel("模型 · model")).toHaveCount(0);
+    await expect(page.getByLabel("数据集 · dataset")).toBeVisible();
     const accessibility = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
       .analyze();

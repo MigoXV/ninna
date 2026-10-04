@@ -318,5 +318,6 @@
     "abyssus"
   ],
   "defaultTheme": "vallum",
-  "tokenSource": "src/web/src/tokens.dtcg.json"
+  "tokenSource": "src/web/src/tokens.dtcg.json",
+  "activeManifest": "docs/figma-work-v2.json"
 }

@@ -27,29 +27,16 @@ poetry run python scripts/register-framework.py /workspace/opus/demo-mnist --ima
 
 Framework 描述任务、支持的操作、命令参数数组、输入种类、必需产物和指标方向。Image 固定 Docker image ID；Runtime 校验实际镜像依赖并绑定 Framework 版本；Workspace 保存独立代码快照。Recipe 保存原生 LightningCLI YAML 对象，以及 framework/task/operation。文档可供 Agent 阅读，但平台只执行声明的命令参数数组。
 
-`POST /api/frameworks/import` 从未启动的容器提取说明和源码，注册 Framework 和 Workspace。`POST /api/assets/runtime` 增加 `framework:{name,version}`。框架的 prepare/train/evaluate/export/infer 操作通过 `POST /api/tasks` 提交；仅使用该任务实际声明的操作。
+`POST /api/v2/frameworks/import` 从未启动的镜像提取说明和源码。注册的 Image、Framework、Workspace 和 Recipe 继续作为高级执行定义保留。日常使用先创建 Environment、准备依赖并发布不可变版本，再从这个版本创建 WorkItem。
 
-```json
-{
-  "protocol_version": 1,
-  "project_id": "实际项目ID",
-  "framework": {"name": "demo-mnist", "version": "ninna-v1"},
-  "task": "classification",
-  "operation": "train",
-  "inputs": {
-    "dataset": {"kind": "dataset", "ref": {"name": "mnist", "version": "parquet-v1"}},
-    "model": {"kind": "model", "ref": {"name": "mnist-config", "version": "v1"}}
-  },
-  "recipe": {"name": "demo-mnist-classification-scratch-train", "version": "ninna-v1"},
-  "execution_spec": {
-    "runtime": {"name": "demo-mnist", "version": "ninna-v1"},
-    "workspace": {"name": "demo-mnist-ninna-v1", "snapshot": "current"},
-    "resources": {"device": "cpu", "gpu_count": 0, "gpu_ids": [], "cpu_threads": 4, "memory_mb": 8192}
-  }
-}
-```
+旧的 `POST /api/tasks`、`POST /api/tasks/preflight` 和 `POST /api/runs` 已返回 410。新创建流程为：
 
-实际名称来自资产发现，示例不是可直接执行的生产请求。`POST /api/tasks/preflight` 校验项目、操作、资产文件 SHA-256、Runtime 绑定和来源产物。它不执行训练 CLI，CLI 配置和数据语义仍在运行容器初始化时检查。
+1. 获取模型和数据的本地资产版本，必要时补充加载信息。
+2. `POST /api/v2/run-plans` 指定 `work_item_id`、`task`、`operation`、`inputs`（输入名到资产版本 ID）、`recipe` 和 `resources`。
+3. 等待检查完成；READY 的方案已固定代码、依赖镜像、输入和配方。检查不执行训练 CLI，数据语义仍由实际训练验证。
+4. `POST /api/v2/runs` 提交 `plan_id` 与稳定 `request_id`，等待 Job 返回 Run ID。同一请求重试不重复创建 Run。
+
+来源产物使用 `source_run_id`、`source_path`，重训使用 `parent_run_id`；项目归属从 WorkItem 获取。完整 Codex 调用入口见 [Agent 接入](agent-integration.md)。`scripts/framework-smoke.py` 已采用以上流程，参数仍可选择既有框架与训练定义。
 
 CPU 使用零 GPU；CUDA 必须显式选取一个 `GPU-...` UUID。`GET /api/resources/gpus` 返回当前显存和利用率，执行前再次拒绝已占用设备。当前是串行单卡执行器，不提供多机调度。宿主机需提供 `nvidia-smi`，Docker 需有 NVIDIA Container Toolkit。
 

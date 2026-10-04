@@ -106,7 +106,12 @@ export function ProjectsPage() {
       {query.loading ? (
         <Loading />
       ) : projects.length ? (
-        <div className="project-list">
+        <div
+          className="project-list"
+          tabIndex={0}
+          role="region"
+          aria-label="项目列表"
+        >
           {projects.map((project) => (
             <Link
               className="project-row"

@@ -1,33 +1,26 @@
-# Ninna · 深度学习训练工作空间
+# Ninna · 在 Codex 中完成模型训练
 
-Ninna 是一个单机 Docker 训练平台。以 Project 组织真实训练运行、模型产物和失败诊断。前端采用 MANAS 工作空间结构与「苍渊·白垣」双主题：默认白垣，可在顶栏切换苍渊，偏好保存在当前浏览器。
+Ninna 提供多来源模型与数据、可复用训练环境、独立工作区和真实 Docker 执行。用户在 Codex 中表达：**用什么数据，训练什么模型，怎么训练**。Codex 调用 Ninna 完成准备、训练、诊断与迭代；网页展示相同的资产、工作进度、指标和成果。
 
-界面资料：[Figma · 31 个独立界面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4)、[白垣 A3 审阅稿](docs/design/ui-v0.8.0-vallum-review.pdf)、[苍渊 A3 审阅稿](docs/design/ui-v0.8.0-abyssus-review.pdf)、[UI 版本记录](docs/ui-releases.md)。
+## 产品结构
 
-桌面工作区固定标题和任务工具栏，运行记录与详情分别滚动；返回列表恢复筛选、分页和位置，不同 Run 与详情标签独立保存滚动位置。小屏恢复文档滚动。Inter、Noto Sans SC 和 IBM Plex Mono 随前端静态资源提供，字体许可见 `src/web/public/fonts/`。中心存储首次检查显示中性等待，实际失败才显示错误与重试。
+| 对象 | 作用 |
+|---|---|
+| 项目 | 组织工作任务、运行记录和成果 |
+| 托管平台 | 同时连接 Hugging Face 和多个 HF 兼容内网站点 |
+| 模型与数据 | 固定来源版本、本地文件及校验状态 |
+| 环境版本 | 已准备并验证的依赖镜像和初始代码快照 |
+| 工作任务 | 用户目标、约束、独立可编辑工作区、进度摘要和下一步 |
+| Run | 一次准备、训练、评估、导出或推理的不可变执行记录 |
+| Job | 下载、环境准备、远端命令和运行提交等后台操作 |
 
-Agent 接口：[MCP 接入与 Skill](docs/agent-integration.md)。平台启动后执行 `codex mcp add ninna --url http://127.0.0.1:8000/mcp/`，使用仓库内的 `$ninna` 操作训练、诊断和模型资产。
+环境发布后可用于多个工作任务；每个任务拥有独立状态。一次训练结束不删除工作区。正式 Run 固定输入、代码和实际依赖镜像，在独立离线容器中执行，避免后续编辑改变已提交训练。
 
-多框架接入：[训练资产协议、构建与注册](docs/framework-integration.md)。支持将图像、文本、VAD、降噪、ASR 和 TTS 框架注册为独立 Framework，通过「训练框架」选择任务及准备数据、训练、评估、导出、推理操作。CPU 与显式指定 GPU 的运行均由平台创建 Docker 容器执行。各框架的 `AGENTS.md` 和 `.agents/skills/` 同时位于仓库根目录与镜像默认工作目录 `/app`。
+下载与训练适配分开：没有 `ninna-asset.json` 的外部仓库也能下载；“已下载”只表示文件在 Ninna 机器上，是否适合训练由具体方案检查。
 
-当前接入状态见 [六框架、十类任务的真实验收记录](docs/framework-verification.md)，包含最终镜像、真实 Run、回归结果及能力边界。示例配方为短跑验证配置，不代表生产质量已经达标。
+## 启动
 
-```text
-训练定义：Dataset × Model × Recipe
-执行环境：Runtime + Workspace snapshot + CPU resources
-                         ↓
-                    Training Run
-                         ↓
-                 独立 Docker Container
-                         ↓
-             checkpoint / metrics / logs / evidence
-                         ↓
-                 Model Artifact → Model Asset
-```
-
-## 快速启动
-
-需要 Linux Docker Engine、Docker CLI、Python 3（仅用于启动时解析路径）和网络。无需 GPU，无需在宿主机安装 PyTorch。
+需要 Linux Docker Engine、Docker CLI 和网络。平台为单机可信部署，使用 SQLite 和一个训练执行器；不包含多租户或多机调度。
 
 ```bash
 git clone https://github.com/MigoXV/ninna.git
@@ -36,325 +29,139 @@ cd ninna
 ./scripts/platform.sh up
 ```
 
-浏览器打开 `http://localhost:8000`。第一次启动会构建平台与 CPU Runtime，并下载、校验和注册 MNIST。随后启动不会重复下载数据。
-
-初始化同时完成离线 HF 格式转换：逐条核对全部图片和标签，验证预处理、初始权重和 logits 一致。v1 资产和历史 Run 保留，默认使用 v2 HF 资产。
-
-## 项目与运行
-
-首页是项目目录。创建 Project（名称使用小写字母、数字、短横线或下划线），进入项目后创建训练。每个 Run 必须指定 `project_id`；Project 是组织上下文，不属于 TrainingSpec 或 ExecutionSpec。数据集、模型、配方和执行资产仍在平台内复用。
-
-项目运行列表显示定义、状态和时间；准确率、loss、训练曲线与 checkpoint 在单次 Run 内查看。实验比较限制在当前项目。重训创建新 Run 并保留相同项目和 `parent_run_id`。项目列表、Run 页面与返回位置按项目隔离。
-
-旧运行通过单独的组织索引归入 `legacy`（历史训练），原始数据库执行记录、run.json 和 checkpoint 不被改写。空安装不会创建默认项目。
-
-系统验收已从生产 UI、API、MCP 和 CLI 移除。开发回归保留在测试目录，不参与应用启动；需要 Poetry 开发依赖和 Docker 时执行：
+打开 `http://localhost:8000`。部署脚本保留现有 MNIST 初始化；首次升级后建立 v2 索引并发布所需环境：
 
 ```bash
-poetry install
-./scripts/mnist-certify.sh
+poetry run ninna migrate
+poetry run ninna migrate --apply
 ```
 
-这是 opt-in 的真实 Docker pytest 套件，会创建 `mnist-tests` 项目和训练记录，测试 Adam/SGD、容器挂载、checkpoint 重载、HF 格式、hash、loss 和准确率。失败返回非零退出码。
+网页“Codex 接入”也提供迁移检查。迁移只增加索引，不改写旧资产和 Run。环境草稿必须准备、验证并发布，才可用于新工作任务。
 
-## 容器内操作 Docker：挂载路径
-
-Docker bind mount 的 `source` 必须是 **Docker daemon 宿主机上的路径**。如果从开发容器启动本平台，设置外层容器实际名称：
+## 从 Codex 使用
 
 ```bash
-export NINNA_OUTER_CONTAINER=wcw_test02
-./scripts/platform.sh up
+codex mcp add ninna --url http://你的平台地址:8000/mcp/
 ```
 
-脚本读取 `docker inspect`，按最长匹配挂载前缀计算路径。当前开发环境的映射为：
+安装本仓库 `.agents/skills/ninna`，在 Codex 中使用：
 
-```text
-wcw_test02 内： /workspace/apps/ninna
-Docker 宿主机：/mnt/zkyx-asr/home/wcw/repositories/apps/ninna
-```
+> 使用 $ninna，在客服语音项目中，用内网的数据集微调这个模型。先复用已有环境做小规模验证，报告真实指标与产物。
 
-也可以显式指定：
+首次连接读取 `ninna://guide` 和 `get_capabilities`。完整工具分组、stdio 接入和工作流见 [Agent 接入说明](docs/agent-integration.md)。MCP 不要求共享文件系统，也不启动第二个平台执行器。
+
+Ninna 持续执行已提交的工作；Codex 断开后回来，可以凭工作任务 ID 恢复目标、进度和证据。Ninna 不自动唤醒已退出的 Codex，也不托管聊天模型。
+
+## 资产来源与本地文件
+
+在“托管平台”添加多个来源，每个来源有独立名称、地址、启用状态和部署侧凭据变量。公开仓库不需要令牌；私有仓库填写环境变量名，例如 `NINNA_HF_TOKEN`，变量值由部署者设置，不能写进源码或对话。
+
+支持：
+
+- HF 兼容平台：浏览、搜索、固定 commit 下载和显式发布。
+- HTTP(S)：指定稳定文件地址下载，以内容摘要标识本地版本。
+- Ninna 主机目录：复制、校验后登记资产。
+- Codex 机器文件：通过流式上传传输，无需共享目录。
 
 ```bash
-export NINNA_HOST_ROOT=/mnt/zkyx-asr/home/wcw/repositories/apps/ninna
-./scripts/platform.sh up
+poetry run ninna upload --path ./dataset --kind dataset --name 我的数据 \
+  --request-id upload-dataset-001 --url http://你的平台地址:8000
 ```
 
-启动会在共享目录写入随机探针，再用真实容器只读挂载并验证内容。目录不共享、映射错误会明确失败。所有训练挂载复用同一转换规则，Compose 使用 `create_host_path: false` 防止静默创建空目录。
+资产有独立的本地状态和训练适配状态。缺少 split 或模型加载描述时，Codex 可以补充元数据、准备数据或调整训练代码。不会强制外部仓库采用 Ninna 专用清单。
 
-平台容器通过宿主机 Docker socket 创建训练容器。此 MVP 面向可信用户的单机环境，默认没有认证；配置远程访问时由部署者限制访问范围。
+模型和数据不进入训练环境镜像。下载先于训练；正式训练关闭网络。训练成果先保存在本地，仅在用户要求时选择目标平台发布。
 
-常用操作：
+## 环境和训练
 
-```bash
-./scripts/platform.sh ps
-./scripts/platform.sh logs -f platform
-./scripts/platform.sh restart platform
-./scripts/platform.sh down
-```
+环境草稿从固定镜像及已有代码空间或 Git 代码准备。Codex 可以读写任务文件、安装依赖、执行 CPU 检查，再验证并发布环境版本。发布固定依赖镜像与代码；修改依赖或代码后需要新的执行快照。
 
-`NINNA_PORT=8000` 可修改暴露端口。平台使用单个执行进程，同一存储通过文件锁防止重复执行器。
+准备环境与正式运行分离：
 
-## 六类资产
+- 准备命令在受管 CPU 容器中执行，有网络，不挂载 Docker socket。新获取的资产通过 `inspect_asset_revision.command_path` 在 `/assets` 下只读访问；历史索引未复制文件时，该字段为空。
+- 任务可以停止、重启，保留文件和依赖。
+- 每个正式 Run 使用只读输入和代码，输出单独保存，关闭网络。
+- GPU 运行显式指定单个 UUID，仍按单机串行执行器调度。
+- 终态 Run、已登记资产和已发布环境版本不可覆盖。
+- 取消一个 Run 不删除任务工作区；重训创建新 Run 并保留来源关系。
 
-| 对象 | 默认资产 | 作用 |
-| --- | --- | --- |
-| Dataset | `mnist/v2` | HF DatasetDict，60,000 train / 10,000 test，SHA-256 清单 |
-| Model | `mnist-cnn/v2` | HF PreTrainedModel，421,642 参数，配置与 Safetensors 权重 |
-| Recipe | `mnist-adam/v1` | CrossEntropy、Adam、lr 0.001、3 epochs |
-| Recipe | `mnist-sgd/v1` | CrossEntropy、SGD、lr 0.05、momentum 0.9、5 epochs |
-| Image | Docker inspect 注册的固定镜像版本 | image ID、仓库 digest、标签、平台与大小 |
-| Runtime | `mnist-pytorch-runtime/v4` | Python 3.10、PyTorch 2.8.0 CPU、Transformers 4.57.1、Datasets 4.4.1 |
-| Workspace | `mnist-hf/v1` | 可编辑本地代码目录，Run 使用内容寻址快照 |
+六个框架的任务与原生 LightningCLI 协议见 [框架接入说明](docs/framework-integration.md)。框架 API v1 的旧创建请求已退役，其加载、checkpoint、导出和证据协议继续由 v2 调用。本次训练回归与验证边界见 [工作任务 v2 验收](docs/work-v2-verification.md)；旧版导出、推理等记录保留在 [框架历史证据](docs/framework-verification.md)。
 
-Runtime Dockerfile 不包含训练业务代码。Dataset、Model、Workspace、解析配置以只读方式挂载，output 可写。训练容器关闭网络且不接触 Docker socket。实际训练入口是容器中的 Python 进程。
+## v2 API
 
-Workspace 默认路径为 `examples/mnist/workspace-hf`。修改代码后新建 Run 就会生成新快照，无需重建 Runtime。快照包含普通 tracked/untracked 文件，排除 `.git`、`.env*`、虚拟环境、依赖、缓存和输出目录，并拒绝符号链接。
-
-Recipe 支持 loss、optimizer 参数、epoch、batch size、gradient accumulation、StepLR、按参数名前缀冻结和指定 epoch 解冻。Model 不包含 loss、optimizer 或训练循环。
-
-所有资产按名称与版本引用，已有版本不能用不同内容覆盖。Runtime 记录并使用不可变 image ID；更新环境应注册新版本。
-
-## Run、输出与生命周期
-
-```text
-CREATED → PREPARING → RUNNING → SUCCESS / FAILED / CANCELLED
-```
-
-平台主动取消是 `CANCELLED`；外部 `docker stop`、OOM、非零退出、缺少必要训练证据为 `FAILED`。平台重启会检查既有容器并恢复监控。Docker 暂时不可达时记录监控错误并重试，不猜测成功或退出码。
-
-Run 定义与资产快照不可修改，生命周期字段可向前推进；终态封存。重新训练会产生新的 run_id。默认串行执行。
-
-输出位于：
-
-```text
-outputs/platform/
-├── ninna.sqlite3
-├── snapshots/<snapshot-hash>/
-└── runs/<run-id>/
-    ├── config/run.json
-    ├── model/                 # HF config、Safetensors、processor、自定义模型代码
-    ├── model.tar.gz           # 可下载的完整 HF 模型包
-    ├── checkpoint.pt
-    ├── metrics.json
-    ├── events.jsonl
-    ├── stdout.log
-    ├── stderr.log
-    ├── run.json
-    ├── container.json
-    ├── process.json
-    └── process-observation.json
-```
-
-逐 epoch 记录训练与测试指标，前端准实时刷新。`metrics.json` 包含 `train_loss`、`final_train_loss`、`test_loss`、`test_accuracy`、`epochs`、`elapsed_time`、`initial_loss`、`final_loss` 和初始/最终 state_dict hash。
-
-Loss 下降使用相同固定的 2,048 个训练样本、相同 eval 模式比较。模型 hash 按排序参数名、dtype、shape 与 tensor 字节计算。Certification 在另一个只读验证容器中重新加载 checkpoint 并评估完整测试集。
-
-成功 Run 的“产物”页可以将 checkpoint 注册为新的 Model 版本。随后在创建训练页选择该版本，进行基于已训练权重的新训练；不恢复旧 Run 的优化器或 epoch 状态。
-
-平台重启会将尚未完成的 Certification 编排标记为失败；其底层 Run 仍会恢复监控，可重新发起一次验收。
-
-历史训练容器和验证容器默认保留，便于 `docker inspect <container_id>` 核验。此版本没有自动清理策略，请按需清理已完成的本项目容器；文件产物独立持久保存。
-
-## API 与 Harness
-
-OpenAPI：`http://localhost:8000/docs`。
-
-主要接口：
+OpenAPI 位于 `/docs`。主要接口族：
 
 | 接口 | 作用 |
-| --- | --- |
-| `GET/POST /api/assets/{kind}` | 查询/注册 Dataset、Model、Recipe、Runtime、Workspace |
-| `POST /api/workspaces/{name}/snapshots` | 创建 Workspace 快照 |
-| `GET /api/workspaces/{name}/files` | 文件清单与只读预览 |
-| `GET/POST /api/runs` | 查询/创建 Run |
-| `GET /api/runs/{id}` | 完整 Run |
-| `POST /api/runs/{id}/cancel` | 请求取消 |
-| `GET /api/runs/{id}/logs?stream=stdout&offset=0` | 按字节 offset 读取日志 |
-| `GET /api/runs/{id}/metrics` | epoch 事件和最终指标 |
-| `GET /api/runs/{id}/artifacts/{filename}` | 下载产物 |
-| `POST /api/runs/{id}/promote` | 注册模型新版本，body 为 `{"version":"trained-001"}` |
-| `GET /api/runs/{id}/diagnostics` | 完整诊断上下文 |
-| `GET/POST /api/projects` | 查询/创建项目 |
-| `GET /api/projects/{id}/runs` | 仅查询该项目的运行 |
+|---|---|
+| `/api/v2/sources` | 托管平台、连接检查和远端搜索 |
+| `/api/v2/assets` | 本地资产、获取、加载描述与发布 |
+| `/api/v2/uploads` | 文件流式上传与封存 |
+| `/api/v2/environments` | 环境准备、版本发布 |
+| `/api/v2/work-items` | 工作目标、上下文与关联运行 |
+| `/api/v2/workspaces` | 文件操作、命令执行和启停 |
+| `/api/v2/run-plans` | 固定并检查运行方案 |
+| `/api/v2/runs` | 幂等提交正式运行 |
+| `/api/v2/jobs`、`/api/v2/events` | 后台进度、日志、事件游标 |
 
-`Platform.get_run_diagnostic_context(run_id)` 是诊断服务实现；HTTP 接口返回 TrainingSpec、ExecutionSpec、资产信息、Workspace 快照、stdout/stderr、exit code、metrics、inspect、资源和状态事件。未来 Harness 可读取诊断、修改 Workspace 或创建 Recipe 新版本，然后新建 Run。历史 Run 无写入接口。
+工作流写操作使用 `request_id`；重试保持同一 ID 和参数。文件更新使用 SHA-256，工作摘要更新使用版本号。事件等待最长 30 秒，游标持久化。
 
-创建 Run 示例：
+旧 `POST /api/runs`、`/api/tasks`、`/api/tasks/preflight` 和单一 Hub 的导入、发布返回 410；旧详情、指标、日志与产物链接仍可读取。API、MCP、网页和 Skill 同步切换。
 
-```bash
-curl -sS http://localhost:8000/api/projects -H 'Content-Type: application/json' -d '{"name":"mnist"}'
-curl -sS http://localhost:8000/api/runs \
-  -H 'Content-Type: application/json' \
-  -d '{"project_id":"mnist","training_spec":{"dataset":{"name":"mnist","version":"v2"},"model":{"name":"mnist-cnn","version":"v2"},"recipe":{"name":"mnist-adam","version":"v1"}},"execution_spec":{"runtime":{"name":"mnist-pytorch-runtime","version":"v4"},"workspace":{"name":"mnist-hf","snapshot":"current"},"resources":{"device":"cpu","gpu_count":0,"cpu_threads":4,"memory_mb":4096}}}'
-```
+## Docker 挂载路径
 
-## Hugging Face 格式与离线推理
-
-模型目录遵循 `save_pretrained`：`config.json`、`model.safetensors`、`preprocessor_config.json` 与三个自定义 Python 模块。配置包含 `auto_map`，支持 `AutoConfig`、`AutoModel`、`AutoModelForImageClassification`、`AutoImageProcessor` 从本地路径加载。`trust_remote_code=True` 用于执行随资产保存、经 manifest 校验的平台自定义 CNN 代码；加载时 `local_files_only=True`，训练容器关闭网络。
-
-数据目录遵循 `DatasetDict.save_to_disk`：`train` / `test` 两个 Arrow split，字段 `image: Image` 和 `label: ClassLabel`。训练使用 `load_from_disk`，不依赖 Hub 账号，也不在训练时下载数据。
-
-成功 Run 的 `model.tar.gz` 可在产物页下载。解压后，可在 HF Runtime 中使用标准接口：
-
-```python
-from datasets import load_from_disk
-from transformers import AutoImageProcessor, AutoModelForImageClassification
-import torch
-
-# 路径为当前容器中的挂载路径。
-dataset = load_from_disk("/dataset")
-processor = AutoImageProcessor.from_pretrained(
-    "/output/model", local_files_only=True, trust_remote_code=True, use_fast=False)
-model = AutoModelForImageClassification.from_pretrained(
-    "/output/model", local_files_only=True, trust_remote_code=True).float().cpu().eval()
-with torch.inference_mode():
-    batch = processor(dataset["test"][:8]["image"], return_tensors="pt")
-    predictions = model(**batch).logits.argmax(-1)
-```
-
-独立的 `examples/mnist/workspace-hf/inference.py` 管理模型一次加载与 CPU / FP32 / eager 推理。Model 只返回 logits，Criterion、Optimizer 和训练循环仍在 Workspace。开发测试在新容器中加载 HF 模型，与 `checkpoint.pt` 对齐 logits 和 hash，并验证单张/批量推理误差与全部测试集准确率。
-
-继续训练时，将完整 HF 模型目录注册为新的 Model 版本，创建新 Run。已有 v1 Run、资产和快照不被迁移覆盖。源格式兼容性也有真实 Docker 回归测试。
-
-HF Runtime 的附加安装命令为：
+容器内运行 Ninna 时，bind mount 必须使用 Docker daemon 主机路径：
 
 ```bash
-pip install transformers==4.57.1 datasets==4.4.1 safetensors==0.6.2
+export NINNA_OUTER_CONTAINER=你的外层容器名
+./scripts/platform.sh up
 ```
 
-## 开发与测试
+也可显式指定 `NINNA_HOST_ROOT`。启动脚本通过 `docker inspect` 的最长挂载前缀解析映射，并使用真实只读挂载探针验证共享目录。不要通过创建不存在的宿主机目录掩盖映射错误。
 
-开发依赖：Python 3.10、Poetry、Node.js 22+、pnpm。宿主机无需安装 torch；torch 生态仅通过 Runtime Dockerfile 的 pip 命令安装：
+平台容器使用 Docker socket 创建受管容器；任务及训练容器不接触该 socket。远端域名访问需设置准确的 `NINNA_MCP_ALLOWED_HOSTS`。
 
-```bash
-pip install torch==2.8.0+cpu torchvision==0.23.0+cpu \
-  --extra-index-url https://download.pytorch.org/whl/cpu
-```
+## 开发与验证
 
-开发启动：
+Python 使用 Poetry，前端使用 pnpm：
 
 ```bash
-poetry env use python3.10
 poetry install
 pnpm --dir src/web install
 pnpm --dir src/web run build
-# 与 Compose 二选一，避免两个平台进程同时打开相同存储。
-# 容器内开发时同时设置 NINNA_HOST_ROOT。
 poetry run ninna serve
-poetry run ninna initialize
 ```
 
-VS Code 的 Ninna web 调试会先执行 `web: build`，后端统一托管前端。Vite dev 仅用于前端开发。
+后端统一托管 `src/web/dist`；Vite 仅用于前端开发。VS Code 后端调试前执行前端构建。
 
 ```bash
 poetry run ruff check src/ninna tests
 poetry run pytest tests/unit -q
 pnpm --dir src/web run lint
 pnpm --dir src/web run build
-pnpm --dir src/web exec playwright install chromium
 pnpm --dir src/web run test
 ```
 
-真实 Docker 集成测试必须先启动平台，执行：
+真实 Docker 验收必须显式开启，并使用独立状态目录：
 
 ```bash
-NINNA_INTEGRATION=1 poetry run pytest tests/integration -v
+NINNA_INTEGRATION=1 NINNA_API_URL=http://127.0.0.1:8021 \
+  poetry run python scripts/validate-work-v2.py
 ```
 
-包含两个 Recipe 的完整 Certification、真实容器与挂载、checkpoint 重载、模型 hash、失败日志、非法 optimizer、平台取消、外部停止，以及 Model Artifact 晋升和再次训练。没有 mock Docker Training。默认单元测试跳过集成测试，但 Certification 遇到 Docker 不可用必须失败。
+真实容器 ID、退出码、参数更新、指标与产物才构成训练证据，mock 不能证明端到端通过。短跑成功不表示质量达到生产标准。
 
-故意失败场景可单独复现：
+## 数据与迁移
 
-```bash
-NINNA_INTEGRATION=1 poetry run pytest tests/integration \
-  -k 'failed_run_logs_preserved or bad_recipe or interrupted_run' -v
-```
+原运行保存在 `outputs/platform/runs`，新工作状态位于状态目录下的 `work-v2`。SQLite 新增独立工作对象、请求去重和事件表，不改写历史执行 JSON。环境、工作区和 Run 首版不自动删除；磁盘清理由部署者显式处理，不删除仍被历史引用的内容。
 
-它们会创建真实失败 Run，保留容器、日志与诊断上下文，可直接从 Web 查看。
+升级前停止新提交、等待活动操作结束并备份整个状态目录。回退使用旧程序和升级前备份；保留升级后的独立副本，不让旧程序直接打开新数据库。
 
-## 当前边界
+## 界面与设计
 
-单机可信用户、CPU、串行执行、SQLite + 本地目录；不包含 Kubernetes、多租户、权限系统、分布式训练、DAG 或 Agent。数据资产和模型资产存储为绝对路径，移动整个存储根目录需要显式迁移路径。输入快照由平台校验并只读挂载；宿主机管理员仍可修改文件，后续运行会检测校验变化。
+界面沿用 MANAS 和苍渊·白垣锁定 Token，默认白垣 `#F8F7F2`，可切换苍渊 `#080A0D`。主入口为项目、模型与数据、训练环境、托管平台和 Codex 接入。工程资产详情收在高级环境管理中。
 
-设计与页面状态约定位于 [docs/ui-design.md](docs/ui-design.md)。运行证据和验证结论见 [docs/validation.md](docs/validation.md)。
+设计同步流程见 [UI 与 Figma 同步](docs/design/sync.md)，版本记录见 [UI 发布记录](docs/ui-releases.md)。页面、组件、两主题 PNG 和打印稿须在发布 tag 前同步完成。
 
-## 可选中心存储：KohakuHub
+## 五分钟 VAD 数据与 preludio2 验证
 
-在“中心存储 → 连接设置”中填写 Hub 地址、命名空间和访问令牌，然后启用。当前实际接入地址是 `http://192.168.0.222:28080`。令牌仅保存在后端 `outputs/platform/integrations.json`（权限 0600），API 不回显，也不会传进训练容器或历史 Run。
-
-- **发布**：选择已注册的 HF Dataset / Model，将完整文件和 `ninna-asset.json` 训练元数据清单上传到 Hub；记录返回的 commit。
-- **导入**：指定 repository 和 commit / branch。平台先将 branch 解析成固定 commit，只下载清单声明的文件，逐个校验 SHA-256，再注册新的本地资产版本。
-- **继续训练**：选择导入的 Dataset 和 Model，使用 HF Runtime + Workspace 创建新 Run。容器仍然只读挂载本地下载缓存且关闭网络。
-- **保存训练成果**：在 Run 产物页晋升为新的 Model 版本，再从中心存储发布该完整 HF 模型。
-- **关闭集成**：不依赖 Hub 的本地训练继续可用。已导入资产可离线重复使用。
-
-中心存储支持标准 HF `save_pretrained` / `DatasetDict.save_to_disk` 目录。可浏览远端其他仓库；自动注册训练资产要求仓库包含 Ninna 清单，以避免猜测架构、初始化和 split。未带清单的仓库会在下载模型/数据文件前明确报错。历史 commit 和历史 Run 不会因新的发布而被覆盖。
-
-部署实例使用专门的 `ninna-platform` Hub 服务账号，只在它自己的仓库内执行集成验收。使用自己的部署时，在连接设置中配置自己的令牌和命名空间即可。SSH 凭据不写入项目配置或 Git。
-
-## 所有新训练必须使用 HF Runtime
-
-默认 Runtime 为 `mnist-pytorch-runtime/v4`。平台在实际镜像中启动探测容器，验证 `torch`、`transformers`、`datasets`、`huggingface_hub`、`safetensors` 和 Auto 类可导入，记录版本与 image ID。注册 Runtime 和创建 Training Run 都执行该检查，伪造 metadata 无法跳过它。
-
-旧 v1 Runtime 只保留历史记录，不能创建新训练。新镜像只提供 HF 生态环境；`runtimes/hf-base` 构建 HF 基础镜像 v2，`runtimes/pytorch-hf` 构建版本化的 v3。`scripts/platform.sh up` 会按顺序准备缺失镜像，不再构建独立的非 HF 训练 Runtime。旧格式资产需要重用时，也必须使用通过验证的 HF Runtime。
-
-## Aim 数据与 Ninna 自定义实验界面
-
-Aim 3.29.1 通过 Python SDK 记录真实 Run 的 TrainingSpec、ExecutionSpec、完整 Recipe 参数、资产校验值、Runtime image ID、Workspace snapshot、生命周期、训练/测试 loss、准确率、学习率和用时。数据保存于 `outputs/platform/aim/.aim`；平台维护 Aim 索引，页面通过 Ninna API 从 Aim 读回曲线，**不启动、不嵌入 Aim 自带 UI**。
-
-“实验观察”支持筛选、最多四个实验的曲线比较、指标切换、原始数值表和原 Run 跳转。取消与失败状态也会记录。Aim 同步与训练执行独立：同步异常显示在页面中，持久化日志仍可用于恢复；关闭 Aim 后可查看已有实验，重新启用会补录期间的 Run。历史 Run 内容保持封存，Aim 关联单独记录在数据库中。
-
-主要扩展 API：
-
-| 接口 | 用途 |
-| --- | --- |
-| `GET/POST /api/integrations` | 查询/配置 Hub 与 Aim，响应不含令牌 |
-| `GET /api/hub/status` | 真实连通性与当前账号 |
-| `GET /api/hub/repositories?kind=model` | 浏览模型或 dataset 仓库 |
-| `POST /api/hub/publish` | 发布 HF 资产，返回后台传输记录 |
-| `POST /api/hub/import` | 固定 revision 导入并注册新版本 |
-| `GET /api/hub/transfers` | 传输状态、commit、校验结果与失败原因 |
-| `GET /api/experiments?project_id={id}` | Aim 实验参数、状态和摘要 |
-| `GET /api/experiments/{run_id}/metrics` | 从 Aim SDK 读取指标序列 |
-
-真实 Hub / Docker / Aim 联合验收（先启动平台并在页面配置 Hub）：
-
-```bash
-NINNA_INTEGRATION=1 NINNA_HUB_INTEGRATION=1 \
-  poetry run pytest tests/integration/test_central_storage.py -v
-pnpm --dir src/web exec playwright test tests/integrations.spec.ts
-```
-
-联合验收会在所配置命名空间的 `mnist` / `mnist-cnn` 仓库创建新的 commit，校验发布、下载、训练、产物回传和旧版本复现。所有远端操作仅针对测试配置指向的资产仓库。
-
-本轮部署、真实 Hub 往返与 Aim 的验收证据见 [中心存储与实验观察验收](docs/central-storage-validation.md)。
-
-### 镜像资产与 Runtime
-
-执行环境现在区分 **Image Asset（镜像身份）**、**Runtime（训练依赖契约）** 与 **Workspace（可变代码）**。
-在「执行环境 → 镜像资产」注册本地镜像，或提交远端拉取。注册记录 Docker inspect 的完整 image ID、仓库 digest、当时的标签、平台和大小。标签变化不会改变已注册资产；版本不可覆盖。
-
-镜像详情可以创建 Runtime，平台在真实容器中验证 PyTorch / HF 依赖。训练只选择 Runtime，其 `image_ref` 确定镜像资产，Run 保存完整身份快照并按 image ID 执行。镜像被删除时会明确失败，不自动使用同名标签替代。
-
-远端拉取是独立持久任务，先解析 digest，再拉取固定内容。离开页面不会中断；重启后仅当固定 digest 已在本地才确认成功，否则记录失败，需重新提交。平台不管理仓库账号、不构建或推送镜像。
-
-私有仓库使用部署侧 Docker 凭据。先在部署机器配置 Docker 登录；若使用 credential helper，需在平台镜像中安装对应 helper。可选只读挂载（路径须为 Docker daemon 所在宿主机上的目录）：
-
-```bash
-export NINNA_DOCKER_CONFIG=/absolute/host/path/to/docker-config
-COMPOSE_FILE=docker-compose.yml:docker-compose.registry.yml ./scripts/platform.sh up
-```
-
-不要向镜像来源字段、Agent 参数或仓库提交密码。认证失败只保存脱敏诊断。
-
-旧 Runtime 与历史 Run 保持原样。停止提交训练并等待活动 Run 结束后，调用 `POST /api/images/migrate-runtimes` 创建 Image 与后继 Runtime；MNIST Runtime 的资产版本为 `v4`，对应的 Docker 镜像仍是 `ninna/pytorch-runtime:v3`，无需重建训练镜像。历史 Runtime 不再用于创建新 Run。
-
-
-### 镜像分层目录
-
-「镜像资产」按站点 → 命名空间 → 镜像 → 版本逐级浏览，面包屑支持返回上层。搜索限定当前目录，结果展示完整路径。拉取进度位于独立的「拉取任务」页面。
-
-归属以注册时的镜像来源为准，其他 tag 作为别名；按 image ID 纳管的内容进入「本地镜像」。同一仓库引用和 image ID 的重复登记折叠，展开可访问各个原资产，Runtime 引用和历史 Run 不变。此目录只组织已登记资产，不代表镜像已经上传到远端站点。
-
-镜像大小统一使用十进制自动单位（B / KB / MB / GB / TB），列表、详情、本地注册选项与拉取进度保持一致。
+[数据契约与操作说明](docs/vad-data-contract.md)固定了 AVA 来源版本、10h/2h 划分、每条严格 300 秒、能量粗标注及 AudioFolder/Parquet 双格式。通过 `poetry run python scripts/prepare-vad.py build` 生成数据；显式 `NINNA_INTEGRATION=1` 后使用 `scripts/run-vad.py` 在现有 Ninna v2 平台运行真实 preludio2 容器，持久保存运行证据。实际结果见 [VAD 验证记录](docs/vad-verification.md)。

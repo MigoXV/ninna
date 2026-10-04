@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test.beforeEach(() =>
+  test.skip(
+    process.env.NINNA_CATALOG_INTEGRATION !== "1",
+    "Requires the configured private registry catalog",
+  ),
+);
+
 test("browse actual migo catalog, preserve paths and separate tasks", async ({
   page,
   request,

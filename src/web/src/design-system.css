@@ -68,8 +68,79 @@ textarea {
   background: var(--bg-secondary);
 }
 .nav-item {
-  height: 40px;
+  height: 32px;
   border-radius: var(--av-radius-md);
+}
+.workspace-identity {
+  margin-bottom: 16px;
+}
+.nav-label {
+  margin-bottom: 4px;
+}
+.nav-group {
+  margin-top: 16px;
+}
+.sidebar-settings {
+  margin: -16px -10px 24px;
+}
+.settings-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  mask: url("/icons/settings.svg") center / 16px 16px no-repeat;
+}
+.appearance-settings {
+  max-width: 960px;
+  padding-top: 12px;
+}
+.appearance-settings > .back-link {
+  min-height: 32px;
+  margin-bottom: 32px;
+}
+.appearance-settings .page-header {
+  padding: 0;
+  margin-bottom: 32px;
+}
+.appearance-section {
+  max-width: 720px;
+}
+.appearance-section h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 24px;
+}
+.appearance-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  min-height: 88px;
+  padding-block: 16px;
+  border-block: 1px solid var(--border);
+}
+.appearance-theme-row h3 {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0 0 8px;
+}
+.appearance-theme-row p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+@media (min-width: 641px) {
+  .sidebar-collapsed .nav-item {
+    height: 32px;
+    margin-block: 2px;
+  }
+  .sidebar-collapsed .nav-group {
+    margin-top: 16px;
+  }
+  .sidebar-collapsed .sidebar-settings {
+    margin-inline: 0;
+  }
 }
 .nav-item.active {
   color: var(--text-primary);
@@ -496,4 +567,59 @@ tr.selected .muted {
     animation: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Object rows: grouping comes from typography and spacing, not item borders. */
+.run-composer { margin-block: 32px; max-width: 960px; }
+.object-composer-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; align-items: start; }
+.composer-main, .object-identity { min-width: 0; }
+.object-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 8px; align-items: start; min-height: 72px; padding-block: 8px; }
+.object-row:has(.object-change):hover { background: color-mix(in srgb, var(--hover) 45%, transparent); }
+.object-type { font-size: 13px; line-height: 25.6px; color: var(--text-secondary); }
+.object-name-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; line-height: 25.6px; }
+.object-name-line strong { font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+.object-version { color: var(--text-secondary); font-size: 12px; }
+.object-description { margin-top: 4px; font-size: 12px; line-height: 1.6; color: var(--text-secondary); overflow-wrap: anywhere; }
+.object-change { padding: 3px 0; border: 0; border-radius: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: 12px; line-height: 20px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.object-change:hover { color: var(--text-primary); }
+.object-change:disabled { opacity: .5; cursor: default; }
+.composer-main > .object-row { min-height: 40px; }
+.composer-section { margin-top: 24px; padding-top: 16px; border-top: 1px solid color-mix(in srgb, var(--border) 25%, transparent); }
+.composer-section-heading { margin-bottom: 16px; }
+.composer-section-heading h2 { margin: 0; font-size: 18px; font-weight: 500; line-height: 1.6; }
+.composer-section-heading h2 span { margin-right: 12px; color: var(--text-secondary); font-size: 12px; }
+.composer-section-heading p { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--text-secondary); }
+.composer-source { margin: 12px 0 0 72px; }
+.composer-summary { display: flex; flex-direction: column; gap: 16px; padding: 8px 0 8px 24px; border-left: 1px solid color-mix(in srgb, var(--border) 50%, transparent); min-width: 0; overflow-wrap: anywhere; }
+.composer-summary h2 { font-size: 22px; font-weight: 500; margin: 12px 0 4px; }
+.composer-kicker, .composer-caption { font-size: 12px; line-height: 1.6; color: var(--text-secondary); margin: 0; }
+.composer-summary strong { font-weight: 500; font-size: 14px; }
+.composer-summary-assets { display: flex; flex-direction: column; gap: 12px; }
+.composer-summary-assets > div { display: flex; justify-content: space-between; gap: 12px; }
+.composer-summary-assets span, .composer-summary small { color: var(--text-secondary); font-size: 12px; }
+.composer-summary-environment, .composer-summary-action { border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent); padding-top: 16px; }
+.composer-summary-environment p { margin: 4px 0; font-size: 13px; color: var(--text-secondary); }
+.composer-summary small { display: block; margin-top: 4px; }
+.composer-summary-action .button { width: 100%; justify-content: space-between; }
+.composer-summary-action .composer-caption { margin-top: 12px; }
+.composer-parent { font-size: 13px; color: var(--text-secondary); }
+.object-editor { width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); }
+.object-editor::backdrop { background: rgb(0 0 0 / 30%); }
+.object-editor .dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.object-editor h2 { margin: 0; font-size: 18px; font-weight: 500; }
+.object-editor .dialog-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+@media (max-width: 1100px) {
+  .object-composer-layout { grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; }
+}
+@media (max-width: 900px) {
+  .object-composer-layout { grid-template-columns: minmax(0, 1fr); }
+  .composer-summary { border-left: 0; padding: 16px 0; max-width: 480px; }
+}
+@media (max-width: 640px) {
+  .object-row { grid-template-columns: minmax(0, 1fr) auto; padding-block: 10px; }
+  .object-type { grid-column: 1; font-size: 12px; line-height: 1.6; }
+  .object-identity { grid-column: 1; grid-row: 2; }
+  .object-change { grid-column: 2; grid-row: 2; min-height: 32px; }
+  .composer-source { margin-left: 0; }
+  .object-editor { padding: 20px; }
 }

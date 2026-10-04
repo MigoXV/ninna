@@ -1,5 +1,13 @@
 # UI 与 Figma 同步
 
+当前工作任务 v2 使用 [独立页面索引](../figma-work-v2.json)，包含 9 个新页面。原 `figma-pages.json` 保留旧版页面清单作为历史记录。两主题 Figma PNG 位于 `outputs/work-v2-validation/figma-png` 与 `figma-abyssus`，打印稿为本目录的 `work-v2-vallum-review.pdf`、`work-v2-abyssus-review.pdf`。
+
+```bash
+node scripts/design/capture.mjs docs/figma-work-v2.json outputs/work-v2-validation/ui http://127.0.0.1:8021
+node scripts/design/prepare-figma.mjs outputs/work-v2-validation/ui docs/figma-work-v2.json
+```
+
+
 当前体系为 MANAS × 苍渊·白垣，默认 Vallum，提供 Abyssus 手动切换。颜色数值以 `src/web/src/tokens.dtcg.json` 和 `tokens.css` 为源，组件使用 `design-system.css` 的语义适配；不要从截图取色。
 
 `docs/figma-pages.json` 保存界面路由、详情标签、视口、Page 和主画板 ID。每个界面独立 Page，Page 内只保留一个位于原点的主画板。规范、交互组件和页面控件分别维护，更新时保留既有主画板 ID。

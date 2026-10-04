@@ -25,29 +25,19 @@ test("projects organize runs and keep training metrics inside run detail", async
     0,
   );
   await page
-    .getByRole("link", { name: "创建训练", exact: true })
+    .getByRole("link", { name: "新建工作任务", exact: true })
     .first()
     .click();
-  await expect(page.getByLabel("所属项目")).toHaveValue(name);
+  await expect(page.getByRole("combobox", { name: "项目", exact: true })).toHaveValue(name);
   await page.goto(`/projects/${name}/experiments`);
   await expect(
     page.getByRole("heading", { name: "等待第一个实验" }),
   ).toBeVisible();
   const members = await request.get(`/api/projects/${name}/runs`);
   expect(await members.json()).toEqual([]);
-  await page.goto("/projects/legacy");
-  await expect(page.locator(".run-title").first()).toBeVisible();
-  await page.locator(".run-title").first().click();
-  await expect(page.locator(".back-link")).toHaveAttribute(
-    "href",
-    "/projects/legacy",
-  );
-  await expect(
-    page.getByText("测试准确率", { exact: true }).first(),
-  ).toBeVisible();
-  await page.getByRole("link", { name: "基于此 Run 新建" }).click();
-  await expect(page.getByLabel("所属项目")).toHaveValue("legacy");
-  await expect(page.getByLabel("所属项目")).toBeDisabled();
+  await page.goto(`/projects/${name}`);
+  await page.getByRole("link", { name: "查看全部运行与历史记录" }).click();
+  await expect(page).toHaveURL(new RegExp(`/projects/${name}/runs$`));
 });
 
 test("project navigation and forms remain accessible at desktop and mobile widths", async ({

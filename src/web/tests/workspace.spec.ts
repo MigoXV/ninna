@@ -6,29 +6,21 @@ test("real workspace navigation, filtering, form and responsive pages", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/projects/legacy");
+  await page.goto("/projects/work-v2-acceptance");
   await expect(
-    page.getByRole("heading", { name: "legacy", exact: true }),
+    page.getByRole("heading", { name: "work-v2-acceptance", exact: true }),
   ).toBeVisible();
-  await page.keyboard.press("/");
-  await expect(page.getByPlaceholder("搜索运行、模型或 Recipe")).toBeFocused();
-  await page
-    .getByRole("link", { name: "创建训练", exact: true })
-    .first()
-    .click();
+  await page.getByRole("link", { name: "新建工作任务", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "训练定义", exact: true }),
+    page.getByRole("heading", { name: "新建工作任务", exact: true }),
   ).toBeVisible();
-  await expect(page.locator("#dataset")).not.toHaveValue("");
-  await page.locator("#recipe").selectOption({ label: "mnist-sgd / v1" });
-  await expect(page.getByText("5 epochs")).toBeVisible();
-  await page.goto("/assets/workspace");
-  await page.getByRole("button", { name: /mnist-hf.*v1/ }).click();
-  await expect(page.getByText("只读预览")).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "项目", exact: true }),
+  ).toHaveValue("work-v2-acceptance");
   for (const width of [320, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const path of [
-      "/projects/legacy",
+      "/projects/work-v2-acceptance",
       "/runs/new",
       "/projects",
       "/assets/dataset",
@@ -54,7 +46,7 @@ test("key routes have no serious accessibility violations", async ({
   page,
 }) => {
   for (const path of [
-    "/projects/legacy",
+    "/projects/work-v2-acceptance",
     "/runs/new",
     "/projects",
     "/assets/dataset",
@@ -85,55 +77,13 @@ test("mobile keyboard navigation opens and closes with restored focus", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/projects/legacy");
+  await page.goto("/projects/work-v2-acceptance");
   const toggle = page.getByRole("button", { name: "打开导航" });
   await toggle.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator(".sidebar")).toHaveClass(/open/);
   await page.keyboard.press("Escape");
   await expect(toggle).toBeFocused();
-});
-
-test("create a real training Run from the UI and download its checkpoint", async ({
-  page,
-}) => {
-  test.setTimeout(240000);
-  await page.goto("/runs/new?project=legacy");
-  await page
-    .locator("#recipe")
-    .selectOption({ label: "mnist-adam / quick-v1" });
-  await expect(page.locator("#recipe option:checked")).toHaveText(
-    "mnist-adam / quick-v1",
-  );
-  const created = page.waitForResponse(
-    (response) =>
-      response.url().endsWith("/api/runs") &&
-      response.request().method() === "POST",
-  );
-  await page.getByRole("button", { name: "开始训练", exact: true }).click();
-  const record = await (await created).json();
-  expect(record.training_spec.recipe.version).toBe("quick-v1");
-  expect(record.training_spec.model.version).toBe("v2");
-  await expect(page).toHaveURL(/\/runs\/run-/);
-  await expect(page.locator(".run-context .status")).toHaveText("已完成", {
-    timeout: 180000,
-  });
-  await expect(
-    page.getByText("Training complete. Checkpoint and metrics saved.", {
-      exact: false,
-    }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: /^产物/ }).click();
-  const row = page
-    .locator(".artifact-row")
-    .filter({ hasText: "checkpoint.pt" });
-  const downloadPromise = page.waitForEvent("download");
-  await row.getByRole("link", { name: "下载" }).click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("checkpoint.pt");
-  await expect(
-    page.getByRole("heading", { name: "让结果成为下一次训练的起点" }),
-  ).toBeVisible();
 });
 
 test("run detail, failure recovery and reduced motion remain accessible", async ({
@@ -179,7 +129,10 @@ test("run detail, failure recovery and reduced motion remain accessible", async 
     await page.goto("/runs/" + failure.id);
     await expect(page.locator(".failure-banner")).toBeVisible();
     await page.getByRole("link", { name: "基于此 Run 新建" }).click();
-    await expect(page.locator("#model")).not.toHaveValue("");
+    await expect(page).toHaveURL(/\/work\//);
+    await expect(
+      page.getByRole("heading", { name: "用什么数据，训练什么模型，怎么训练" }),
+    ).toBeVisible();
     await expect(page.locator(".failure-banner")).toHaveCount(0);
   }
 });

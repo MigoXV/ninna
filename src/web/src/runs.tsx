@@ -967,7 +967,14 @@ export function RunPage() {
   return (
     <section className="work-page run-workspace" aria-label="运行详情工作区">
       <div className="work-heading">
-        <Link to={`/projects/${run.project_id}`} className="back-link">
+        <Link
+          to={
+            run.work_item_id
+              ? `/work/${run.work_item_id}`
+              : `/projects/${run.project_id}/runs`
+          }
+          className="back-link"
+        >
           <ArrowLeft size={14} />
           {run.project_id} / 运行
         </Link>
@@ -990,9 +997,9 @@ export function RunPage() {
                 <Link
                   className="button"
                   to={
-                    run.task_spec
-                      ? `/tasks/new?project_id=${encodeURIComponent(run.project_id)}&framework=${encodeURIComponent(run.task_spec.framework.name + "/" + run.task_spec.framework.version)}&task=${encodeURIComponent(run.task_spec.task)}&parent_run_id=${id}`
-                      : "/runs/new?from=" + id
+                    run.work_item_id
+                      ? `/work/${run.work_item_id}?parent=${id}`
+                      : `/work/new?project=${encodeURIComponent(run.project_id)}&parent=${id}`
                   }
                 >
                   <Copy size={15} />
@@ -1158,7 +1165,12 @@ export function RunPage() {
               }
             />
             {run.artifacts.length ? (
-              <div className="artifact-list">
+              <div
+                className="artifact-list"
+                tabIndex={0}
+                role="region"
+                aria-label="训练产物"
+              >
                 {[
                   ...run.artifacts,
                   { name: "run.json", size: 0, sha256: "" },

@@ -38,6 +38,9 @@ def create_app(settings=None, serve_frontend=True):
 
     app = FastAPI(title="Ninna Training Platform", lifespan=lifespan)
     app.state.platform = platform
+    from ninna.work.api import install
+
+    install(app, platform.work)
     import httpx
 
     mcp_server = create_server(
@@ -57,6 +60,28 @@ def create_app(settings=None, serve_frontend=True):
     @app.exception_handler(KeyError)
     async def missing(request: Request, exc: KeyError):
         return JSONResponse(status_code=404, content={"detail": f"Not found: {exc}"})
+
+    @app.middleware("http")
+    async def retired_writes(request: Request, call_next):
+        if request.method == "POST" and request.url.path in {
+            "/api/runs",
+            "/api/tasks",
+            "/api/tasks/preflight",
+            "/api/hub/import",
+            "/api/hub/publish",
+        }:
+            return JSONResponse(
+                status_code=410,
+                content={
+                    "detail": {
+                        "code": "API_RETIRED",
+                        "message": "请使用 v2 工作任务、运行方案和资产来源接口。",
+                        "retryable": False,
+                        "next_action": "读取 /api/v2/capabilities 与 ninna://guide。",
+                    }
+                },
+            )
+        return await call_next(request)
 
     @app.get("/api/integrations")
     def integrations():
@@ -116,6 +141,7 @@ def create_app(settings=None, serve_frontend=True):
     ):
         return platform.repo.assets(kind)
 
+    @app.post("/api/v2/definitions/{kind}", status_code=201)
     @app.post("/api/assets/{kind}", status_code=201)
     def register(
         kind: Literal["dataset", "model", "recipe", "runtime", "workspace", "image", "framework"],
@@ -166,7 +192,9 @@ def create_app(settings=None, serve_frontend=True):
             Path(asset["entrypoint"]).is_absolute() or ".." in Path(asset["entrypoint"]).parts
         ):
             raise ValueError("Workspace entrypoint must be a relative path")
-        return platform.repo.register(kind, asset)
+        registered = platform.repo.register(kind, asset)
+        platform.work.assets.index_registered(kind, registered)
+        return registered
 
     @app.get("/api/assets/{kind}/{name}/{version}")
     def asset_detail(
@@ -288,11 +316,12 @@ def create_app(settings=None, serve_frontend=True):
     def gpus():
         return platform.frameworks.gpus()
 
+    @app.post("/api/v2/frameworks/import", status_code=201)
     @app.post("/api/frameworks/import", status_code=201)
     def import_framework(request: ImportFramework):
         return platform.frameworks.import_image(request)
 
-    @app.post("/api/tasks/preflight")
+    @app.post("/api/tasks/preflight", deprecated=True)
     def preflight_task(request: CreateTask):
         resolved = platform.frameworks.preflight(request)
         return {
@@ -303,11 +332,11 @@ def create_app(settings=None, serve_frontend=True):
             "image_id": resolved["image"]["image_id"],
         }
 
-    @app.post("/api/tasks", status_code=201)
+    @app.post("/api/tasks", status_code=201, deprecated=True)
     def create_task(request: CreateTask):
         return platform.frameworks.create(request)
 
-    @app.post("/api/runs", status_code=201)
+    @app.post("/api/runs", status_code=201, deprecated=True)
     def create_run(request: CreateRun):
         return platform.create_run(request)
 
@@ -321,8 +350,18 @@ def create_app(settings=None, serve_frontend=True):
     @app.get("/api/runs/{run_id}")
     def run(run_id: str):
         record = platform.repo.get("runs", run_id)
-        return {**record, "project_id": platform.repo.run_project(record)}
+        try:
+            link = platform.work.store.get("run_link", run_id)
+        except KeyError:
+            link = {}
+        return {
+            **record,
+            "project_id": platform.repo.run_project(record),
+            "work_item_id": link.get("work_item_id"),
+            "plan_id": link.get("plan_id"),
+        }
 
+    @app.post("/api/v2/runs/{run_id}/cancel")
     @app.post("/api/runs/{run_id}/cancel")
     def cancel(run_id: str):
         return platform.cancel(run_id)
@@ -366,13 +405,17 @@ def create_app(settings=None, serve_frontend=True):
             raise HTTPException(404, "Artifact not found")
         return FileResponse(path, filename=filename)
 
+    @app.post("/api/v2/runs/{run_id}/promote", status_code=201)
     @app.post("/api/runs/{run_id}/promote", status_code=201)
     def promote(run_id: str, request: PromoteRequest):
         if platform.repo.get("runs", run_id).get("task_spec"):
-            return platform.frameworks.promote(
+            asset = platform.frameworks.promote(
                 run_id, request.version, request.artifact_path, request.kind
             )
-        return platform.promote(run_id, request.version)
+        else:
+            asset = platform.promote(run_id, request.version)
+        platform.work.assets.index_registered(request.kind, asset)
+        return asset
 
     @app.api_route("/api/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     def unknown_api(path: str):

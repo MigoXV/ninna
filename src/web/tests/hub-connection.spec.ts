@@ -1,131 +1,105 @@
 import { test, expect } from "@playwright/test";
 
-// These are UI transport states only; training and Run data are never mocked.
-test("Hub loading is neutral, real failure is actionable, retry recovers", async ({
+// Only transport states are simulated; no training evidence is mocked.
+const sources = [
+  {
+    id: "source-internal",
+    name: "公司内网",
+    endpoint: "https://internal.example",
+    protocol: "hf",
+    enabled: true,
+    token_env: null,
+    version: 1,
+  },
+  {
+    id: "source-public",
+    name: "公开平台",
+    endpoint: "https://huggingface.co",
+    protocol: "hf",
+    enabled: true,
+    token_env: null,
+    version: 1,
+  },
+];
+test("a source failure does not replace another source's connection state", async ({
   page,
 }) => {
-  let respond!: () => void;
-  const gate = new Promise<void>((resolve) => {
-    respond = resolve;
-  });
-  let state = "waiting";
-  await page.route("**/api/hub/status", async (route) => {
-    if (state === "waiting") await gate;
-    await route.fulfill({
-      json:
-        state === "failed"
-          ? {
-              status: "UNAVAILABLE",
-              error: "连接失败，请检查地址、凭据和服务状态。",
-            }
-          : { status: "CONNECTED", account: "ui-state-test" },
-    });
-  });
-  await page.goto("/hub");
-  await expect(page.locator(".connection-state")).toContainText("正在检查连接");
-  await expect(page.getByRole("alert")).toHaveCount(0);
-  await expect(page.getByText("按需连接中心存储", { exact: true })).toHaveCount(
-    0,
+  await page.route("**/api/v2/sources", (route) =>
+    route.fulfill({ json: sources }),
   );
-  state = "failed";
-  respond();
-  await expect(page.getByRole("alert")).toContainText("连接失败");
-  await expect(page.getByRole("button", { name: "发布到 Hub" })).toBeDisabled();
-  state = "connected";
-  await page
-    .getByRole("alert")
-    .getByRole("button", { name: "重试", exact: true })
-    .click();
-  await expect(page.locator(".connection-state")).toContainText("已连接");
-  await expect(page.getByRole("alert")).toHaveCount(0);
+  await page.route("**/api/v2/sources/source-internal/status", (route) =>
+    route.fulfill({ json: { status: "UNAVAILABLE" } }),
+  );
+  await page.route("**/api/v2/sources/source-public/status", (route) =>
+    route.fulfill({ json: { status: "CONNECTED" } }),
+  );
+  await page.goto("/settings/sources");
+  const internal = page.locator(".work-row").filter({ hasText: "公司内网" });
+  const publicSource = page
+    .locator(".work-row")
+    .filter({ hasText: "公开平台" });
+  await internal.getByRole("button", { name: "检查连接" }).click();
+  await expect(internal).toContainText("连接失败");
+  await publicSource.getByRole("button", { name: "检查连接" }).click();
+  await expect(publicSource).toContainText("连接正常");
+  await expect(internal).toContainText("连接失败");
 });
 
-test("disabled Hub preserves settings save errors beside the form", async ({
+test("source form preserves values and shows errors on HTTP LAN installations", async ({
   page,
 }) => {
-  const settings = await (await page.request.get("/api/integrations")).json();
-  await page.route("**/api/integrations", (route) =>
-    route.request().method() === "POST"
-      ? route.fulfill({ status: 503, json: { detail: "保存设置失败" } })
-      : route.fulfill({
-          json: { ...settings, hub: { ...settings.hub, enabled: false } },
-        }),
+  await page.addInitScript(() =>
+    Object.defineProperty(crypto, "randomUUID", { value: undefined }),
   );
-  await page.route("**/api/hub/status", (route) =>
-    route.fulfill({ json: { status: "DISABLED" } }),
-  );
-  await page.goto("/hub");
-  await page.getByRole("button", { name: "连接设置", exact: true }).click();
-  await page.getByRole("button", { name: "保存并检查连接" }).click();
-  await expect(
-    page.locator(".integration-settings").getByRole("alert"),
-  ).toHaveText(/保存设置失败/);
-});
-
-test("Hub settings pending never flashes disabled; disabled is not an error", async ({
-  page,
-}) => {
-  const settings = await (await page.request.get("/api/integrations")).json();
-  let respond!: () => void;
-  const gate = new Promise<void>((resolve) => {
-    respond = resolve;
-  });
-  await page.route("**/api/integrations", async (route) => {
-    await gate;
-    await route.fulfill({
-      json: { ...settings, hub: { ...settings.hub, enabled: false } },
-    });
-  });
-  await page.route("**/api/hub/status", (route) =>
-    route.fulfill({ json: { status: "DISABLED" } }),
-  );
-  await page.goto("/hub");
-  await expect(page.locator(".connection-state")).toContainText("正在检查连接");
-  await expect(page.getByText("按需连接中心存储", { exact: true })).toHaveCount(
-    0,
-  );
-  respond();
-  await expect(page.locator(".connection-state")).toContainText("未启用");
-  await expect(
-    page.getByText("按需连接中心存储", { exact: true }),
-  ).toBeVisible();
-  await expect(page.getByRole("alert")).toHaveCount(0);
-});
-
-test("Hub refresh keeps prior state while checking and exposes refresh/repository errors", async ({
-  page,
-}) => {
-  let refreshing = false;
-  let respond!: () => void;
-  const gate = new Promise<void>((resolve) => {
-    respond = resolve;
-  });
-  await page.route("**/api/hub/status", async (route) => {
-    if (refreshing) {
-      await gate;
-      await route.fulfill({ status: 503, json: { detail: "状态服务不可用" } });
-    } else
+  await page.route("**/api/v2/sources", async (route) => {
+    if (route.request().method() === "POST") {
+      expect(route.request().postDataJSON().request_id).toMatch(
+        /^[a-f0-9]{32}$/,
+      );
       await route.fulfill({
-        json: { status: "CONNECTED", account: "ui-state-test" },
+        status: 409,
+        json: { detail: { message: "平台配置冲突" } },
       });
+    } else await route.fulfill({ json: [] });
   });
-  await page.route("**/api/hub/repositories?*", (route) =>
-    route.fulfill({ status: 503, json: { detail: "仓库读取失败" } }),
+  await page.goto("/settings/sources");
+  await page.getByLabel("名称", { exact: true }).fill("内网");
+  await page.getByLabel("平台地址").fill("http://internal.example");
+  await page.getByRole("button", { name: "添加平台", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("平台配置冲突");
+  await expect(page.getByLabel("平台地址")).toHaveValue(
+    "http://internal.example",
   );
+});
+
+test("the old Hub route leads to multiple hosting platforms", async ({
+  page,
+}) => {
   await page.goto("/hub");
-  await expect(page.locator(".connection-state")).toContainText("已连接");
-  await expect(page.locator(".hub-repositories")).toContainText("仓库读取失败");
-  await expect(page.getByText("没有匹配的仓库", { exact: true })).toHaveCount(
-    0,
-  );
-  refreshing = true;
-  await page.getByRole("button", { name: "刷新", exact: true }).click();
-  await expect(page.locator(".connection-state")).toContainText(
-    "已连接 · ui-state-test · 检查中",
-  );
-  respond();
-  await expect(page.locator(".connection-state")).toHaveText("暂不可用");
+  await expect(page).toHaveURL(/\/settings\/sources$/);
   await expect(
-    page.getByRole("alert").filter({ hasText: "状态服务不可用" }),
+    page.getByRole("heading", { name: "托管平台", exact: true }),
   ).toBeVisible();
+  await expect(page.getByLabel("访问令牌", { exact: true })).toHaveCount(0);
+});
+
+test("retry after a lost mutation response keeps the same request identity", async ({
+  page,
+}) => {
+  const identities: string[] = [];
+  await page.route("**/api/v2/sources", async (route) => {
+    if (route.request().method() !== "POST") return route.fulfill({ json: [] });
+    identities.push(route.request().postDataJSON().request_id);
+    if (identities.length === 1) return route.abort("failed");
+    await route.fulfill({ json: { id: "source-created" } });
+  });
+  await page.goto("/settings/sources");
+  await page.getByLabel("名称", { exact: true }).fill("重试验证");
+  await page.getByLabel("平台地址").fill("https://hosting.example");
+  await page.getByRole("button", { name: "添加平台", exact: true }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await page.getByRole("button", { name: "添加平台", exact: true }).click();
+  await expect(page.getByLabel("名称", { exact: true })).toHaveValue("");
+  expect(identities).toHaveLength(2);
+  expect(identities[0]).toBe(identities[1]);
 });

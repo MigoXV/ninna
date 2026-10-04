@@ -1,0 +1,48 @@
+seed_everything: 42
+trainer:
+  accelerator: cpu
+  devices: 1
+  precision: 32-true
+  max_epochs: 1
+  log_every_n_steps: 1
+  fast_dev_run: false
+  default_root_dir: '{output}/training'
+  callbacks: []
+  max_steps: -1
+  limit_train_batches: 1.0
+  limit_val_batches: 1.0
+  num_sanity_val_steps: 0
+  enable_progress_bar: false
+  logger:
+    class_path: lightning.pytorch.loggers.CSVLogger
+    init_args:
+      save_dir: '{output}'
+      name: training
+      version: run
+  accumulate_grad_batches: 1
+model:
+  class_path: preludio2.tasks.attetion_vad.AttetionVadFromScratchTask
+  init_args:
+    model_config_path: '{model}'
+    lr: 0.0001
+    weight_decay: 0.0
+    adam_eps: 1.0e-09
+    threshold: 0.5
+    threshold_sweep:
+    - 0.5
+data:
+  class_path: preludio2.tasks.attetion_vad.AttetionVadDataModule
+  init_args:
+    dataset_path: '{dataset}'
+    train_split: train
+    validation_split: test
+    test_split: test
+    batch_size: 1
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+    prefetch_factor: null
+    cache_in_memory: false
+    max_train_samples: null
+    max_validation_samples: null
+    max_test_samples: null

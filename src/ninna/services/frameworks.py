@@ -248,7 +248,7 @@ class FrameworkService:
             "source": source,
         }
 
-    def create(self, request):
+    def create(self, request, run_id=None):
         from ninna.services.platform import write_json
 
         with self.platform.operation_lock:
@@ -265,7 +265,7 @@ class FrameworkService:
                 raise ValueError("Workspace framework manifest differs from registered version")
             if not (path / spec.skill).is_file() or not (path / "AGENTS.md").is_file():
                 raise ValueError("Workspace is missing agent instructions")
-            key = "run-" + uuid.uuid4().hex[:12]
+            key = run_id or "run-" + uuid.uuid4().hex[:12]
             execution = request.execution_spec.model_dump()
             execution["workspace"]["snapshot"] = workspace["snapshot"]
             inputs = resolved["inputs"]
@@ -312,7 +312,7 @@ class FrameworkService:
                 "runtime_validation": resolved["runtime"]["validation"],
             }
             output = self.platform.output(key)
-            (output / "config").mkdir(parents=True)
+            (output / "config").mkdir(parents=True, exist_ok=True)
             write_json(output / "config/run.json", run)
             write_json(output / "run.json", run)
             for name in ("stdout.log", "stderr.log"):

@@ -64,7 +64,7 @@ def test_run_requires_project_and_checks_it_before_execution(tmp_path):
     client = TestClient(app)
     request = default_request()
     request.pop("project_id", None)
-    assert client.post("/api/runs", json=request).status_code == 422
+    assert client.post("/api/runs", json=request).status_code == 410
     request["project_id"] = "missing"
-    assert client.post("/api/runs", json=request).status_code == 404
+    assert client.post("/api/runs", json=request).status_code == 410
     assert app.state.platform._docker is None

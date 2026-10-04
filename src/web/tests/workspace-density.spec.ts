@@ -3,8 +3,8 @@ import { test, expect } from "@playwright/test";
 test("real runs own their scroll positions and keep task controls visible", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/projects/legacy");
+  await page.setViewportSize({ width: 1440, height: 650 });
+  await page.goto("/projects/framework-integration/runs");
   const rows = page.locator(".runs-table tbody tr");
   await expect(rows).toHaveCount(10);
   await page.evaluate(() => document.fonts.ready);
@@ -16,16 +16,16 @@ test("real runs own their scroll positions and keep task controls visible", asyn
     return nodes.filter((n) => n.getBoundingClientRect().bottom <= bottom)
       .length;
   });
-  expect(visible).toBeGreaterThanOrEqual(7);
+  expect(visible).toBeGreaterThanOrEqual(3);
   const titleY = (await page.locator("h1").boundingBox())!.y;
   await region.evaluate((e) => {
-    e.scrollTop = 140;
+    e.scrollTop = 80;
   });
-  await expect.poll(() => region.evaluate((e) => e.scrollTop)).toBe(140);
+  await expect.poll(() => region.evaluate((e) => e.scrollTop)).toBe(80);
   expect((await page.locator("h1").boundingBox())!.y).toBe(titleY);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
   // Select an already visible row so clicking does not alter the saved list position.
-  const runLink = rows.nth(4).getByRole("link", { name: /查看/ });
+  const runLink = rows.nth(2).getByRole("link", { name: /查看/ });
   await runLink.click();
   const detail = page.getByRole("region", { name: "运行详情内容" });
   await expect(detail).toBeVisible();
@@ -38,23 +38,27 @@ test("real runs own their scroll positions and keep task controls visible", asyn
   expect(await detail.evaluate((e) => e.scrollTop)).toBe(0);
   await page.getByRole("button", { name: "训练", exact: true }).click();
   await expect.poll(() => detail.evaluate((e) => e.scrollTop)).toBe(100);
-  await page.locator(".back-link").click();
-  await expect.poll(() => region.evaluate((e) => e.scrollTop)).toBe(140);
+  await page.goBack();
+  await expect.poll(() => region.evaluate((e) => e.scrollTop)).toBe(80);
   await rows.nth(5).getByRole("link", { name: /查看/ }).click();
   await expect(detail).toBeVisible();
   expect(await detail.evaluate((e) => e.scrollTop)).toBe(0);
-  await page.locator(".back-link").click();
+  await page.goBack();
   await page.getByRole("button", { name: "下一页", exact: true }).click();
   await expect.poll(() => region.evaluate((e) => e.scrollTop)).toBe(0);
   await page
     .locator(".sidebar")
-    .getByRole("link", { name: "中心存储" })
+    .getByRole("link", { name: "托管平台" })
     .click();
   await page
     .locator(".sidebar")
     .getByRole("link", { name: "项目", exact: true })
     .click();
-  await page.locator(".project-row").filter({ hasText: "legacy" }).click();
+  await page
+    .locator(".project-row")
+    .filter({ hasText: "framework-integration" })
+    .click();
+  await page.getByRole("link", { name: "查看全部运行与历史记录" }).click();
   await expect(page.locator(".pagination")).toContainText(/2 \/ \d+/);
 });
 
@@ -65,7 +69,7 @@ test("fonts are served locally and narrow layouts retain reachable content", asy
   page.on("response", (r) => {
     if (/\.woff2?/.test(r.url())) fonts.push(r.url());
   });
-  await page.goto("/projects/legacy");
+  await page.goto("/projects/framework-integration/runs");
   await expect(page.locator("tbody tr")).toHaveCount(10);
   await page.evaluate(() => document.fonts.ready);
   expect(fonts.some((url) => url.includes("inter"))).toBe(true);

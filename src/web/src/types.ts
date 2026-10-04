@@ -16,6 +16,8 @@ export type Asset = {
   [key: string]: any;
 };
 export type Run = {
+  work_item_id?: string | null;
+  plan_id?: string | null;
   task_spec?: {
     framework: Ref;
     task: string;

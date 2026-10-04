@@ -1,128 +1,87 @@
-# MCP 与 Agent Skill
+# 在 Codex 中调用 Ninna
 
-Ninna 提供官方 MCP Python SDK 实现的 **Streamable HTTP** 和 **stdio**，共用 26 个工具、平台指南资源、资产资源模板及失败诊断 prompt。接口直接使用当前领域模型。
+Ninna 是训练执行平台，Codex 是用户交互入口。v2 支持多个资产来源、可复用环境、独立工作区、命令执行、运行方案和工作进度恢复。网页与 MCP 共用领域服务和真实状态；平台不会托管 Codex 对话。
 
-## 接入 Codex
+## 连接
 
-先运行平台，再连接 HTTP MCP：
-
-```bash
-./scripts/platform.sh up
-codex mcp add ninna --url http://127.0.0.1:8000/mcp/
-```
-
-本仓库的 `.agents/skills/ninna/` 提供 `$ninna`。重新打开仓库会话后可以使用：
-
-```text
-使用 $ninna，选择已注册的 MNIST HF 资产做一次快速训练。
-先选择或创建 Project，创建训练时显式传 project_id。等待完成，报告容器 ID、准确率、模型 hash 变化和 checkpoint 下载地址。
-```
-
-在其他仓库使用时，将整个 `.agents/skills/ninna` 目录复制到目标仓库的 `.agents/skills/`，或放入个人 Skill 目录。Skill 的 `agents/openai.yaml` 声明本机 MCP 依赖；远程部署时同步修改其中的地址。
-
-也可以通过 stdio 接入（平台需已运行）：
+先运行 Ninna，再在 Codex 所在机器连接实际可访问的地址：
 
 ```bash
-poetry install
-codex mcp add ninna -- poetry --directory /绝对路径/ninna run ninna mcp --url http://127.0.0.1:8000
+codex mcp add ninna --url http://你的平台地址:8000/mcp/
 ```
 
-二选一即可。stdio 只连接 API，不启动训练 worker；Agent 退出后训练仍由平台继续执行。协议 stdout 只用于 JSON-RPC，日志写 stderr。
+本机运行时使用 `http://127.0.0.1:8000/mcp/`。远端部署设置 `NINNA_MCP_ALLOWED_HOSTS` 为对应 host:port。既有可信单机部署边界不变，不将没有额外访问控制的平台直接暴露到公网。
 
-## 其他 Agent
+stdio 同样连接已运行的 API，不创建执行器：
 
-使用客户端支持的 Streamable HTTP 配置，URL 为 `http://127.0.0.1:8000/mcp/`。通用 stdio 配置示例（不同客户端配置文件位置不同）：
-
-```json
-{
-  "mcpServers": {
-    "ninna": {
-      "command": "poetry",
-      "args": ["--directory", "/绝对路径/ninna", "run", "ninna", "mcp"],
-      "env": {"NINNA_API_URL": "http://127.0.0.1:8000"}
-    }
-  }
-}
+```bash
+codex mcp add ninna -- poetry --directory /安装路径/ninna run ninna mcp --url http://你的平台地址:8000
 ```
 
-Skill 内容为普通 Markdown，其他 Agent 可将其作为平台操作指南读取。连接后先 `resources/read ninna://guide`，再 `tools/list` 获取当前参数 schema。所有工具返回结构化 JSON；业务失败使用 MCP `isError`，不能把错误文本当成功结果。
+安装 `.agents/skills/ninna` 到 Codex 使用的仓库或个人 Skill 目录。Skill 不固定 localhost 依赖；MCP 地址以实际客户端配置为准。
 
-HTTP 默认允许 localhost/127.0.0.1/IPv6 loopback。使用远端域名时，设置准确的 Host 白名单，例如 `NINNA_MCP_ALLOWED_HOSTS=training.example.internal:8000` 后重新启动平台。平台与 MCP 当前均面向可信单机环境，没有另加认证系统。
+## 用户示例
 
-## 能力和副作用
+> 使用 $ninna，在我的语音项目中，用内网数据集微调这个模型，先做一次小规模验证。复用已准备的环境，报告实际指标和模型产物。
 
-| 工作 | 工具 | 行为 |
-| --- | --- | --- |
-| 发现 | platform_health、list_assets、describe_asset | 只读；资产列表分页，详情含说明与 README |
-| 准备 | read_workspace、snapshot_workspace、register_asset | 读取代码；创建快照；注册新版本 |
-| 执行 | create_run、list_runs、get_run、cancel_run | 创建真实训练；观察；显式取消 |
-| 证据 | read_run_logs、get_run_metrics、get_run_diagnostic_context、list_run_artifacts | 只读；日志分段/诊断截断；模型使用下载路径 |
-| 复用 | promote_model | 从成功 Run 创建新模型版本 |
-| 项目 | list_projects、create_project | 选择或创建组织上下文；create_run / list_runs 必须传 project_id |
-| 中心存储 | list_hub_repositories、publish_asset、import_asset、list_hub_transfers | 发现；远端发布；导入新版本；观察传输 |
+> 继续工作任务 work_item-…，看看上次训练的结果，诊断问题并创建新的训练尝试。
 
-`ninna://assets/{kind}/{name}/{version}` 提供资产详情资源。`diagnose_run` prompt 引导基于日志、容器状态和实际快照诊断。训练不会由于 MCP 会话结束而取消。
+首次读取 `ninna://guide` 和 `get_capabilities`。工具 schema 是参数真源，不依赖固定工具数量。
 
-## 一次训练的定义
+## 能力分组
 
-先发现当前资产，下例仅说明已初始化 MNIST 的组合方式：
+| 目的 | 主要工具 |
+|---|---|
+| 多来源 | list_sources、configure_source、check_source、search_source_assets |
+| 本地资产 | list_asset_revisions、inspect_asset_revision、acquire_asset、bind_asset |
+| 环境 | list_environments、create_environment、prepare_environment、publish_environment |
+| 工作上下文 | list_work_items、create_work_item、get_work_context、update_work_item |
+| 工作区 | read_task_files、edit_task_file、execute_task_command、set_workspace_state |
+| 执行 | prepare_run_plan、read_run_plan、submit_run、get_run、cancel_run |
+| 后台操作 | list_jobs、get_job、read_job_logs、cancel_job、wait_for_events |
+| 证据与成果 | get_run_metrics、get_run_diagnostic_context、list_run_artifacts、promote_model、promote_dataset、publish_asset_revision |
 
-```json
-{
-  "project_id": "mnist",
-  "training_spec": {
-    "dataset": {"name": "mnist", "version": "v2"},
-    "model": {"name": "mnist-cnn", "version": "v2"},
-    "recipe": {"name": "mnist-adam", "version": "quick-v1"}
-  },
-  "execution_spec": {
-    "runtime": {"name": "mnist-pytorch-runtime", "version": "v4"},
-    "workspace": {"name": "mnist-hf", "snapshot": "current"},
-    "resources": {"device": "cpu", "gpu_count": 0, "cpu_threads": 4, "memory_mb": 4096}
-  }
-}
+镜像、框架与配方的精确声明仍通过 list_assets / describe_asset / register_asset 管理。普通用户无需逐次手工组合 Image、Runtime 和 Workspace。
+
+## 不共享文件系统
+
+Codex 通过 MCP 编辑任务工作区并执行命令。传入的 local_path 指 **Ninna 主机** 路径；若文件在 Codex 机器上，使用 CLI：
+
+```bash
+poetry run ninna upload --path ./my-dataset --kind dataset --name 客服录音 \
+  --request-id upload-callcenter-001 --url http://你的平台地址:8000
 ```
 
-create_run 返回创建记录。保存 `id`，轮询至终态后核对容器、退出码、指标、hash 与产物。每次 create_run 都产生新 Run，提交超时时先查询近期记录，不盲目重试。修复失败时传 `parent_run_id` 关联原记录。
+文件通过 PUT `/api/v2/uploads/{id}/files` 流式传输并验证 SHA-256，完成后登记本地资产。重试复用 request-id，不经过模型文本上下文。
 
-## 仓库说明与资产卡片
+## 长时间训练
 
-`GET /api/assets/{kind}/{name}/{version}` 和 describe_asset 返回完整资产、生成的加载/版本/来源说明，以及资产已有的 README（上限 100,000 字节）。文档作为数据读取，不执行其中代码。
+提交返回 Job，成功结果中包含 run_id；必须继续检查 Run 到终态。HTTP 或 MCP 会话结束不取消训练。事件接口使用持久游标，最多等待 30 秒；重新连接从原游标继续。平台不会自动唤醒退出的 Codex。
 
-发布到 HF 兼容仓库时，若资产没有 README，平台在发布暂存区生成中文 README，说明格式、加载入口、元数据和校验关系。已有 README 原样保留。生成的说明位于资产 payload 之外，不改变已注册资产的清单或 checksum；导入只取 `ninna-asset.json` 中声明的文件。已有远端仓库不会因升级自动改写，下次显式发布时才应用。
+工作流写操作的 request_id 是幂等身份：相同参数复用相同 ID，参数改变使用新 ID。文件编辑使用 expected_sha256，工作任务摘要更新使用 expected_version，冲突后重新读取。
 
-仓库层面由 `AGENTS.md` 说明代码入口和工程约定；平台层面由 MCP `ninna://guide` 说明工作流；资产层面由 describe_asset / README 说明训练输入。这三处随功能一起维护。
+正式训练使用固定的代码和依赖快照，关闭网络；准备命令默认在有网络的 CPU 工作区运行。GPU 训练必须明确 UUID，并由现有串行执行器检查设备可用性。
 
-## 开发与验证
+## 迁移
+
+停止新提交并等待原运行结束，备份状态目录后：
+
+```bash
+poetry run ninna migrate --url http://平台地址:8000
+poetry run ninna migrate --apply --url http://平台地址:8000
+```
+
+迁移只新增索引：原单一 Hub 变为一个来源，原模型和数据成为可查询资产，Runtime/Workspace 组合成为待验证环境草稿。原资产和历史 Run 不改写。发布草稿后再创建新工作。
+
+旧 POST `/api/runs`、`/api/tasks`、`/api/tasks/preflight`、`/api/hub/import`、`/api/hub/publish` 返回 410。旧详情、日志与产物链接继续只读可用。旧 create_run/create_task 等创建工具不再出现在 MCP 目录。
+
+## 验证
 
 ```bash
 poetry run pytest tests/unit -q
-NINNA_INTEGRATION=1 poetry run pytest tests/integration/test_mcp.py -q -s
+NINNA_INTEGRATION=1 poetry run python scripts/validate-work-v2.py
 ```
 
-集成测试使用官方 MCP 客户端：HTTP 创建 Run，断开创建者后通过独立 stdio 进程观察真实 Docker 训练；验证只读挂载、模型 hash、loss、准确率和 checkpoint 下载。第二条链路注册非法 Recipe，验证失败诊断，再创建带 parent_run_id 的成功 Run，确认历史失败记录不变。测试会增加真实 Run 和 Recipe 版本。
+真实验收脚本使用独立运行平台，默认 `http://127.0.0.1:8021`。它通过官方 MCP 客户端准备环境、修改远端文件、执行真实 CPU 训练、验证重复提交和工作区停止恢复，并通过新 MCP 会话读取同一上下文。只有实际产生的容器、指标和产物才作为训练证据。
 
-服务代码：`src/ninna/agent/server.py`。HTTP 子应用由 FastAPI 主 lifespan 启动 MCP session manager，内部以 ASGI 调用同一 API；stdio 通过 HTTP 连接运行平台。单一平台 worker 始终持有任务生命周期。
-
-## agent-v0.1.0 验证记录
-
-2026-09-25，分支 `feature/mcp-agent-skill`，生产镜像 `ea92ce05ba64` 健康运行。分三批提交工具实现、Skill/说明、验证测试，并使用 annotated tag `agent-v0.1.0` 标记本次版本。
-
-- 单元测试：22 项通过；包括 MCP 协议、资源、结构化结果、参数校验、错误、文档边界及发布说明不改写资产清单。
-- 真实 MCP 集成：2 项通过，65.62 秒。没有 mock Docker 训练。
-- HTTP 创建 → stdio 观察：`run-4b1e02fe8b09` SUCCESS，准确率 98.21%；Docker ID `e1df95fcc9f43904e09c5765f10e62bf43c3609d1a507149f795ffe867dc72ce`。
-- 非法学习率：`run-df17145d34ef` FAILED，保留退出码和 stderr；修复后新建 `run-b196f3593b05` SUCCESS，parent_run_id 指向失败 Run，旧记录保持不变。
-- Ruff、Skill frontmatter 校验通过；构建 wheel 后确认平台指南随包交付。
-
-Hub 发布说明的文件清单不变性使用暂存区测试验证；本轮没有重新发布远端模型仓库。UI 已先 squash 到 `dev` 并标记 `ui-v0.2.1`，MCP 工作保留在独立功能分支。
-
-### 镜像工具
-
-MCP 新增 `list_local_images`、`pull_image`、`list_image_pulls`、`get_image_pull`；通用资产工具支持 `kind=image`。Runtime 注册参数改为 `name/version/image_ref/description`。Image 可独立纳管任意 Docker 镜像；创建 Runtime 才验证训练依赖。Run 诊断的 `assets.image` 包含实际执行镜像身份。
-
-
-### 镜像目录浏览
-
-`browse_images()` 返回已登记的站点。依次传 `registry`、`namespace`、`repository` 进入命名空间、镜像和版本；`q` 在当前层级内搜索路径、标签与资产名称。`GET /api/images/catalog` 提供同样的只读目录接口。父级参数必须完整。
-
-目录依据注册时来源派生，不扫描远端仓库，不修改资产。相同仓库引用和 image ID 的重复登记聚合展示；`assets` 保留所有精确 name/version 引用，选择后用 `describe_asset` 查看。按 image ID 登记的内容属于 `local` 站点；标签无法确定唯一仓库时归入未分类。目录统计不证明当前 Docker 可用，执行前仍需读取资产可用性。
+本次实际验收、历史测试的运行方式与验证边界见 [工作任务 v2 验收记录](work-v2-verification.md)。

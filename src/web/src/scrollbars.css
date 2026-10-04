@@ -1,0 +1,98 @@
+/* Persistent native scrollbars follow the same theme as the Figma viewports.
+   Keep browser keyboard, wheel, touch and thumb dragging behavior. */
+/* Chromium/WebKit draw the explicit track even when native overlay bars hide.
+   Firefox uses the standard scrollbar properties. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: var(--text-secondary) var(--border);
+    scrollbar-width: thin;
+  }
+  * {
+    scrollbar-width: thin;
+  }
+}
+@supports selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--border);
+  border: 2px solid var(--bg-primary);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border: 2px solid var(--bg-primary);
+  border-radius: 6px;
+  min-height: 32px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+}
+::-webkit-scrollbar-corner {
+  background: var(--bg-primary);
+}
+
+/* Lists scroll as a group; filenames, row actions and document content stay intact. */
+.project-list,
+.asset-catalog,
+.artifact-list,
+.work-list:not(:empty),
+.catalog-table-scroll,
+.experiment-list,
+.log-output,
+.log-content,
+.code-pane pre {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+.project-list,
+.asset-catalog,
+.artifact-list,
+.work-list:not(:empty),
+.catalog-table-scroll {
+  max-height: var(--scroll-viewport-height, 480px);
+  padding-right: 8px;
+}
+.project-list {
+  --scroll-viewport-height: 504px;
+}
+.artifact-list {
+  --scroll-viewport-height: 488px;
+}
+.work-jobs {
+  --scroll-viewport-height: 304px;
+}
+
+@media (min-width: 1000px) and (min-height: 650px) {
+  main:not(.task-main),
+  .work-scroll {
+    overflow-y: scroll;
+  }
+}
+@media (max-width: 999px), (max-height: 649px) {
+  /* One scroll owner for the wide table preserves both axes on narrow screens. */
+  .work-scroll > .table-scroll {
+    max-height: 520px;
+    overflow: scroll;
+    scrollbar-gutter: stable;
+  }
+  .project-list,
+  .asset-catalog,
+  .artifact-list,
+  .work-list:not(:empty),
+  .catalog-table-scroll {
+    max-height: min(var(--scroll-viewport-height, 480px), 65dvh);
+  }
+}
+@media (forced-colors: active) {
+  html {
+    scrollbar-color: auto;
+  }
+}

@@ -14,14 +14,14 @@ test("desktop rail preserves navigation, keyboard focus and preference across ro
   await expect(expand).toHaveAttribute("aria-expanded", "false");
   const models = page
     .locator(".sidebar")
-    .getByRole("link", { name: "模型", exact: true });
+    .getByRole("link", { name: "模型与数据", exact: true });
   await models.focus();
   await expect(models.locator(".nav-tooltip")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(models.locator(".nav-tooltip")).not.toBeVisible();
   await expect(models).toBeFocused();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/assets\/model$/);
+  await expect(page).toHaveURL(/\/library$/);
   await expect(models).toHaveAttribute("aria-current", "page");
   await page.reload();
   await expect(expand).toBeVisible();
@@ -57,9 +57,9 @@ test("collapsed desktop preference does not hide mobile labels or leave the desk
   await expect(page.getByRole("button", { name: "展开侧边栏" })).toBeVisible();
   await page
     .locator(".sidebar")
-    .getByRole("link", { name: "中心存储", exact: true })
+    .getByRole("link", { name: "托管平台", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/hub$/);
+  await expect(page).toHaveURL(/\/settings\/sources$/);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

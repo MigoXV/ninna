@@ -169,21 +169,29 @@ function AssetContent({
               <div className="asset-facts">
                 <div>
                   <span>训练样本</span>
-                  <strong>{selected.train_split.count.toLocaleString()}</strong>
+                  <strong>
+                    {selected.train_split?.count?.toLocaleString() ?? "未记录"}
+                  </strong>
                 </div>
                 <div>
                   <span>测试样本</span>
-                  <strong>{selected.test_split.count.toLocaleString()}</strong>
+                  <strong>
+                    {selected.test_split?.count?.toLocaleString() ?? "未记录"}
+                  </strong>
                 </div>
                 <div>
                   <span>图像尺寸</span>
                   <strong>
-                    {selected.metadata.shape?.toString().replaceAll(",", " × ")}
+                    {selected.metadata?.shape
+                      ?.toString()
+                      .replaceAll(",", " × ")}
                   </strong>
                 </div>
                 <div>
                   <span>类别</span>
-                  <strong>{String(selected.metadata.classes)}</strong>
+                  <strong>
+                    {String(selected.metadata?.classes ?? "未记录")}
+                  </strong>
                 </div>
               </div>
               <SectionHeader title="数据版本" />
@@ -196,9 +204,9 @@ function AssetContent({
                 <dd>只读挂载 · 离线读取</dd>
                 <dt>资产格式</dt>
                 <dd>
-                  {selected.metadata.format === "huggingface.DatasetDict"
+                  {selected.metadata?.format === "huggingface.DatasetDict"
                     ? "Hugging Face · DatasetDict / Arrow"
-                    : "MNIST / IDX"}
+                    : String(selected.metadata?.format || "详见加载信息")}
                 </dd>
               </dl>
               <SectionHeader title="文件清单" />
@@ -209,13 +217,23 @@ function AssetContent({
             <>
               <SectionHeader title="网络结构" />
               <div className="architecture-flow">
-                {selected.architecture.description
+                {(
+                  selected.architecture?.description ||
+                  (typeof selected.architecture === "string"
+                    ? selected.architecture
+                    : "详见模型加载描述")
+                )
                   .split(" → ")
                   .map((s: string, i: number) => (
                     <div key={i}>
                       <span>{s}</span>
                       {i <
-                        selected.architecture.description.split(" → ").length -
+                        (
+                          selected.architecture?.description ||
+                          (typeof selected.architecture === "string"
+                            ? selected.architecture
+                            : "详见模型加载描述")
+                        ).split(" → ").length -
                           1 && <ArrowRight size={14} />}
                     </div>
                   ))}
@@ -223,7 +241,9 @@ function AssetContent({
               <div className="asset-facts">
                 <div>
                   <span>参数量</span>
-                  <strong>{selected.parameter_count.toLocaleString()}</strong>
+                  <strong>
+                    {selected.parameter_count?.toLocaleString() ?? "未记录"}
+                  </strong>
                 </div>
                 <div>
                   <span>初始化</span>
@@ -236,7 +256,7 @@ function AssetContent({
                 <div>
                   <span>资产格式</span>
                   <strong>
-                    {selected.metadata.format === "huggingface.PreTrainedModel"
+                    {selected.metadata?.format === "huggingface.PreTrainedModel"
                       ? "HF · Safetensors"
                       : "PyTorch"}
                   </strong>
@@ -254,7 +274,10 @@ function AssetContent({
               <Json value={selected} />
             </>
           )}
-          {kind === "recipe" && (
+          {kind === "recipe" && selected.framework && (
+            <Json value={selected.config} />
+          )}
+          {kind === "recipe" && !selected.framework && (
             <>
               <div className="asset-facts">
                 <div>
@@ -399,7 +422,13 @@ function AssetContent({
             </label>
           </div>
           {rows.length ? (
-            <div className="asset-catalog" data-asset-kind={kind}>
+            <div
+              className="asset-catalog"
+              tabIndex={0}
+              role="region"
+              aria-label="资产目录"
+              data-asset-kind={kind}
+            >
               {rows.map((a) => (
                 <button
                   className="asset-catalog-row"
@@ -418,11 +447,13 @@ function AssetContent({
                     </strong>
                     <p>
                       {kind === "dataset"
-                        ? `${a.train_split.count.toLocaleString()} train / ${a.test_split.count.toLocaleString()} test · 28 × 28`
+                        ? `${a.train_split?.count?.toLocaleString() ?? "未记录"} train / ${a.test_split?.count?.toLocaleString() ?? "未记录"} test`
                         : kind === "model"
-                          ? `${a.parameter_count.toLocaleString()} parameters · ${a.initial_checkpoint ? "checkpoint initialization" : "seed " + a.initialization.seed}`
+                          ? `${a.parameter_count?.toLocaleString() ?? "未记录"} parameters · ${a.initial_checkpoint ? "checkpoint initialization" : a.initialization?.source || "配置初始化"}`
                           : kind === "recipe"
-                            ? `${a.optimizer.name} · lr ${a.optimizer.params.lr} · ${a.epochs} epochs`
+                            ? a.framework
+                              ? `${a.task} · ${a.operation || "train"}`
+                              : `${a.optimizer?.name} · lr ${a.optimizer?.params?.lr} · ${a.epochs} epochs`
                             : kind === "runtime"
                               ? `Python ${a.metadata.python} · PyTorch ${a.metadata.torch} · CPU`
                               : "train.py · 可编辑代码与不可变快照"}

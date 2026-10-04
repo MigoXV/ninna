@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("theme follows the locked palette, survives reload, and synchronizes desktop/mobile controls", async ({
   page,
 }) => {
-  await page.goto("/projects/legacy");
+  await page.goto("/settings/appearance");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "vallum");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
@@ -14,14 +14,6 @@ test("theme follows the locked palette, survives reload, and synchronizes deskto
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
     "rgb(8, 10, 13)",
-  );
-  await expect(page.locator(".button.primary").first()).toHaveCSS(
-    "color",
-    "rgb(8, 10, 13)",
-  );
-  await expect(page.locator(".button.primary").first()).toHaveCSS(
-    "background-color",
-    "rgb(159, 196, 226)",
   );
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "abyssus");
@@ -43,29 +35,16 @@ test("theme follows the locked palette, survives reload, and synchronizes deskto
   );
 });
 
-test("theme switches retain draft fields, selected runs and scroll positions", async ({
+test("theme controls live in settings and return to the originating page", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/runs/new?project=legacy");
-  await expect(page.locator("#recipe option")).not.toHaveCount(1);
-  await page.locator("#threads").fill("6");
-  const recipe = await page.locator("#recipe").inputValue();
+  await page.goto("/work/new?project=legacy");
+  await expect(page.getByRole("button", { name: "苍渊主题" })).toHaveCount(0);
+  await page.getByRole("link", { name: "设置", exact: true }).click();
   await page.getByRole("button", { name: "苍渊主题" }).click();
-  await expect(page.locator("#threads")).toHaveValue("6");
-  await expect(page.locator("#recipe")).toHaveValue(recipe);
-  await page.goto("/projects/legacy");
-  await expect(page.locator(".runs-table tbody tr")).toHaveCount(10);
-  const check = page.locator('.runs-table input[type="checkbox"]').first();
-  await check.check();
-  const region = page.getByRole("region", { name: "训练运行记录" });
-  await region.evaluate((el) => {
-    el.scrollTop = 100;
-  });
-  const scroll = await region.evaluate((el) => el.scrollTop);
-  await page.getByRole("button", { name: "白垣主题" }).click();
-  await expect(check).toBeChecked();
-  expect(await region.evaluate((el) => el.scrollTop)).toBe(scroll);
+  await page.getByRole("link", { name: "返回工作空间" }).click();
+  await expect(page).toHaveURL(/work\/new\?project=legacy/);
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "abyssus");
 });
 
 test("blocked preference storage falls back to a usable Vallum theme", async ({
@@ -78,7 +57,7 @@ test("blocked preference storage falls back to a usable Vallum theme", async ({
       },
     });
   });
-  await page.goto("/projects");
+  await page.goto("/settings/appearance");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "vallum");
   await page.getByRole("button", { name: "苍渊主题" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "abyssus");
@@ -92,7 +71,7 @@ test("invalid stored theme falls back before the first paint", async ({
   await page.addInitScript(() =>
     localStorage.setItem("ninna.theme", "unknown"),
   );
-  await page.goto("/projects");
+  await page.goto("/settings/appearance");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "vallum");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
@@ -116,7 +95,8 @@ for (const theme of ["vallum", "abyssus"] as const) {
         "/assets/dataset",
         "/assets/image",
         "/hub",
-        "/runs/run-b196f3593b05",
+        "/settings/agent",
+        "/settings/appearance",
       ]) {
         await page.goto(path);
         await expect(page.locator(".loading")).toHaveCount(0);

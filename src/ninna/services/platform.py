@@ -54,6 +54,9 @@ class Platform:
         from ninna.services.frameworks import FrameworkService
 
         self.frameworks = FrameworkService(self)
+        from ninna.work.service import WorkService
+
+        self.work = WorkService(self)
 
     @property
     def docker(self):
@@ -77,15 +80,21 @@ class Platform:
         self.hub.recover()
         self.images.recover()
         self.tracking.start()
+        self.work.start()
 
     def close(self):
+        self.work.close()
         self.images.close()
         self.tracking.close()
         self.hub.close()
         self.stop_event.set()
         if self.thread:
             self.thread.join(timeout=35)
-        if self.worker_lock and (not self.thread or not self.thread.is_alive()):
+        if (
+            self.worker_lock
+            and (not self.thread or not self.thread.is_alive())
+            and (not self.work.worker or not self.work.worker.is_alive())
+        ):
             fcntl.flock(self.worker_lock, fcntl.LOCK_UN)
             self.worker_lock.close()
             self.worker_lock = None
@@ -178,7 +187,7 @@ class Platform:
             raise ValueError("Snapshot does not belong to requested workspace")
         return workspace
 
-    def create_run(self, request: CreateRun):
+    def create_run(self, request: CreateRun, run_id=None):
         if request.execution_spec.resources.device != "cpu":
             raise ValueError("Use the framework task API for GPU training")
         with self.operation_lock:
@@ -198,7 +207,7 @@ class Platform:
             execution["workspace"]["snapshot"] = workspace["snapshot"]
             if request.parent_run_id:
                 self.repo.get("runs", request.parent_run_id)
-            run_id = "run-" + uuid.uuid4().hex[:12]
+            run_id = run_id or "run-" + uuid.uuid4().hex[:12]
             run = {
                 "id": run_id,
                 "run_id": run_id,
@@ -224,8 +233,8 @@ class Platform:
                 "runtime_validation": runtime_evidence,
             }
             output = self.output(run_id)
-            output.mkdir(parents=True)
-            (output / "config").mkdir()
+            output.mkdir(parents=True, exist_ok=True)
+            (output / "config").mkdir(exist_ok=True)
             write_json(output / "config" / "run.json", run)
             for name in ["stdout.log", "stderr.log"]:
                 (output / name).touch()

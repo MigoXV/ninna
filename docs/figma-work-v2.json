@@ -1,0 +1,115 @@
+{
+  "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
+  "version": "work-v2",
+  "themes": [
+    "vallum",
+    "abyssus"
+  ],
+  "screens": [
+    {
+      "name": "23 · 工作任务",
+      "source": "work-items",
+      "path": "/projects/work-v2-acceptance",
+      "width": 1440,
+      "height": 900,
+      "theme": "vallum",
+      "page": "189:3958",
+      "frame": "189:3959",
+      "slots": {},
+      "instances": 9
+    },
+    {
+      "name": "24 · 新建工作任务",
+      "source": "new-work",
+      "path": "/work/new?project=work-v2-acceptance",
+      "width": 1440,
+      "height": 1000,
+      "theme": "vallum",
+      "page": "189:4107",
+      "frame": "189:4108",
+      "slots": {}
+    },
+    {
+      "name": "25 · 工作详情",
+      "source": "work-detail",
+      "path": "/work/work_item-6a84d12b2af64a97",
+      "width": 1440,
+      "height": 2100,
+      "theme": "vallum",
+      "page": "189:4262",
+      "frame": "189:4263",
+      "slots": {
+        "region-1": "189:4263"
+      }
+    },
+    {
+      "name": "26 · 模型与数据",
+      "source": "library",
+      "path": "/library",
+      "width": 1440,
+      "height": 1100,
+      "theme": "vallum",
+      "page": "189:4531",
+      "frame": "189:4532",
+      "slots": {
+        "region-1": "189:4532",
+        "region-2": "189:4610"
+      }
+    },
+    {
+      "name": "27 · 资产版本",
+      "source": "asset-version",
+      "path": "/library/asset-1e776a236bc04815",
+      "width": 1440,
+      "height": 1300,
+      "theme": "vallum",
+      "page": "189:4816",
+      "frame": "189:4817",
+      "slots": {}
+    },
+    {
+      "name": "28 · 训练环境",
+      "source": "environments",
+      "path": "/environments",
+      "width": 1440,
+      "height": 1500,
+      "theme": "vallum",
+      "page": "189:5004",
+      "frame": "189:5005",
+      "slots": {}
+    },
+    {
+      "name": "29 · 环境详情",
+      "source": "environment",
+      "path": "/environments/environment-d07d7885db0d4043",
+      "width": 1440,
+      "height": 1300,
+      "theme": "vallum",
+      "page": "189:5247",
+      "frame": "189:5248",
+      "slots": {}
+    },
+    {
+      "name": "30 · 托管平台",
+      "source": "sources",
+      "path": "/settings/sources",
+      "width": 1440,
+      "height": 1100,
+      "theme": "vallum",
+      "page": "189:5454",
+      "frame": "189:5455",
+      "slots": {}
+    },
+    {
+      "name": "31 · Codex 接入",
+      "source": "agent",
+      "path": "/settings/agent",
+      "width": 1440,
+      "height": 1100,
+      "theme": "vallum",
+      "page": "189:5611",
+      "frame": "189:5612",
+      "slots": {}
+    }
+  ]
+}

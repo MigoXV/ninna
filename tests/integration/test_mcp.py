@@ -16,7 +16,7 @@ from mcp.client.streamable_http import streamable_http_client
 
 from tests.support.training import default_request
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, pytest.mark.legacy_api]
 API = os.environ.get("NINNA_API_URL", "http://127.0.0.1:8000").rstrip("/")
 
 

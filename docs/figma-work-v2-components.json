@@ -1,0 +1,209 @@
+{
+  "fileKey": "ab3EG1a9aEHNyNZRJCzmD4",
+  "componentPage": "33:322",
+  "components": [
+    {
+      "key": "e9d03c970ec6",
+      "id": "157:2742",
+      "family": "Button",
+      "label": "收起侧边栏",
+      "state": "Default"
+    },
+    {
+      "key": "01fb43a7927d",
+      "id": "157:2747",
+      "family": "Navigation",
+      "label": "项目",
+      "state": "Selected"
+    },
+    {
+      "key": "61251fcabd4b",
+      "id": "189:38",
+      "family": "Navigation",
+      "label": "模型与数据",
+      "state": "Default"
+    },
+    {
+      "key": "1c0479bf1150",
+      "id": "189:45",
+      "family": "Navigation",
+      "label": "训练环境",
+      "state": "Default"
+    },
+    {
+      "key": "324e3e5a6873",
+      "id": "189:54",
+      "family": "Navigation",
+      "label": "托管平台",
+      "state": "Default"
+    },
+    {
+      "key": "e531cfa0ef77",
+      "id": "189:62",
+      "family": "Navigation",
+      "label": "Codex 接入",
+      "state": "Default"
+    },
+    {
+      "key": "76f1dbd3a44c",
+      "id": "157:2815",
+      "family": "Button",
+      "label": "白垣主题",
+      "state": "Selected"
+    },
+    {
+      "key": "02bcc1b773e3",
+      "id": "157:2830",
+      "family": "Button",
+      "label": "苍渊主题",
+      "state": "Default"
+    },
+    {
+      "key": "ec3c0783b7c7",
+      "id": "157:2837",
+      "family": "Theme",
+      "label": "界面主题",
+      "state": "Default"
+    },
+    {
+      "key": "06d18041e785",
+      "id": "157:2909",
+      "family": "Navigation",
+      "label": "项目",
+      "state": "Default"
+    },
+    {
+      "key": "ed31e4a752ee",
+      "id": "189:69",
+      "family": "Button",
+      "label": "创建工作任务",
+      "state": "Default"
+    },
+    {
+      "key": "81de7dd1e97c",
+      "id": "189:71",
+      "family": "Button",
+      "label": "标记工作完成",
+      "state": "Default"
+    },
+    {
+      "key": "f775f159f696",
+      "id": "189:73",
+      "family": "Button",
+      "label": "检查并固定运行方案",
+      "state": "Default"
+    },
+    {
+      "key": "275615948e0a",
+      "id": "189:75",
+      "family": "Button",
+      "label": "开始运行",
+      "state": "Disabled"
+    },
+    {
+      "key": "27cfa91cc911",
+      "id": "189:77",
+      "family": "Button",
+      "label": "日志",
+      "state": "Default"
+    },
+    {
+      "key": "f7132d65e4e2",
+      "id": "189:79",
+      "family": "Navigation",
+      "label": "模型与数据",
+      "state": "Selected"
+    },
+    {
+      "key": "b70a2c6eb458",
+      "id": "189:86",
+      "family": "Button",
+      "label": "校验本地文件",
+      "state": "Default"
+    },
+    {
+      "key": "d5123bd6f53e",
+      "id": "189:88",
+      "family": "Button",
+      "label": "保存加载信息",
+      "state": "Default"
+    },
+    {
+      "key": "aa8dafdda033",
+      "id": "189:90",
+      "family": "Button",
+      "label": "发布为私有仓库",
+      "state": "Default"
+    },
+    {
+      "key": "0afb9f5e7d0a",
+      "id": "189:92",
+      "family": "Navigation",
+      "label": "训练环境",
+      "state": "Selected"
+    },
+    {
+      "key": "8911a11a854e",
+      "id": "189:101",
+      "family": "Button",
+      "label": "创建环境草稿",
+      "state": "Default"
+    },
+    {
+      "key": "fc3175e7763d",
+      "id": "189:103",
+      "family": "Button",
+      "label": "准备环境",
+      "state": "Disabled"
+    },
+    {
+      "key": "797cfe19cc60",
+      "id": "189:105",
+      "family": "Button",
+      "label": "验证并发布新版本",
+      "state": "Default"
+    },
+    {
+      "key": "a2e38602198b",
+      "id": "189:107",
+      "family": "Navigation",
+      "label": "托管平台",
+      "state": "Selected"
+    },
+    {
+      "key": "cbf87eddf516",
+      "id": "189:115",
+      "family": "Button",
+      "label": "检查连接",
+      "state": "Default"
+    },
+    {
+      "key": "88a99c6662f4",
+      "id": "189:117",
+      "family": "Button",
+      "label": "启用",
+      "state": "Default"
+    },
+    {
+      "key": "41deb4b25137",
+      "id": "189:119",
+      "family": "Button",
+      "label": "添加平台",
+      "state": "Default"
+    },
+    {
+      "key": "8b33c0e61c2f",
+      "id": "189:121",
+      "family": "Navigation",
+      "label": "Codex 接入",
+      "state": "Selected"
+    },
+    {
+      "key": "0ccc0f95bdef",
+      "id": "189:128",
+      "family": "Button",
+      "label": "检查迁移",
+      "state": "Default"
+    }
+  ]
+}

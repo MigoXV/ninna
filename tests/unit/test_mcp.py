@@ -56,15 +56,15 @@ def test_mcp_http_catalog_resource_and_asset_roundtrip(tmp_path):
                     assert not project.isError
                     projects = await session.call_tool("list_projects", {})
                     assert projects.structuredContent["projects"][0]["id"] == "mcp-project"
-                    assert "project_id" in tools["create_run"].inputSchema["required"]
+                    assert "create_run" not in tools and "create_task" not in tools
                     assert tools["describe_asset"].annotations.readOnlyHint
-                    assert not tools["create_run"].annotations.idempotentHint
+                    assert tools["submit_run"].annotations.idempotentHint
                     assert tools["cancel_run"].annotations.destructiveHint
-                    assert {"training_spec", "execution_spec"} <= set(
-                        tools["create_run"].inputSchema["properties"]
-                    )
+                    capabilities = await session.call_tool("get_capabilities", {})
+                    assert capabilities.structuredContent["api_version"] == 2
+                    assert "execute_task_command" in tools
                     guide = await session.read_resource("ninna://guide")
-                    assert "TrainingSpec" in guide.contents[0].text
+                    assert "Ninna" in guide.contents[0].text
                     asset = {
                         "name": "adam",
                         "version": "v1",
@@ -115,14 +115,15 @@ def test_invalid_resources_never_reach_api_and_transport_errors_are_actionable()
                 transport=httpx.MockTransport(handler), base_url="http://localhost"
             )
         )
-        from tests.support.training import default_request
-
-        request = default_request()
-        request["execution_spec"]["resources"]["device"] = "cuda"
-        import pytest
-
+        request = {
+            "request_id": "bad",
+            "work_item_id": "work",
+            "task": "train",
+            "recipe": {"name": "r", "version": "v1"},
+            "resources": {"device": "cuda"},
+        }
         with pytest.raises(Exception, match="GPU UUID"):
-            await server.call_tool("create_run", request)
+            await server.call_tool("prepare_run_plan", {"request": request})
         assert not calls
         with pytest.raises(Exception, match="outcome is unknown") as error:
             await server.call_tool("platform_health", {})
