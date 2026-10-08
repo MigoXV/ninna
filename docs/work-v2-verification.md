@@ -24,7 +24,6 @@
 | 恢复与隔离 | 工作区停止/重启文件保持；新任务不继承另一任务的私有文件；平台重启后恢复原目标及 3 个运行记录 |
 | Hugging Face | 实际下载 `hf-internal-testing/tiny-random-bert`，固定 commit，无 Ninna 专用清单要求 |
 | 模型交付 | MNIST 真实导出、晋升进入新资产目录、重新加载推理全部成功 |
-| Figma | 9 个新页面、23 个新增组件；一页一个原点主画板，复用锁定变量；双主题 PNG 和打印稿已导出 |
 
 逐次 Run 的容器 ID、退出码、参数 hash、指标和产物数量见 [机器可读证据](work-v2-verification.json)。本地完整日志位于 `outputs/work-v2-validation`。默认测试跳过集成检查不代表集成通过；上表的实际训练与 MCP 结果来自分别显式开启的验收命令。
 
@@ -46,12 +45,6 @@ NINNA_INTEGRATION=1 NINNA_WEB_URL=http://127.0.0.1:8021 \
 ```
 
 框架矩阵还需已有 `outputs/framework-integration/platform` 中的历史验证定义；脚本只读取它们，在新实例中创建新工作任务与 Run。生产启用方法见 [迁移和 Agent 接入](agent-integration.md)。
-
-## 设计交付
-
-[Figma 工作任务页面](https://www.figma.com/design/ab3EG1a9aEHNyNZRJCzmD4?node-id=189-3959)、[页面索引](figma-work-v2.json)、[组件映射](figma-work-v2-components.json)。旧索引保留历史页面，本次新工作流使用独立索引。
-
-[白垣打印稿](design/work-v2-vallum-review.pdf)、[苍渊打印稿](design/work-v2-abyssus-review.pdf)，各 19 页。逐页 Figma PNG 分别位于 `outputs/work-v2-validation/figma-png` 和 `figma-abyssus`，各 9 张；浏览器双主题截图位于 `outputs/work-v2-validation/ui`。
 
 ## 验证边界
 

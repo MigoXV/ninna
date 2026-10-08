@@ -71,7 +71,7 @@ MNIST 的导出链路源于表内首次成功训练；随后另建训练与恢�
 | richiamo | 33 passed |
 | serenata | 18 passed |
 
-Python 测试使用对应项目的 `poetry run pytest tests`（Ninna 为 `tests/unit`），不扫描框架忽略目录中的旧工作区。合计 457 项通过，日志保存在 `outputs/framework-integration/`。前端构建通过；Playwright 检查真实资产页面、任务表单、重训预填、任务指标、1440/375 像素布局与 axe 可访问性。训练框架目录、创建任务、运行详情已同步为 Figma 原生可编辑页面，目录包含完整六框架；索引见 `docs/figma-pages.json`。
+Python 测试使用对应项目的 `poetry run pytest tests`（Ninna 为 `tests/unit`），不扫描框架忽略目录中的旧工作区。合计 457 项通过，日志保存在 `outputs/framework-integration/`。前端构建通过；Playwright 检查真实资产页面、任务表单、重训预填、任务指标、1440/375 像素布局与 axe 可访问性。
 
 ## 边界与后续使用
 

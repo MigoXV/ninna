@@ -160,7 +160,7 @@ NINNA_INTEGRATION=1 NINNA_API_URL=http://127.0.0.1:8021 \
 
 界面沿用 MANAS 和苍渊·白垣锁定 Token，默认白垣 `#F8F7F2`，可切换苍渊 `#080A0D`。主入口为项目、模型与数据、训练环境、托管平台和 Codex 接入。工程资产详情收在高级环境管理中。
 
-设计同步流程见 [UI 与 Figma 同步](docs/design/sync.md)，版本记录见 [UI 发布记录](docs/ui-releases.md)。页面、组件、两主题 PNG 和打印稿须在发布 tag 前同步完成。
+当前界面约定见 [UI 设计](docs/ui-design.md)，同步流程见 [UI 与 Figma 同步](docs/design/sync.md)。页面、组件、两主题 PNG 和打印稿须在发布 tag 前同步完成；仓库只维护当前索引和最新打印稿。
 
 ## 从远端发现数据与训练契约
 

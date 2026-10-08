@@ -8,7 +8,7 @@ import { prepareScene, squash, nativeRuntime } from "./figma-native.mjs";
 import { partitionTree } from "./partition.mjs";
 const directory = process.argv[2];
 if (!directory) throw new Error("Pass the browser evidence directory");
-const manifest = JSON.parse(await fs.readFile(process.argv[3] || "docs/figma-pages.json", "utf8"));
+const manifest = JSON.parse(await fs.readFile(process.argv[3] || "docs/figma-work-v2.json", "utf8"));
 const scenes = [],
   definitions = new Map();
 for (const screen of manifest.screens) {

@@ -7,109 +7,320 @@
   ],
   "screens": [
     {
-      "name": "23 · 工作任务",
+      "name": "01 · 项目",
+      "source": "projects",
+      "path": "/projects",
+      "width": 1440,
+      "height": 900,
+      "theme": "vallum",
+      "page": "44:2591",
+      "frame": "120:318",
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 01 · 项目",
+          "page": "44:2591",
+          "frame": "120:318",
+          "pageName": "白垣 · 01 · 项目与任务",
+          "section": "228:112"
+        },
+        "abyssus": {
+          "name": "苍渊 · 01 · 项目",
+          "page": "223:1285",
+          "frame": "223:1286",
+          "pageName": "苍渊 · 01 · 项目与任务",
+          "section": "228:413"
+        }
+      },
+      "section": "228:112"
+    },
+    {
+      "name": "02 · 工作任务",
       "source": "work-items",
       "path": "/projects/work-v2-acceptance",
       "width": 1440,
       "height": 900,
       "theme": "vallum",
-      "page": "189:3958",
+      "page": "44:2591",
       "frame": "189:3959",
       "slots": {},
-      "instances": 9
+      "instances": 9,
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 02 · 工作任务",
+          "page": "44:2591",
+          "frame": "189:3959",
+          "pageName": "白垣 · 01 · 项目与任务",
+          "section": "228:1517"
+        },
+        "abyssus": {
+          "name": "苍渊 · 02 · 工作任务",
+          "page": "223:1285",
+          "frame": "223:222",
+          "pageName": "苍渊 · 01 · 项目与任务",
+          "section": "228:1524"
+        }
+      },
+      "section": "228:1517"
     },
     {
-      "name": "24 · 新建工作任务",
+      "name": "03 · 新建工作任务",
       "source": "new-work",
       "path": "/work/new?project=work-v2-acceptance",
       "width": 1440,
       "height": 1000,
       "theme": "vallum",
-      "page": "189:4107",
+      "page": "44:2591",
       "frame": "189:4108",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 03 · 新建工作任务",
+          "page": "44:2591",
+          "frame": "189:4108",
+          "pageName": "白垣 · 01 · 项目与任务",
+          "section": "228:1518"
+        },
+        "abyssus": {
+          "name": "苍渊 · 03 · 新建工作任务",
+          "page": "223:1285",
+          "frame": "223:371",
+          "pageName": "苍渊 · 01 · 项目与任务",
+          "section": "228:1525"
+        }
+      },
+      "section": "228:1518"
     },
     {
-      "name": "25 · 工作详情",
+      "name": "04 · 工作详情",
       "source": "work-detail",
       "path": "/work/work_item-6a84d12b2af64a97",
       "width": 1440,
       "height": 2100,
       "theme": "vallum",
-      "page": "189:4262",
+      "page": "44:2591",
       "frame": "189:4263",
       "slots": {
         "region-1": "189:4263"
-      }
+      },
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 04 · 工作详情",
+          "page": "44:2591",
+          "frame": "189:4263",
+          "pageName": "白垣 · 01 · 项目与任务",
+          "section": "228:1519"
+        },
+        "abyssus": {
+          "name": "苍渊 · 04 · 工作详情",
+          "page": "223:1285",
+          "frame": "223:527",
+          "pageName": "苍渊 · 01 · 项目与任务",
+          "section": "228:1526"
+        }
+      },
+      "section": "228:1519"
     },
     {
-      "name": "26 · 模型与数据",
+      "name": "05 · 模型与数据",
       "source": "library",
       "path": "/library",
       "width": 1440,
       "height": 1100,
       "theme": "vallum",
-      "page": "189:4531",
+      "page": "44:2579",
       "frame": "189:4532",
       "slots": {
         "region-1": "189:4532",
         "region-2": "189:4610"
-      }
+      },
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 05 · 模型与数据",
+          "page": "44:2579",
+          "frame": "189:4532",
+          "pageName": "白垣 · 02 · 模型与数据",
+          "section": "228:172"
+        },
+        "abyssus": {
+          "name": "苍渊 · 05 · 模型与数据",
+          "page": "223:3699",
+          "frame": "223:3700",
+          "pageName": "苍渊 · 02 · 模型与数据",
+          "section": "228:473"
+        }
+      },
+      "section": "228:172"
     },
     {
-      "name": "27 · 资产版本",
+      "name": "06 · 资产版本",
       "source": "asset-version",
       "path": "/library/asset-1e776a236bc04815",
       "width": 1440,
       "height": 1300,
       "theme": "vallum",
-      "page": "189:4816",
+      "page": "44:2579",
       "frame": "189:4817",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 06 · 资产版本",
+          "page": "44:2579",
+          "frame": "189:4817",
+          "pageName": "白垣 · 02 · 模型与数据",
+          "section": "228:1522"
+        },
+        "abyssus": {
+          "name": "苍渊 · 06 · 资产版本",
+          "page": "223:3699",
+          "frame": "223:3990",
+          "pageName": "苍渊 · 02 · 模型与数据",
+          "section": "228:1527"
+        }
+      },
+      "section": "228:1522"
     },
     {
-      "name": "28 · 训练环境",
+      "name": "07 · 训练环境",
       "source": "environments",
       "path": "/environments",
       "width": 1440,
       "height": 1500,
       "theme": "vallum",
-      "page": "189:5004",
+      "page": "44:2585",
       "frame": "189:5005",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 07 · 训练环境",
+          "page": "44:2585",
+          "frame": "189:5005",
+          "pageName": "白垣 · 03 · 训练环境",
+          "section": "228:320"
+        },
+        "abyssus": {
+          "name": "苍渊 · 07 · 训练环境",
+          "page": "223:5712",
+          "frame": "223:5713",
+          "pageName": "苍渊 · 03 · 训练环境",
+          "section": "228:537"
+        }
+      },
+      "section": "228:320"
     },
     {
-      "name": "29 · 环境详情",
+      "name": "08 · 环境详情",
       "source": "environment",
       "path": "/environments/environment-d07d7885db0d4043",
       "width": 1440,
       "height": 1300,
       "theme": "vallum",
-      "page": "189:5247",
+      "page": "44:2585",
       "frame": "189:5248",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 08 · 环境详情",
+          "page": "44:2585",
+          "frame": "189:5248",
+          "pageName": "白垣 · 03 · 训练环境",
+          "section": "228:1521"
+        },
+        "abyssus": {
+          "name": "苍渊 · 08 · 环境详情",
+          "page": "223:5712",
+          "frame": "223:5959",
+          "pageName": "苍渊 · 03 · 训练环境",
+          "section": "228:1528"
+        }
+      },
+      "section": "228:1521"
     },
     {
-      "name": "30 · 托管平台",
+      "name": "09 · 托管平台",
       "source": "sources",
       "path": "/settings/sources",
       "width": 1440,
       "height": 1100,
       "theme": "vallum",
-      "page": "189:5454",
+      "page": "199:442",
       "frame": "189:5455",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 09 · 托管平台",
+          "page": "199:442",
+          "frame": "189:5455",
+          "pageName": "白垣 · 04 · 设置",
+          "section": "228:1523"
+        },
+        "abyssus": {
+          "name": "苍渊 · 09 · 托管平台",
+          "page": "223:6385",
+          "frame": "223:6550",
+          "pageName": "苍渊 · 04 · 设置",
+          "section": "228:1529"
+        }
+      },
+      "section": "228:1523"
     },
     {
-      "name": "31 · Codex 接入",
+      "name": "10 · Codex 接入",
       "source": "agent",
       "path": "/settings/agent",
       "width": 1440,
       "height": 1100,
       "theme": "vallum",
-      "page": "189:5611",
+      "page": "199:442",
       "frame": "189:5612",
-      "slots": {}
+      "slots": {},
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 10 · Codex 接入",
+          "page": "199:442",
+          "frame": "189:5612",
+          "pageName": "白垣 · 04 · 设置",
+          "section": "228:1520"
+        },
+        "abyssus": {
+          "name": "苍渊 · 10 · Codex 接入",
+          "page": "223:6385",
+          "frame": "223:6708",
+          "pageName": "苍渊 · 04 · 设置",
+          "section": "228:1530"
+        }
+      },
+      "section": "228:1520"
+    },
+    {
+      "name": "11 · 设置 · 外观",
+      "source": "appearance",
+      "path": "/settings/appearance",
+      "width": 1440,
+      "height": 987,
+      "theme": "vallum",
+      "page": "199:442",
+      "frame": "199:443",
+      "themeVariants": {
+        "vallum": {
+          "name": "白垣 · 11 · 设置 · 外观",
+          "page": "199:442",
+          "frame": "199:443",
+          "pageName": "白垣 · 04 · 设置",
+          "section": "228:256"
+        },
+        "abyssus": {
+          "name": "苍渊 · 11 · 设置 · 外观",
+          "page": "223:6385",
+          "frame": "223:6386",
+          "pageName": "苍渊 · 04 · 设置",
+          "section": "228:621"
+        }
+      },
+      "section": "228:256"
     }
-  ]
+  ],
+  "defaultTheme": "vallum",
+  "tokenSource": "src/web/src/tokens.dtcg.json",
+  "pageOrder": "docs/design/figma-page-order.json",
+  "figmaLayoutDescription": "两主题独立，Page 按业务分组"
 }

@@ -516,13 +516,5 @@
       "parameter_evidence": {},
       "artifact_count": 9
     }
-  },
-  "design": {
-    "file_key": "ab3EG1a9aEHNyNZRJCzmD4",
-    "pages": 9,
-    "components_added": 23,
-    "component_mapping": "docs/figma-work-v2-components.json",
-    "png_per_theme": 9,
-    "pdf_pages_per_theme": 19
   }
 }

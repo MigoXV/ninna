@@ -12,12 +12,13 @@ from PIL import Image, ImageDraw, ImageFont
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--images", type=Path, default=Path("outputs/ui-evidence/figma-print"))
+    parser.add_argument("--images", type=Path, default=None)
     parser.add_argument("--theme", choices=["vallum", "abyssus"], default="vallum")
-    parser.add_argument("--manifest", type=Path, default=Path("docs/figma-pages.json"))
+    parser.add_argument("--manifest", type=Path, default=Path("docs/figma-work-v2.json"))
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--font", default="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
     args = parser.parse_args()
+    args.images = args.images or Path("outputs/figma-theme-organization") / args.theme
     manifest = json.loads(args.manifest.read_text())
     version = manifest["version"]
     theme_label = "白垣 · VALLUM" if args.theme == "vallum" else "苍渊 · ABYSSUS"
@@ -94,7 +95,8 @@ def main() -> None:
     draw.text((margin, 100), f"Ninna / {theme_label} / 界面审阅稿", font=title_font, fill=ink)
     draw.text(
         (margin, 215),
-        f"{version} · A3 横向 · 一个界面对应一个 Figma Page",
+        f"{version} · A3 横向 · "
+        + manifest.get("figmaLayoutDescription", "两主题独立，按业务合并 Page"),
         font=normal,
         fill=muted,
     )
