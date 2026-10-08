@@ -9,6 +9,7 @@
 - Dataset/Model/Recipe 与 Runtime/Workspace 独立。真实训练只在平台创建的 Docker 容器执行。
 - 终态 Run 和注册资产版本不可修改；重训创建新 Run。Workspace 修改生成新快照。
 - 维护 `agent/guide.md`、Skill、工具描述和资产说明，让 Agent 能找到前提、输入、执行副作用和结果证据。
+- 开发仓库只维护当前训练入口与契约，不保留废弃流程或实验专用验收材料。Agent 从 MCP 读取平台资产、框架 Skill 和配方，不依赖客户端检出 Ninna 或训练框架仓库。
 - README 使用中文。新版本分批提交并打 annotated tag；不移动已有 tag。
 - UI 遵循 MANAS 与苍渊·白垣锁定 Token；默认白垣 `#F8F7F2`，可切换苍渊 `#080A0D`。Figma 一界面一 Page，规范、组件分开，Page 内仅一个原点主画板。
 - UI 修改应及时同步 Figma 的界面和组件；发布 tag 前更新页面索引、PNG 与打印稿。

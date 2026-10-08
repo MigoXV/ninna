@@ -20,6 +20,8 @@ codex mcp add ninna -- poetry --directory /安装路径/ninna run ninna mcp --ur
 
 本仓库不包含 Ninna Skill。MCP 地址以实际客户端配置为准；连接后读取 `ninna://guide` 和 `get_capabilities`。
 
+客户端无需检出 Ninna 或训练框架仓库。框架任务、操作、输入与 Skill 从 `list_assets(kind="framework")` / `describe_asset` 读取；模型、数据和 Recipe 使用平台上的精确版本。已发布 Environment 保存依赖与初始代码，WorkItem 保存远端工作区，客户端通过 MCP 完成发现、编辑、提交和恢复。
+
 ## 用户示例
 
 > 通过 Ninna MCP，在我的语音项目中，用内网数据集微调这个模型，先做一次小规模验证。复用已准备的环境，报告实际指标和模型产物。
@@ -46,6 +48,8 @@ codex mcp add ninna -- poetry --directory /安装路径/ninna run ninna mcp --ur
 已有固定配方和就绪 WorkItem 时，最短执行序列是 `start_run` → `get_job` 获得 run_id → `get_run` 等待终态并核对证据。start_run 保留与手动方案完全相同的快照、输入校验和不可变 Run，检查失败不会提交训练；同请求重试返回同一个 Job。下载、成果发布仍为显式操作。
 
 ## 不共享文件系统
+
+发现数据时先调用 `list_asset_revisions(kind="dataset")` 查看已有副本，再用 `list_sources` 找到 HF 兼容来源，逐个调用 `search_source_assets(source_id, kind="dataset", query, offset, limit)`，跟随 `next_offset` 读取分页。数据搜索必须显式指定 kind；工具默认搜索 model。搜索结果不证明数据可训练，需核对数据卡、字段、标签质量、划分、许可与框架加载契约。其他网站的公开资源可先查询官方说明，再用稳定 HTTP(S) 文件地址导入。
 
 Codex 通过 MCP 编辑任务工作区并执行命令。传入的 local_path 指 **Ninna 主机** 路径；若文件在 Codex 机器上，使用 CLI：
 

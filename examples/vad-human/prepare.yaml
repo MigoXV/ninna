@@ -1,3 +1,0 @@
-transform: ava-speech-human-v1
-source_path: '{dataset}'
-output_dir: '{output}/dataset'

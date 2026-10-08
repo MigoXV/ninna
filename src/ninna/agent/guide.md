@@ -2,6 +2,8 @@
 
 Ninna API v2 提供资产、可复用环境、工作区和真实 Docker 执行。Codex 是工作入口；平台不托管模型对话。先调用 `get_capabilities`，再 `list_projects`，所有新工作必须属于项目。
 
+客户端无需检出 Ninna 或训练框架仓库。当前能力由 MCP 工具 schema、平台资产详情和框架 Skill 提供；环境与任务源码在 Ninna 侧。使用注册配方和资产版本提交训练，不把客户端示例脚本或历史实验报告作为执行前提。未连接平台时明确说明无法查询当前库存与运行状态。
+
 ## 主流程
 
 1. `list_work_items(project_id)` 找到原工作，`get_work_context` 恢复目标、约束、方案、Job、Run 和下一步。没有工作任务时，选择已发布环境后 `create_work_item`。
@@ -65,14 +67,12 @@ Scratch、Full/LoRA 和 checkpoint 恢复遵循框架声明。恢复必须保留
 
 准备命令可使用 `inspect_asset_revision` 返回的 `command_path` 读取新获取的资产，该目录只读，不进入环境镜像。历史资产的该字段可能为空；需要准备命令访问时，显式 acquire_asset(local_path=原资产路径) 创建本地副本。
 
-## 五分钟 VAD 数据配方
+## 数据集发现与任务契约
 
-本仓库的 `docs/vad-data-contract.md`、`examples/vad/` 和 `scripts/prepare-vad.py` 固定 AVA 10h/2h 工作流：16 kHz 单声道 PCM16、每条 300 秒、原始录音级 split、能量粗标注，以及独立 AudioFolder/内嵌 WAV Parquet 副本。2h 按 20/2/2 条划分，是 10h 的严格子集。不要自行改变 `seconds.starts/durations` 的秒单位或重排 split。未人工审核标签的指标不代表真实 VAD 质量。真实运行脚本为 `scripts/run-vad.py`；preludio2 的训练与测试阈值列表均固定为 `[0.5]`。Lightning 会从 checkpoint 恢复模型超参数；仅改评估 YAML 不能证明参数已生效，必须核对 resolved 配置。
+先用 `list_asset_revisions(kind="dataset")` 查平台已有数据，可按 query 过滤名称与 repo_id。再读取 `list_sources`，逐个启用的 HF 兼容来源调用 `search_source_assets(source_id, kind="dataset", query, offset, limit)`；工具默认 kind=model，查数据时必须显式指定 dataset。按目标任务尝试不同关键词，跟随 next_offset 读取分页。搜索使用 HF 仓库搜索 API，不是对数据卡全文的语义搜索；无结果不能证明不存在合适数据。
 
-## 完整人工 AVA 训练闭环
+候选清单说明来源、repo_id、精确 revision、本地状态、标签质量、任务适用性和所需转换。核对数据卡、字段、split、采样率、时长、标签来源、许可证与目标场景，避免将 ASR 文本标签当成 VAD 区间标签。已有资产的内容与可用性通过 `inspect_asset_revision` 检查；已注册资产的 README 通过 `describe_asset` 读取。外部候选先读取来源数据卡，选定后显式 acquire_asset，不因搜索自动下载。
 
-完整人工 AVA 使用 `examples/vad-human/` 与 `scripts/run-vad-training-loop.py`，独立于上述旧能量流程。保留 158 条 900 秒录音和 2 条 300 秒录音及原 11 个字段，prepare 只增加 seconds.starts=onset、seconds.durations=offset-onset。原 train 按固定录音哈希选 16 条 validation，得到 142/16/2，原 test 不变。
+框架能力通过 `list_assets(kind="framework")` / `describe_asset` 发现；详情包含任务、操作、输入和框架 Skill。精确 Recipe 详情说明实际配置。字段映射、标签单位、数据准备、模型初始化、checkpoint 恢复与导出方式都遵循所选契约，缺少适配就在平台工作区准备新版本，不要求外部数据仓库预装 Ninna 清单。
 
-Scratch 只读无权重 config，Full/LoRA 只读同一已导出基线；三种 Task 和配方分别固定，全部模型选择完成后才评估 test。检查优化步、trainable/frozen 参数数目、逐参数哈希与 resolved.yaml。LoRA 的 frozen_changed_parameter_tensors 必须为 0；导出后重新加载并推理。发布数据必须显式传 --publish。
-
-大音频的 datasets.map 固定 writer_batch_size=1，Parquet 分片最多 16 条，避免 Arrow binary 的 2 GB 偏移上限。MCP 资产列表只列身份与 file_count，文件哈希用 inspect_asset_revision 查询；环境列表省略历史源码清单，HTTP 与网页详情仍完整。
+VAD 需区分人工标注和自动粗标签，按原录音隔离划分，检查音频可解码及语音区间有效性。粗标签指标只反映对粗标注的一致性。实时任务另核对未来上下文、状态缓存、端点策略和实际事件延迟；帧分类 F1 不能替代实时验收。具体数据集、时长、切片和划分以资产及框架契约为准，不沿用实验中的固定规则。

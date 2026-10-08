@@ -162,10 +162,10 @@ NINNA_INTEGRATION=1 NINNA_API_URL=http://127.0.0.1:8021 \
 
 设计同步流程见 [UI 与 Figma 同步](docs/design/sync.md)，版本记录见 [UI 发布记录](docs/ui-releases.md)。页面、组件、两主题 PNG 和打印稿须在发布 tag 前同步完成。
 
-## 五分钟 VAD 数据与 preludio2 验证
+## 从远端发现数据与训练契约
 
-[数据契约与操作说明](docs/vad-data-contract.md)固定了 AVA 来源版本、10h/2h 划分、每条严格 300 秒、能量粗标注及 AudioFolder/Parquet 双格式。通过 `poetry run python scripts/prepare-vad.py build` 生成数据；显式 `NINNA_INTEGRATION=1` 后使用 `scripts/run-vad.py` 在现有 Ninna v2 平台运行真实 preludio2 容器，持久保存运行证据。实际结果见 [VAD 验证记录](docs/vad-verification.md)。
+Codex 客户端只需连接 Ninna MCP，不需要检出本仓库或训练框架仓库。先读取 `ninna://guide` 和 `get_capabilities`，通过 `list_asset_revisions(kind="dataset")` 查看平台已有数据，再用 `list_sources` 和 `search_source_assets(kind="dataset")` 逐个来源搜索；继续读取分页，不能将首批搜索结果视为完整目录。
 
-## 完整人工 AVA：Scratch、全量与 LoRA 闭环
+选择候选时核对来源版本、标注质量、划分、字段、音频格式、许可证及目标场景。已下载资产通过 `inspect_asset_revision` 检查文件；具体加载、转换、训练与导出要求来自平台 `describe_asset(kind="framework")` 返回的任务声明和框架 Skill，以及数据、模型、配方的精确版本详情。
 
-[固定配方](examples/vad-human/README.md)保留完整人工标注与录音长度，独立生成可训练 FLAC Parquet 和 142/16/2 划分。`start_run` 将原来的准备方案、检查和提交收敛为一次 MCP 写操作，仍保存封存方案与输入校验。`scripts/run-vad-training-loop.py` 可恢复地执行从零训练、HF 导出、同基线 Full/LoRA、独立评估和重新加载推理；`--publish` 显式发布训练数据。实际优化步、冻结底座哈希、指标、产物与验证边界见 [训练闭环验收](docs/vad-training-loop-verification.md)。
+已发布环境、注册配方和输入资产就绪后，通过 `start_run` 提交。需要调整数据或代码时，在平台工作区内准备并验证新版本。VAD 的人工标签与自动粗标签分别说明质量边界，数据切片、字段转换和划分遵循所选资产契约；平台不内置某个实验的数据集、时长、资产 ID 或客户端源码路径。
