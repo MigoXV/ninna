@@ -6,7 +6,7 @@
 
 - 主平台：[训练框架目录](http://127.0.0.1:8000/assets/framework)。六套 Framework、Image、Runtime、Workspace、操作配方，以及验证用输入数据、底座和十个导出模型已注册。
 - 验证平台：[验收项目](http://127.0.0.1:8011/projects/framework-integration)。状态目录为 `outputs/framework-integration/platform`；主平台继续使用 `outputs/platform`，原有运行未覆盖。
-- Agent 使用根目录 `AGENTS.md` 与 `.agents/skills/ninna/SKILL.md`，通过 MCP 发现 Framework、读取框架 Skill、执行 preflight，再创建任务。各框架的镜像默认 WORKDIR 为 `/app`，该目录直接包含 `AGENTS.md`、`.agents/skills/` 和 `ninna-framework.yaml`；宿主机根目录使用同一套说明。
+- Agent 使用根目录 `AGENTS.md` 与 MCP 提供的 `ninna://guide`，通过 MCP 发现 Framework、读取框架 Skill、执行 preflight，再创建任务。各框架的镜像默认 WORKDIR 为 `/app`，该目录直接包含 `AGENTS.md`、`.agents/skills/` 和 `ninna-framework.yaml`；宿主机根目录使用同一套说明。
 - [协议与构建说明](framework-integration.md)；[机器可读验收证据](framework-verification.json)包含真实容器 ID、image ID、代码快照、输入摘要、配方摘要、参数更新证据和产物摘要。完整日志与产物由对应 Run 保管。
 
 ## 已注册的最终镜像

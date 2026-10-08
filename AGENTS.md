@@ -1,6 +1,6 @@
 # Ninna 开发与 Agent 入口
 
-项目说明见中文 README；运行平台的 Agent 使用 `.agents/skills/ninna/SKILL.md`，连接方法见 `docs/agent-integration.md`。
+项目说明见中文 README；运行平台的 Agent 通过 MCP 接入，连接方法见 `docs/agent-integration.md`。
 
 - Python 使用 Poetry：`poetry run pytest`、`poetry run ninna ...`。前端使用 `pnpm --dir src/web ...`。
 - 修改前阅读入口和调用链。API：`src/ninna/web/app.py`；领域：`domain/schemas.py`；执行：`services/platform.py`；数据：`storage/repository.py`。

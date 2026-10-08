@@ -18,11 +18,11 @@ stdio 同样连接已运行的 API，不创建执行器：
 codex mcp add ninna -- poetry --directory /安装路径/ninna run ninna mcp --url http://你的平台地址:8000
 ```
 
-安装 `.agents/skills/ninna` 到 Codex 使用的仓库或个人 Skill 目录。Skill 不固定 localhost 依赖；MCP 地址以实际客户端配置为准。
+本仓库不包含 Ninna Skill。MCP 地址以实际客户端配置为准；连接后读取 `ninna://guide` 和 `get_capabilities`。
 
 ## 用户示例
 
-> 使用 $ninna，在我的语音项目中，用内网数据集微调这个模型，先做一次小规模验证。复用已准备的环境，报告实际指标和模型产物。
+> 通过 Ninna MCP，在我的语音项目中，用内网数据集微调这个模型，先做一次小规模验证。复用已准备的环境，报告实际指标和模型产物。
 
 > 继续工作任务 work_item-…，看看上次训练的结果，诊断问题并创建新的训练尝试。
 

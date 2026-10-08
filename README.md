@@ -44,9 +44,9 @@ poetry run ninna migrate --apply
 codex mcp add ninna --url http://你的平台地址:8000/mcp/
 ```
 
-安装本仓库 `.agents/skills/ninna`，在 Codex 中使用：
+连接 MCP 后，在 Codex 中使用：
 
-> 使用 $ninna，在客服语音项目中，用内网的数据集微调这个模型。先复用已有环境做小规模验证，报告真实指标与产物。
+> 通过 Ninna MCP，在客服语音项目中，用内网的数据集微调这个模型。先复用已有环境做小规模验证，报告真实指标与产物。
 
 首次连接读取 `ninna://guide` 和 `get_capabilities`。完整工具分组、stdio 接入和工作流见 [Agent 接入说明](docs/agent-integration.md)。MCP 不要求共享文件系统，也不启动第二个平台执行器。
 
